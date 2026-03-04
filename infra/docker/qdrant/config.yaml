@@ -1,0 +1,14 @@
+events:
+  daemon_threads: true
+
+nginx:
+  worker_processes: auto
+
+http:
+  upstream_backend:
+    servers:
+      - backend:8000
+
+  upstream_frontend:
+    servers:
+      - frontend:3000
