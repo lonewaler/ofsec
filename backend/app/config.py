@@ -70,6 +70,8 @@ class Settings(BaseSettings):
     # ─── CORS / Hosts ────────────────────────────
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
         "http://localhost:80",
         "http://localhost",
     ]
@@ -81,6 +83,14 @@ class Settings(BaseSettings):
         "case_sensitive": True,
         "extra": "ignore",
     }
+
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Return CORS origins — locked down in production."""
+        if self.ENVIRONMENT == "production":
+            # In production, only allow the configured origins (no wildcards)
+            return [o for o in self.CORS_ORIGINS if "localhost" not in o] or self.CORS_ORIGINS
+        return self.CORS_ORIGINS
 
 
 # Global settings instance

@@ -25,3 +25,7 @@ Thumbs.db
 
 # ─── Gemini/Agent ─────────────
 .gemini/
+
+# ─── TLS Certificates ────────
+infra/certs/*.key
+infra/certs/*.crt

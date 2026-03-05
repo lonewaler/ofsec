@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import HTMLResponse
 
 from app.api.deps import DbSession, CurrentUser
+from app.repositories import ScanRepository
 from app.schemas import (
     ReconScanRequest,
     ReconResultResponse,
@@ -132,6 +133,52 @@ async def instant_recon_scan(
         await orchestrator.close()
 
 
+@router.post("/passive", tags=["Reconnaissance"])
+async def run_passive_recon(
+    request: ReconScanRequest,
+    db: DbSession,
+    user: CurrentUser,
+) -> dict:
+    """Run passive recon and persist results."""
+    repo = ScanRepository(db)
+
+    # Create scan record
+    scan = await repo.create_scan(
+        target=request.target,
+        scan_type="recon",
+        config={"modules": request.modules, "mode": "passive"},
+    )
+
+    orchestrator = ReconOrchestrator()
+    try:
+        if "all" in request.modules:
+            results = await orchestrator.run_full_recon(request.target)
+        elif len(request.modules) == 1:
+            results = await orchestrator.run_module(request.modules[0], request.target, request.config)
+        else:
+            results = await orchestrator.run_full_recon(request.target, modules=request.modules)
+
+        # Extract any findings and persist them
+        findings = results.get("findings") or results.get("vulnerabilities") or []
+        if findings:
+            await repo.add_vulnerabilities(scan.id, findings)
+
+        await repo.complete_scan(scan.id, result_summary={
+            "modules_run": request.modules,
+            "findings_count": len(findings),
+        })
+
+        # Attach scan_id to response for frontend cross-reference
+        results["scan_id"] = scan.id
+        return results
+
+    except Exception as e:
+        await repo.complete_scan(scan.id, result_summary={}, error=str(e))
+        raise
+    finally:
+        await orchestrator.close()
+
+
 @router.post("/report", tags=["Reconnaissance"], response_model=None)
 async def generate_recon_report(
     request: ReconScanRequest,
@@ -159,17 +206,58 @@ async def list_recon_results(
     limit: int = 20,
     offset: int = 0,
 ) -> dict:
-    """List recon scan results."""
-    # TODO: Query scans from DB with recon type filter
-    return {"items": [], "total": 0, "limit": limit, "offset": offset}
+    """List recon scan results from database."""
+    repo = ScanRepository(db)
+    items, total = await repo.list_scans(
+        scan_type="recon", target=target, limit=limit, offset=offset
+    )
+    return {
+        "items": [
+            {
+                "id": s.id,
+                "target": s.target,
+                "status": s.status,
+                "started_at": s.started_at.isoformat() if s.started_at else None,
+                "finished_at": s.finished_at.isoformat() if s.finished_at else None,
+                "result_summary": s.result_summary,
+            }
+            for s in items
+        ],
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+    }
 
 
-@router.get("/results/{scan_id}", response_model=ReconResultResponse, tags=["Reconnaissance"])
+@router.get("/results/{scan_id}", tags=["Reconnaissance"])
 async def get_recon_result(
     scan_id: int,
     db: DbSession,
     user: CurrentUser,
-) -> ReconResultResponse:
+) -> dict:
     """Get a specific recon scan result."""
-    # TODO: Fetch scan from DB
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Scan not found")
+    repo = ScanRepository(db)
+    scan = await repo.get_scan(scan_id)
+    if not scan:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Scan not found")
+    return {
+        "id": scan.id,
+        "target": scan.target,
+        "scan_type": scan.scan_type,
+        "status": scan.status,
+        "config": scan.config,
+        "result_summary": scan.result_summary,
+        "started_at": scan.started_at.isoformat() if scan.started_at else None,
+        "finished_at": scan.finished_at.isoformat() if scan.finished_at else None,
+        "error_message": scan.error_message,
+        "vulnerabilities": [
+            {
+                "id": v.id,
+                "title": v.title,
+                "severity": v.severity,
+                "cvss": v.cvss,
+                "description": v.description,
+            }
+            for v in (scan.vulnerabilities or [])
+        ],
+    }

@@ -22,6 +22,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       document.getElementById('app-layout').style.display = 'flex';
       toast('Welcome to OfSec V3', 'success');
       loadDashboard();
+      loadPersistedData();
       loadModuleGrid();
       loadAIModules();
       loadAPIKeyStatus();
@@ -43,11 +44,41 @@ async function api(path, opts = {}) {
     },
     body: opts.body ? JSON.stringify(opts.body) : undefined
   });
+
+  // Handle rate limiting with a visible countdown
+  if (res.status === 429) {
+    const retryAfter = parseInt(res.headers.get('Retry-After') || '60', 10);
+    showRateLimitToast(retryAfter);
+    throw new Error(`Rate limited. Retry in ${retryAfter}s`);
+  }
+
   if (!res.ok) {
     const e = await res.json().catch(() => ({ detail: res.statusText }));
     throw new Error(e.detail || res.statusText);
   }
   return res.json();
+}
+
+// Rate limit countdown toast
+function showRateLimitToast(seconds) {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast toast-error';
+  el.style.cssText = 'min-width:260px;padding:12px 16px';
+  container.appendChild(el);
+
+  let remaining = seconds;
+  function tick() {
+    el.innerHTML = `⏱ Rate limited — retry in <strong>${remaining}s</strong>`;
+    if (remaining <= 0) {
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 300);
+    } else {
+      remaining--;
+      setTimeout(tick, 1000);
+    }
+  }
+  tick();
 }
 
 // ─── Navigation ─────────────────────────────
@@ -70,7 +101,17 @@ function navigate(page) {
     reports: 'Reports', settings: 'Settings'
   };
   document.getElementById('page-title').textContent = titles[page] || page;
+
+  // Start/stop alert polling based on active page
+  if (page === 'defense') {
+    startAlertPolling();
+  } else {
+    stopAlertPolling();
+  }
 }
+
+window.addEventListener('beforeunload', stopAlertPolling);
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCVEPanel(); });
 
 // ─── Dashboard ──────────────────────────────
 async function loadDashboard() {
@@ -323,13 +364,18 @@ function updateResults() {
 
   body.innerHTML = vulnResults.map(v => {
     const sev = (v.severity || 'info').toLowerCase();
+    const cveMatch = (v.cve || v.title || v.name || '').match(/CVE-\d{4}-\d{4,}/i);
+    const cveId = cveMatch ? cveMatch[0].toUpperCase() : null;
+    const cveLink = cveId
+      ? '<span onclick="openCVEPanel(\'' + cveId + '\')" style="margin-left:6px;background:rgba(59,130,246,0.2);color:var(--accent-blue);padding:1px 6px;border-radius:3px;font-size:10px;font-family:monospace;cursor:pointer;border:1px solid rgba(59,130,246,0.3)" title="View CVE detail">' + cveId + ' ↗</span>'
+      : '';
     return `
-      <tr>
+      <tr style="cursor:default">
         <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${v.target}</td>
         <td>${v.type || v.scan_type || 'web'}</td>
         <td><span class="badge-severity badge-${sev}">${v.severity || 'INFO'}</span></td>
-        <td>${v.title || v.name || 'Finding'}</td>
-        <td>${v.cvss || '—'}</td>
+        <td>${v.title || v.name || 'Finding'}${cveLink}</td>
+        <td>${v.cvss || (v.cvss_score ? v.cvss_score.toFixed(1) : '—')}</td>
         <td style="color:var(--text-muted);font-size:12px">${v.found}</td>
       </tr>
     `;
@@ -645,67 +691,423 @@ async function askAI() {
   }
 }
 
-// ─── Reports ────────────────────────────────
+// ─── Reports ────────────────────────────────────────────
+const REPORT_TITLES = {
+  executive: '📊 Executive Summary Report',
+  technical: '🔧 Technical Report',
+  compliance: '✅ Compliance Report',
+  vulnerability: '⚠️ Vulnerability Report',
+  pentest: '🗡️ Penetration Test Report',
+};
+
 function generateReport(type) {
   const card = document.getElementById('report-output');
   const title = document.getElementById('report-title');
   const content = document.getElementById('report-content');
   card.style.display = 'block';
 
-  const titles = {
-    executive: '📊 Executive Summary Report',
-    technical: '🔧 Technical Report',
-    compliance: '✅ Compliance Report',
-    vulnerability: '⚠️ Vulnerability Report',
-    pentest: '🗡️ Penetration Test Report'
-  };
+  title.textContent = REPORT_TITLES[type] || 'Report';
 
-  title.textContent = titles[type] || 'Report';
-  content.innerHTML = `
-      <span class="line-info">═══════════════════════════════════════</span><br>
-        <span class="line-success">${titles[type]}</span><br>
-          <span class="line-info">═══════════════════════════════════════</span><br><br>
-            <span class="line-dim">Generated: ${new Date().toISOString()}</span><br>
-              <span class="line-dim">Platform: OfSec V3 — Vector Triangulum</span><br><br>
-                <span class="line-info">Summary</span><br>
-                  <span>  Total scans: ${scanHistory.length}</span><br>
-                    <span>  Vulnerabilities found: ${vulnResults.length}</span><br>
-                      <span>  Critical: ${vulnResults.filter(v => v.severity === 'CRITICAL').length}</span><br>
-                        <span>  High: ${vulnResults.filter(v => v.severity === 'HIGH').length}</span><br>
-                          <span>  Medium: ${vulnResults.filter(v => v.severity === 'MEDIUM').length}</span><br>
-                            <span>  Low: ${vulnResults.filter(v => v.severity === 'LOW').length}</span><br><br>
-                              <span class="line-info">Scanned Targets</span><br>
-                                ${scanHistory.length ? scanHistory.map(s => `<span>  • ${s.target} (${s.type}) — ${s.findings} findings</span><br>`).join('') : '<span class="line-dim">  No scans performed yet</span><br>'}
-                                <br><span class="line-dim">─── End of Report ───</span>
-                                  `;
+  const critCount = vulnResults.filter(v => v.severity === 'CRITICAL').length;
+  const highCount = vulnResults.filter(v => v.severity === 'HIGH').length;
+  const medCount = vulnResults.filter(v => v.severity === 'MEDIUM').length;
+  const lowCount = vulnResults.filter(v => v.severity === 'LOW').length;
+
+  var rpt = '<span class="line-info">═══════════════════════════════════════</span><br>';
+  rpt += '<span class="line-success">' + (REPORT_TITLES[type] || 'Report') + '</span><br>';
+  rpt += '<span class="line-info">═══════════════════════════════════════</span><br><br>';
+  rpt += '<span class="line-dim">Generated: ' + new Date().toISOString() + '</span><br>';
+  rpt += '<span class="line-dim">Platform: OfSec V3 — Vector Triangulum</span><br><br>';
+  rpt += '<span class="line-info">── Scan Summary ──────────────────────</span><br>';
+  rpt += '<span>  Total scans run:     ' + scanHistory.length + '</span><br>';
+  rpt += '<span>  Vulnerabilities:     ' + vulnResults.length + '</span><br>';
+  rpt += '<span style="color:var(--accent-red)">  Critical:            ' + critCount + '</span><br>';
+  rpt += '<span style="color:var(--accent-orange)">  High:                ' + highCount + '</span><br>';
+  rpt += '<span style="color:#f59e0b">  Medium:              ' + medCount + '</span><br>';
+  rpt += '<span style="color:var(--accent-green)">  Low:                 ' + lowCount + '</span><br><br>';
+  rpt += '<span class="line-info">── Scanned Targets ───────────────────</span><br>';
+  if (scanHistory.length) {
+    scanHistory.forEach(function (s) {
+      rpt += '<span>  • ' + s.target + ' &nbsp;[' + s.type + '] &nbsp;→ ' + s.findings + ' finding' + (s.findings !== 1 ? 's' : '') + ' &nbsp;<span style="color:var(--text-muted)">' + s.time + '</span></span><br>';
+    });
+  } else {
+    rpt += '<span class="line-dim">  No scans performed yet</span><br>';
+  }
+  if (vulnResults.length > 0) {
+    rpt += '<br><span class="line-info">── Top Findings ──────────────────────</span><br>';
+    vulnResults.slice(0, 10).forEach(function (v) {
+      var c = v.severity === 'CRITICAL' ? 'var(--accent-red)' : v.severity === 'HIGH' ? 'var(--accent-orange)' : '#f59e0b';
+      rpt += '<span>  [<span style="color:' + c + '">' + (v.severity || 'INFO') + '</span>] ' + (v.title || v.name || 'Finding') + ' — ' + v.target + '</span><br>';
+    });
+  }
+  rpt += '<br><span class="line-dim">─── End of Report ───────────────────</span>';
+  content.innerHTML = rpt;
+  card.dataset.reportType = type;
   toast('Report generated', 'success');
 }
 
-// ─── Settings ───────────────────────────────
-async function loadAPIKeyStatus() {
-  const container = document.getElementById('api-key-status');
-  try {
-    const health = await api('/health');
-    const keys = [
-      { name: 'Gemini AI', key: 'GEMINI_API_KEY', critical: true },
-      { name: 'Shodan', key: 'SHODAN_API_KEY', critical: false },
-      { name: 'VirusTotal', key: 'VIRUSTOTAL_API_KEY', critical: false },
-      { name: 'AbuseIPDB', key: 'ABUSEIPDB_API_KEY', critical: false },
-      { name: 'Censys', key: 'CENSYS_API_ID', critical: false },
-      { name: 'NVD', key: 'NVD_API_KEY', critical: false },
-      { name: 'AlienVault OTX', key: 'OTX_API_KEY', critical: false },
-      { name: 'Hunter.io', key: 'HUNTER_API_KEY', critical: false },
-    ];
+// ─── Export: JSON ────────────────────────────────────────
+function exportReportJSON() {
+  var card = document.getElementById('report-output');
+  var type = card?.dataset?.reportType || 'report';
+  var payload = {
+    meta: { report_type: type, generated_at: new Date().toISOString(), platform: 'OfSec V3', version: '3.0.0' },
+    summary: {
+      total_scans: scanHistory.length, total_vulnerabilities: vulnResults.length,
+      critical: vulnResults.filter(function (v) { return v.severity === 'CRITICAL' }).length,
+      high: vulnResults.filter(function (v) { return v.severity === 'HIGH' }).length,
+      medium: vulnResults.filter(function (v) { return v.severity === 'MEDIUM' }).length,
+      low: vulnResults.filter(function (v) { return v.severity === 'LOW' }).length,
+    },
+    scans: scanHistory, vulnerabilities: vulnResults,
+  };
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'ofsec-' + type + '-report-' + Date.now() + '.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('JSON report downloaded', 'success');
+}
 
-    container.innerHTML = keys.map(k => `
-                                  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(55,65,81,0.2);border-radius:var(--radius-sm)">
-                                    <span style="font-size:13px">${k.name}</span>
-                                    <span style="font-size:11px;color:var(--accent-green)">● Configured</span>
-                                  </div>
-                                  `).join('');
+// ─── Export: HTML ────────────────────────────────────────
+function exportReportHTML() {
+  var card = document.getElementById('report-output');
+  var type = card?.dataset?.reportType || 'report';
+  var titleText = document.getElementById('report-title')?.textContent || 'OfSec Report';
+  var contentHTML = document.getElementById('report-content')?.innerHTML || '';
+  var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">';
+  html += '<title>' + titleText + ' — OfSec V3</title>';
+  html += '<style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0f1117;color:#e2e8f0;font-family:"JetBrains Mono","Courier New",monospace;font-size:13px;line-height:1.6;padding:40px}';
+  html += 'header{border-bottom:1px solid #1e293b;padding-bottom:20px;margin-bottom:28px}header h1{font-size:22px;color:#38bdf8}header p{font-size:12px;color:#64748b;margin-top:4px}';
+  html += '.terminal{background:#0a0e1a;border:1px solid #1e293b;border-radius:8px;padding:20px;white-space:pre-wrap;word-break:break-word}';
+  html += '.line-success{color:#4ade80}.line-info{color:#38bdf8}.line-warning{color:#fb923c}.line-error{color:#f87171}.line-dim{color:#475569}';
+  html += 'footer{margin-top:32px;font-size:11px;color:#334155;border-top:1px solid #1e293b;padding-top:16px}';
+  html += '@media print{body{background:white;color:black}.terminal{background:#f8f8f8;border-color:#ccc}}</style></head><body>';
+  html += '<header><h1>' + titleText + '</h1><p>OfSec V3 — Vector Triangulum &nbsp;|&nbsp; Generated: ' + new Date().toISOString() + '</p></header>';
+  html += '<div class="terminal">' + contentHTML + '</div>';
+  html += '<footer>This report was generated by OfSec V3. Confidential — for authorized use only.</footer></body></html>';
+  var blob = new Blob([html], { type: 'text/html' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'ofsec-' + type + '-report-' + Date.now() + '.html'; a.click();
+  URL.revokeObjectURL(url);
+  toast('HTML report downloaded', 'success');
+}
+
+// ─── Export: via Backend API ─────────────────────────────
+async function exportReportViaAPI(type) {
+  toast('Generating report via API...', 'info');
+  try {
+    var data = await api('/api/v1/ops/reports/generate', {
+      method: 'POST',
+      body: { report_type: type, scan_data: { scans: scanHistory, vulnerabilities: vulnResults, generated_at: new Date().toISOString() } }
+    });
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'ofsec-api-' + type + '-' + Date.now() + '.json'; a.click();
+    URL.revokeObjectURL(url);
+    toast('API report downloaded', 'success');
   } catch (e) {
-    container.innerHTML = '<p style="color:var(--text-muted)">Unable to check API key status</p>';
+    toast('API report failed: ' + e.message, 'error');
   }
+}
+
+// ─── CVE Side Panel ─────────────────────────────────────
+var cvePanel = null;
+
+function openCVEPanel(cveId) {
+  if (!cvePanel) {
+    cvePanel = document.createElement('div');
+    cvePanel.id = 'cve-panel';
+    cvePanel.style.cssText = 'position:fixed;top:0;right:-440px;width:420px;height:100vh;background:var(--bg-card);border-left:1px solid var(--border-color);z-index:1000;transition:right 0.3s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;padding:24px;box-shadow:-8px 0 32px rgba(0,0,0,0.4)';
+    document.body.appendChild(cvePanel);
+  }
+  var bd = document.getElementById('cve-backdrop');
+  if (bd) bd.style.display = 'block';
+  cvePanel.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
+    '<div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">CVE DETAIL</div>' +
+    '<div style="font-family:monospace;font-size:16px;font-weight:700;color:var(--accent-blue)">' + cveId + '</div></div>' +
+    '<button onclick="closeCVEPanel()" style="background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;padding:4px">✕</button>' +
+    '</div><div id="cve-panel-body"><div class="spinner"></div></div>';
+  cvePanel.style.right = '0';
+  fetchCVEDetail(cveId);
+}
+
+function closeCVEPanel() {
+  if (cvePanel) cvePanel.style.right = '-440px';
+  var bd = document.getElementById('cve-backdrop');
+  if (bd) bd.style.display = 'none';
+}
+
+async function fetchCVEDetail(cveId) {
+  var body = document.getElementById('cve-panel-body');
+  try {
+    var data = await api('/api/v1/ai/cve/analyze', { method: 'POST', body: [cveId] });
+    var cve = data?.cves?.[0];
+    if (!cve || !cve.found) { body.innerHTML = '<div class="terminal"><span class="line-warning">CVE not found in NVD database.</span></div>'; return; }
+    var score = cve.cvss?.base_score ?? '—';
+    var severity = cve.cvss?.severity ?? 'UNKNOWN';
+    var sevColor = severity === 'CRITICAL' ? 'var(--accent-red)' : severity === 'HIGH' ? 'var(--accent-orange)' : severity === 'MEDIUM' ? '#f59e0b' : 'var(--accent-green)';
+    var sevBg = severity === 'CRITICAL' ? '239,68,68' : severity === 'HIGH' ? '249,115,22' : '59,130,246';
+    var html = '<div style="text-align:center;padding:20px;background:rgba(' + sevBg + ',0.1);border-radius:var(--radius);margin-bottom:16px;border:1px solid ' + sevColor + '40">';
+    html += '<div style="font-size:48px;font-weight:900;color:' + sevColor + ';line-height:1">' + score + '</div>';
+    html += '<div style="font-size:13px;font-weight:700;color:' + sevColor + ';margin-top:4px">' + severity + '</div>';
+    if (cve.cvss?.vector) html += '<div style="font-size:10px;color:var(--text-muted);margin-top:6px;font-family:monospace">' + cve.cvss.vector + '</div>';
+    html += '</div>';
+    html += '<div style="font-size:11px;color:var(--text-muted);margin-bottom:12px">';
+    if (cve.published) html += 'Published: ' + new Date(cve.published).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    if (cve.modified) html += ' &nbsp;|&nbsp; Modified: ' + new Date(cve.modified).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    html += '</div>';
+    html += '<div style="margin-bottom:16px"><div style="font-size:11px;color:var(--accent-blue);font-weight:600;margin-bottom:6px">DESCRIPTION</div>';
+    html += '<div style="font-size:12px;line-height:1.7;color:var(--text-secondary)">' + (cve.description || 'No description available.') + '</div></div>';
+    if (cve.weaknesses && cve.weaknesses.length > 0) {
+      html += '<div style="margin-bottom:16px"><div style="font-size:11px;color:var(--accent-blue);font-weight:600;margin-bottom:6px">WEAKNESSES (CWE)</div><div style="display:flex;flex-wrap:wrap;gap:6px">';
+      cve.weaknesses.forEach(function (w) { html += '<span style="background:rgba(251,191,36,0.15);color:#fbbf24;padding:3px 8px;border-radius:4px;font-size:11px;font-family:monospace">' + w + '</span>'; });
+      html += '</div></div>';
+    }
+    if (cve.references && cve.references.length > 0) {
+      html += '<div style="margin-bottom:16px"><div style="font-size:11px;color:var(--accent-blue);font-weight:600;margin-bottom:6px">REFERENCES</div>';
+      cve.references.slice(0, 5).forEach(function (ref) {
+        var short = ref.replace('https://', '').substring(0, 55) + (ref.length > 60 ? '…' : '');
+        html += '<div style="margin-bottom:4px"><a href="' + ref + '" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent-blue);word-break:break-all;text-decoration:none;opacity:0.8">↗ ' + short + '</a></div>';
+      });
+      html += '</div>';
+    }
+    html += '<div style="display:flex;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border-color)">';
+    html += '<a href="https://nvd.nist.gov/vuln/detail/' + cveId + '" target="_blank" rel="noopener" class="btn btn-primary" style="flex:1;text-align:center;text-decoration:none;font-size:12px">View in NVD ↗</a>';
+    html += '<button class="btn" style="font-size:12px" onclick="navigator.clipboard.writeText(\'' + cveId + '\').then(function(){toast(\'Copied\',\'success\')})">Copy ID</button>';
+    html += '</div>';
+    body.innerHTML = html;
+  } catch (e) {
+    body.innerHTML = '<div class="terminal"><span class="line-error">Error: ' + e.message + '</span></div>';
+  }
+}
+
+// ─── Defense — Live Alert Polling ───────────────────────
+var alertPollInterval = null;
+var lastAlertCount = 0;
+var lastRefreshTime = null;
+var refreshTickInterval = null;
+
+async function loadDefenseAlerts() {
+  try {
+    var alertsRes, corrRes;
+    try { alertsRes = await api('/api/v1/defense/alerts?limit=50'); } catch (e) { alertsRes = { alerts: [] }; }
+    try { corrRes = await api('/api/v1/defense/correlation/alerts?limit=20'); } catch (e) { corrRes = { alerts: [] }; }
+    var alerts = alertsRes?.alerts || [];
+    var corrAlerts = corrRes?.alerts || [];
+    var newAlerts = alerts.length > lastAlertCount;
+    renderAlertsTable(alerts, newAlerts);
+    renderCorrAlertsTable(corrAlerts);
+    updateIncidentKPI();
+    lastAlertCount = alerts.length;
+    lastRefreshTime = Date.now();
+    updateRefreshLabel();
+  } catch (e) { console.warn('Alert poll error:', e); }
+}
+
+function renderAlertsTable(alerts, hasNew) {
+  var body = document.getElementById('alerts-body');
+  if (!body) return;
+  if (alerts.length === 0) {
+    body.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No alerts currently. System is monitoring.</p></div></td></tr>';
+    return;
+  }
+  var rows = '';
+  alerts.forEach(function (a, i) {
+    var sev = (a.severity || 'info').toLowerCase();
+    var sevColor = sev === 'critical' ? 'var(--accent-red)' : sev === 'high' ? 'var(--accent-orange)' : sev === 'medium' ? '#f59e0b' : 'var(--accent-green)';
+    var isNew = hasNew && i < (alerts.length - lastAlertCount);
+    var statusBg = a.status === 'open' ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)';
+    var statusColor = a.status === 'open' ? 'var(--accent-red)' : 'var(--accent-green)';
+    var ts = a.timestamp || a.created_at ? new Date(a.timestamp || a.created_at).toLocaleTimeString() : now();
+    rows += '<tr class="' + (isNew ? 'alert-new' : '') + '" style="transition:background 0.5s">';
+    rows += '<td><span style="color:' + sevColor + ';font-weight:700;font-size:12px;text-transform:uppercase">' + (a.severity || 'INFO') + '</span></td>';
+    rows += '<td style="font-size:13px">' + (a.title || a.type || a.name || 'Alert') + '</td>';
+    rows += '<td style="font-size:12px;color:var(--text-muted)">' + (a.source || a.rule || '—') + '</td>';
+    rows += '<td><span style="font-size:11px;padding:2px 7px;border-radius:3px;background:' + statusBg + ';color:' + statusColor + '">' + (a.status || 'open') + '</span></td>';
+    rows += '<td style="color:var(--text-muted);font-size:11px">' + ts + '</td>';
+    rows += '</tr>';
+  });
+  body.innerHTML = rows;
+  if (hasNew) {
+    document.querySelectorAll('.alert-new').forEach(function (row) {
+      row.style.background = 'rgba(239,68,68,0.15)';
+      setTimeout(function () { row.style.background = ''; }, 2000);
+    });
+  }
+}
+
+function renderCorrAlertsTable(alerts) {
+  var body = document.getElementById('correlation-alerts-body');
+  if (!body || alerts.length === 0) return;
+  var rows = '';
+  alerts.forEach(function (a) {
+    var ts = a.triggered_at ? new Date(a.triggered_at).toLocaleTimeString() : now();
+    rows += '<tr>';
+    rows += '<td style="font-family:monospace;font-size:11px">' + (a.rule_id || '—') + '</td>';
+    rows += '<td style="font-size:12px">' + (a.rule_name || a.description || 'Correlation Match') + '</td>';
+    rows += '<td style="font-size:11px;color:var(--text-muted)">' + (a.matched_events || 0) + ' events</td>';
+    rows += '<td style="font-size:11px;color:var(--text-muted)">' + ts + '</td>';
+    rows += '</tr>';
+  });
+  body.innerHTML = rows;
+}
+
+function updateRefreshLabel() {
+  var label = document.getElementById('alerts-refresh-label');
+  if (!label || !lastRefreshTime) return;
+  if (refreshTickInterval) clearInterval(refreshTickInterval);
+  refreshTickInterval = setInterval(function () {
+    var secs = Math.floor((Date.now() - lastRefreshTime) / 1000);
+    label.textContent = 'Last refreshed ' + secs + 's ago';
+  }, 1000);
+}
+
+async function updateIncidentKPI() {
+  try {
+    var alertsRes = await api('/api/v1/defense/alerts?limit=100').catch(function () { return { alerts: [] }; });
+    var openCount = (alertsRes?.alerts || []).filter(function (a) { return a.status === 'open'; }).length;
+    var el = document.getElementById('kpi-incidents');
+    if (el) { el.textContent = openCount; el.style.color = openCount > 0 ? 'var(--accent-red)' : 'var(--accent-green)'; }
+  } catch (e) { }
+}
+
+function startAlertPolling() {
+  if (alertPollInterval) clearInterval(alertPollInterval);
+  loadDefenseAlerts();
+  alertPollInterval = setInterval(loadDefenseAlerts, 30000);
+}
+
+function stopAlertPolling() {
+  if (alertPollInterval) clearInterval(alertPollInterval);
+  if (refreshTickInterval) clearInterval(refreshTickInterval);
+}
+
+// ─── Settings — Live API Key Validation ─────────────────
+var KEY_DEFS = [
+  { name: 'Gemini AI', key: 'GEMINI_API_KEY', critical: true, testFn: testGemini },
+  { name: 'Shodan', key: 'SHODAN_API_KEY', critical: false, testFn: testShodan },
+  { name: 'VirusTotal', key: 'VIRUSTOTAL_API_KEY', critical: false, testFn: testVirusTotal },
+  { name: 'AbuseIPDB', key: 'ABUSEIPDB_API_KEY', critical: false, testFn: testAbuseIPDB },
+  { name: 'Censys', key: 'CENSYS_API_ID', critical: false, testFn: testCensys },
+  { name: 'NVD', key: 'NVD_API_KEY', critical: false, testFn: testNVD },
+  { name: 'AlienVault OTX', key: 'OTX_API_KEY', critical: false, testFn: null },
+  { name: 'Hunter.io', key: 'HUNTER_API_KEY', critical: false, testFn: null },
+];
+
+var keyStatuses = {};
+
+async function loadAPIKeyStatus() {
+  var container = document.getElementById('api-key-status');
+  if (!container) return;
+
+  function renderKeyGrid() {
+    var rows = '';
+    KEY_DEFS.forEach(function (k) {
+      var s = keyStatuses[k.key] || 'idle';
+      var dot = s === 'ok' ? '🟢' : s === 'error' ? '🔴' : s === 'testing' ? '🟡' : s === 'untestable' ? '🟠' : '⚪';
+      var label = s === 'ok' ? 'Connected' : s === 'error' ? 'Failed / Not Set' : s === 'testing' ? 'Testing...' : s === 'untestable' ? 'Not testable' : 'Untested';
+      var labelColor = s === 'ok' ? 'var(--accent-green)' : s === 'error' ? 'var(--accent-red)' : s === 'testing' ? 'var(--accent-orange)' : 'var(--text-muted)';
+      var canTest = k.testFn !== null;
+      rows += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(55,65,81,0.2);border-radius:var(--radius-sm);margin-bottom:6px">';
+      rows += '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">' + dot + '</span><div><div style="font-size:13px;font-weight:500">' + k.name + '</div><div style="font-size:11px;color:var(--text-muted)">' + k.key + '</div></div></div>';
+      rows += '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:11px;color:' + labelColor + '">' + label + '</span>';
+      if (canTest) {
+        rows += '<button class="btn" style="padding:3px 10px;font-size:11px" onclick="testKey(\'' + k.key + '\')"' + (s === 'testing' ? ' disabled' : '') + '>' + (s === 'testing' ? '...' : 'Test') + '</button>';
+      }
+      rows += '</div></div>';
+    });
+    container.innerHTML = rows;
+  }
+
+  renderKeyGrid();
+
+  // Auto-test all testable keys
+  KEY_DEFS.forEach(function (k) {
+    if (k.testFn) {
+      testKey(k.key);
+    } else {
+      keyStatuses[k.key] = 'untestable';
+    }
+  });
+  renderKeyGrid();
+}
+
+async function testKey(keyName) {
+  var def = KEY_DEFS.find(function (k) { return k.key === keyName; });
+  if (!def || !def.testFn) return;
+  keyStatuses[keyName] = 'testing';
+  loadAPIKeyStatus();
+  try {
+    var result = await def.testFn();
+    keyStatuses[keyName] = result ? 'ok' : 'error';
+  } catch (e) {
+    keyStatuses[keyName] = 'error';
+  }
+  var container = document.getElementById('api-key-status');
+  if (container) {
+    var rows = '';
+    KEY_DEFS.forEach(function (k) {
+      var s = keyStatuses[k.key] || 'idle';
+      var dot = s === 'ok' ? '🟢' : s === 'error' ? '🔴' : s === 'testing' ? '🟡' : s === 'untestable' ? '🟠' : '⚪';
+      var label = s === 'ok' ? 'Connected' : s === 'error' ? 'Failed / Not Set' : s === 'testing' ? 'Testing...' : s === 'untestable' ? 'Not testable' : 'Untested';
+      var labelColor = s === 'ok' ? 'var(--accent-green)' : s === 'error' ? 'var(--accent-red)' : s === 'testing' ? 'var(--accent-orange)' : 'var(--text-muted)';
+      var canTest = k.testFn !== null;
+      rows += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(55,65,81,0.2);border-radius:var(--radius-sm);margin-bottom:6px">';
+      rows += '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">' + dot + '</span><div><div style="font-size:13px;font-weight:500">' + k.name + '</div><div style="font-size:11px;color:var(--text-muted)">' + k.key + '</div></div></div>';
+      rows += '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:11px;color:' + labelColor + '">' + label + '</span>';
+      if (canTest) {
+        rows += '<button class="btn" style="padding:3px 10px;font-size:11px" onclick="testKey(\'' + k.key + '\')"' + (s === 'testing' ? ' disabled' : '') + '>' + (s === 'testing' ? '...' : 'Test') + '</button>';
+      }
+      rows += '</div></div>';
+    });
+    container.innerHTML = rows;
+  }
+}
+
+// ─── Key probe functions ─────────────────────────────────
+async function testGemini() {
+  try {
+    var r = await api('/api/v1/ai/analyze/instant', { method: 'POST', body: { target: 'test', findings: [], analysis_type: 'general' } });
+    return !r?.error?.toLowerCase().includes('api key');
+  } catch (e) { return false; }
+}
+
+async function testShodan() {
+  try {
+    var r = await api('/api/v1/recon/passive', { method: 'POST', body: { target: '8.8.8.8', modules: ['osint'] } });
+    return !r?.sources?.shodan?.error;
+  } catch (e) { return false; }
+}
+
+async function testVirusTotal() {
+  try {
+    var r = await api('/api/v1/recon/passive', { method: 'POST', body: { target: '8.8.8.8', modules: ['osint'] } });
+    return !r?.sources?.virustotal?.error;
+  } catch (e) { return false; }
+}
+
+async function testAbuseIPDB() {
+  try {
+    var r = await api('/api/v1/recon/passive', { method: 'POST', body: { target: '8.8.8.8', modules: ['osint'] } });
+    return r?.sources?.abuseipdb !== undefined && !r?.sources?.abuseipdb?.error;
+  } catch (e) { return false; }
+}
+
+async function testCensys() {
+  try {
+    var r = await api('/api/v1/recon/passive', { method: 'POST', body: { target: '8.8.8.8', modules: ['osint'] } });
+    return r?.sources?.censys !== undefined && !r?.sources?.censys?.error;
+  } catch (e) { return false; }
+}
+
+async function testNVD() {
+  try {
+    var r = await api('/api/v1/ai/cve/analyze', { method: 'POST', body: ['CVE-2021-44228'] });
+    return Array.isArray(r?.cves) && r.cves.length > 0;
+  } catch (e) { return false; }
 }
 
 async function loadPlatformInfo() {
@@ -750,4 +1152,79 @@ function termLine(terminal, text, cls = '') {
   line.textContent = text;
   terminal.appendChild(line);
   terminal.scrollTop = terminal.scrollHeight;
+}
+
+// ─── Data Persistence (Phase 3) ───────────────────
+async function loadPersistedData() {
+  try {
+    // Load scan history from DB
+    const scansRes = await api('/api/v1/recon/results?limit=50');
+    const vulnRes = await api('/api/v1/scanner/vulnerabilities?limit=100');
+
+    if (scansRes?.items?.length > 0) {
+      scansRes.items.forEach(s => {
+        if (!scanHistory.find(h => h.id === s.id)) {
+          scanHistory.push({
+            id: s.id,
+            target: s.target,
+            type: s.scan_type || 'recon',
+            status: s.status,
+            findings: s.result_summary?.findings_count || 0,
+            time: s.started_at ? new Date(s.started_at).toLocaleTimeString() : '—',
+            data: s.result_summary,
+          });
+        }
+      });
+    }
+
+    if (vulnRes?.items?.length > 0) {
+      vulnRes.items.forEach(v => {
+        if (!vulnResults.find(r => r.id === v.id)) {
+          vulnResults.push({
+            id: v.id,
+            target: v.url || 'unknown',
+            severity: v.severity,
+            title: v.title,
+            cvss: v.cvss,
+            found: v.discovered_at ? new Date(v.discovered_at).toLocaleTimeString() : '—',
+          });
+        }
+      });
+    }
+
+    // Load IOC history
+    const iocRes = await api('/api/v1/defense/ioc/history?limit=50').catch(() => null);
+    if (iocRes?.items?.length > 0) {
+      iocRes.items.forEach(i => {
+        if (!iocHistory.find(h => h.ioc === i.value)) {
+          iocHistory.push({
+            ioc: i.value,
+            type: i.ioc_type,
+            risk: i.confidence > 0.7 ? 'HIGH RISK' : i.confidence > 0.3 ? 'MEDIUM RISK' : 'LOW RISK',
+            riskColor: i.confidence > 0.7 ? 'var(--accent-red)' : i.confidence > 0.3 ? 'var(--accent-orange)' : 'var(--accent-green)',
+            timestamp: i.last_seen ? new Date(i.last_seen).toLocaleTimeString() : '—',
+          });
+        }
+      });
+    }
+
+    updateDashboardKPIs();
+    updateResults();
+    toast(`Loaded ${scanHistory.length} scans, ${vulnResults.length} findings from DB`, 'info');
+  } catch (e) {
+    console.warn('Could not load persisted data:', e.message);
+  }
+}
+
+function updateDashboardKPIs() {
+  const critCount = vulnResults.filter(v => v.severity === 'CRITICAL' || v.severity === 'HIGH').length;
+  const kpiScans = document.getElementById('kpi-scans');
+  if (kpiScans) kpiScans.textContent = scanHistory.length;
+  const kpiVulns = document.getElementById('kpi-vulns');
+  if (kpiVulns) kpiVulns.textContent = vulnResults.length;
+  const kpiCrit = document.getElementById('kpi-critical');
+  if (kpiCrit) {
+    kpiCrit.textContent = critCount;
+    kpiCrit.style.color = critCount > 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+  }
 }

@@ -6,7 +6,8 @@ REST API for defense, incident response, SIEM, and operations (#66–82).
 
 from fastapi import APIRouter, HTTPException
 
-from app.api.deps import CurrentUser
+from app.api.deps import CurrentUser, DbSession
+from app.repositories import AlertRepository, IOCRepository
 from app.schemas import SuccessResponse
 from app.services.defense.orchestrator import DefenseOrchestrator
 from app.workers.defense_tasks import (
@@ -103,15 +104,115 @@ async def get_incident(incident_id: str, user: CurrentUser) -> dict:
 # ─── Alert Triage ────────────────────────────
 
 @router.post("/alert")
-async def triage_alert(alert: dict, user: CurrentUser = None) -> dict:
+async def triage_alert(alert: dict, db: DbSession, user: CurrentUser = None) -> dict:
+    """Ingest alert — persists to DB and runs in-memory triage."""
+    repo = AlertRepository(db)
+
+    # Persist
+    db_alert = await repo.create_alert(
+        severity=alert.get("severity", "medium"),
+        source=alert.get("source", "manual"),
+        title=alert.get("title", "Alert"),
+        message=alert.get("message", ""),
+        metadata=alert,
+    )
+
+    # Also run through triage engine
     orchestrator = DefenseOrchestrator()
-    return orchestrator.triage.ingest_alert(alert)
+    triage_result = orchestrator.triage.ingest_alert(alert)
+    triage_result["db_id"] = db_alert.id
+    return triage_result
 
 
 @router.get("/alerts")
-async def get_alert_queue(limit: int = 50, user: CurrentUser = None) -> dict:
+async def get_alert_queue(
+    db: DbSession,
+    limit: int = 50,
+    user: CurrentUser = None,
+) -> dict:
+    """Get alerts — DB-persisted alerts merged with live in-memory triage queue."""
+    repo = AlertRepository(db)
+    db_items, total = await repo.list_alerts(limit=limit)
+
+    db_alerts = [
+        {
+            "id": a.id,
+            "severity": a.severity,
+            "source": a.source,
+            "title": a.title,
+            "message": a.message,
+            "status": a.status,
+            "timestamp": a.created_at.isoformat() if a.created_at else None,
+        }
+        for a in db_items
+    ]
+
+    # Also include in-memory triage queue (not yet persisted)
     orchestrator = DefenseOrchestrator()
-    return {"alerts": orchestrator.triage.get_queue(limit)}
+    live_alerts = orchestrator.triage.get_queue(limit)
+
+    # Merge: DB alerts first (most recent), then live unique ones
+    seen_titles = {a["title"] for a in db_alerts}
+    merged = db_alerts + [a for a in live_alerts if a.get("title") not in seen_titles]
+
+    return {"alerts": merged[:limit], "total": len(merged)}
+
+
+# ─── IOC Tracking ──────────────────────────────
+
+@router.post("/ioc/track")
+async def track_ioc(
+    ioc_value: str,
+    ioc_type: str = "ip",
+    source: str = "manual",
+    db: DbSession = None,
+    user: CurrentUser = None,
+) -> dict:
+    """Track and persist an IOC to the database."""
+    repo = IOCRepository(db)
+    ioc = await repo.upsert_ioc(
+        ioc_type=ioc_type,
+        value=ioc_value,
+        source=source,
+        confidence=0.7,
+    )
+    return {
+        "id": ioc.id,
+        "ioc_type": ioc.ioc_type,
+        "value": ioc.value,
+        "source": ioc.source,
+        "confidence": ioc.confidence,
+        "first_seen": ioc.first_seen.isoformat() if ioc.first_seen else None,
+        "last_seen": ioc.last_seen.isoformat() if ioc.last_seen else None,
+    }
+
+
+@router.get("/ioc/history")
+async def list_ioc_history(
+    ioc_type: str | None = None,
+    limit: int = 50,
+    db: DbSession = None,
+    user: CurrentUser = None,
+) -> dict:
+    """List tracked IOCs from the database."""
+    repo = IOCRepository(db)
+    items, total = await repo.list_iocs(ioc_type=ioc_type, limit=limit)
+    return {
+        "items": [
+            {
+                "id": i.id,
+                "ioc_type": i.ioc_type,
+                "value": i.value,
+                "source": i.source,
+                "confidence": i.confidence,
+                "tags": i.tags,
+                "first_seen": i.first_seen.isoformat() if i.first_seen else None,
+                "last_seen": i.last_seen.isoformat() if i.last_seen else None,
+            }
+            for i in items
+        ],
+        "total": total,
+    }
 
 
 # ─── SIEM ────────────────────────────────────

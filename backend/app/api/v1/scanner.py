@@ -7,6 +7,7 @@ REST API for vulnerability scanning operations (Upgrades #16–30).
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import DbSession, CurrentUser
+from app.repositories import ScanRepository
 from app.schemas import SuccessResponse
 from app.workers.scan_tasks import (
     run_web_scan,
@@ -104,14 +105,40 @@ async def start_vulnerability_scan(
 async def instant_vulnerability_scan(
     target: str,
     modules: list[str] | None = None,
+    db: DbSession = None,
     user: CurrentUser = None,
 ) -> dict:
-    """Run scanner modules instantly (blocking)."""
+    """Run scanner modules instantly and persist results."""
+    repo = ScanRepository(db)
+    scan = await repo.create_scan(target=target, scan_type="vuln", config={"modules": modules or []})
+
     orchestrator = ScannerOrchestrator()
     try:
         if modules and len(modules) == 1:
-            return await orchestrator.run_module(modules[0], target)
-        return await orchestrator.run_full_scan(target, modules=modules)
+            results = await orchestrator.run_module(modules[0], target)
+        else:
+            results = await orchestrator.run_full_scan(target, modules=modules)
+
+        findings = results.get("findings") or results.get("vulnerabilities") or []
+        if findings:
+            await repo.add_vulnerabilities(scan.id, findings)
+
+        severity_summary = {}
+        for f in findings:
+            sev = (f.get("severity") or "info").upper()
+            severity_summary[sev] = severity_summary.get(sev, 0) + 1
+
+        await repo.complete_scan(scan.id, result_summary={
+            "total_findings": len(findings),
+            "severity_summary": severity_summary,
+        })
+
+        results["scan_id"] = scan.id
+        return results
+
+    except Exception as e:
+        await repo.complete_scan(scan.id, result_summary={}, error=str(e))
+        raise
     finally:
         await orchestrator.close()
 
@@ -138,13 +165,29 @@ async def quick_ssl_scan(host: str, port: int = 443, user: CurrentUser = None) -
 
 @router.get("/results")
 async def list_scan_results(
-    db: DbSession = None,
-    user: CurrentUser = None,
+    db: DbSession,
+    user: CurrentUser,
     limit: int = 20,
     offset: int = 0,
 ) -> dict:
-    """List vulnerability scan results."""
-    return {"items": [], "total": 0, "limit": limit, "offset": offset}
+    repo = ScanRepository(db)
+    items, total = await repo.list_scans(scan_type="vuln", limit=limit, offset=offset)
+    return {
+        "items": [
+            {
+                "id": s.id,
+                "target": s.target,
+                "status": s.status,
+                "result_summary": s.result_summary,
+                "started_at": s.started_at.isoformat() if s.started_at else None,
+                "finished_at": s.finished_at.isoformat() if s.finished_at else None,
+            }
+            for s in items
+        ],
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+    }
 
 
 @router.get("/results/{scan_id}")
@@ -155,11 +198,31 @@ async def get_scan_result(scan_id: int, db: DbSession = None, user: CurrentUser 
 
 @router.get("/vulnerabilities")
 async def list_vulnerabilities(
-    db: DbSession = None,
-    user: CurrentUser = None,
+    db: DbSession,
+    user: CurrentUser,
     severity: str | None = None,
     limit: int = 50,
     offset: int = 0,
 ) -> dict:
-    """List discovered vulnerabilities."""
-    return {"items": [], "total": 0, "limit": limit, "offset": offset}
+    repo = ScanRepository(db)
+    items, total = await repo.list_vulnerabilities(severity=severity, limit=limit, offset=offset)
+    return {
+        "items": [
+            {
+                "id": v.id,
+                "scan_id": v.scan_id,
+                "title": v.title,
+                "severity": v.severity,
+                "cwe": v.cwe,
+                "cvss": v.cvss,
+                "description": v.description,
+                "remediation": v.remediation,
+                "url": v.url,
+                "discovered_at": v.discovered_at.isoformat() if v.discovered_at else None,
+            }
+            for v in items
+        ],
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+    }

@@ -491,8 +491,16 @@
             </div>
           </div>
           <div class="card" style="margin-top:16px">
-            <div class="card-header">
-              <div class="card-title">🔔 Security Alerts</div>
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="card-title">🔔 Security Alerts</div>
+                <div id="alerts-refresh-label" style="font-size:11px;color:var(--text-muted);margin-top:2px">Loading...
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span id="poll-indicator" style="font-size:11px;color:var(--accent-green)">● Live</span>
+                <button class="btn" style="font-size:12px" onclick="loadDefenseAlerts()">↻ Refresh</button>
+              </div>
             </div>
             <div class="table-container">
               <table class="data-table">
@@ -510,6 +518,32 @@
                     <td colspan="5">
                       <div class="empty-state">
                         <p>No alerts currently. The system is monitoring.</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <div class="card-header">
+              <div class="card-title">🔗 Correlation Alerts</div>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Rule ID</th>
+                    <th>Description</th>
+                    <th>Matched</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody id="correlation-alerts-body">
+                  <tr>
+                    <td colspan="4">
+                      <div class="empty-state">
+                        <p>No correlation alerts.</p>
                       </div>
                     </td>
                   </tr>
@@ -561,11 +595,18 @@
               <div class="card-subtitle" style="margin-top:4px">Interactive Swagger UI</div>
             </div>
           </div>
-          <div class="card" id="report-output" style="display:none;margin-top:20px">
-            <div class="card-header">
+          <div id="report-output" class="card" style="display:none;margin-top:16px">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
               <div class="card-title" id="report-title">Report</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn" style="font-size:12px" onclick="exportReportJSON()">⬇ Download JSON</button>
+                <button class="btn" style="font-size:12px" onclick="exportReportHTML()">⬇ Download HTML</button>
+                <button class="btn btn-secondary" style="font-size:12px"
+                  onclick="exportReportViaAPI(document.getElementById('report-output').dataset.reportType)">⚙ API
+                  Export</button>
+              </div>
             </div>
-            <div class="terminal" id="report-content"></div>
+            <div class="terminal" id="report-content" style="max-height:500px;overflow-y:auto"></div>
           </div>
         </div>
       </div>
@@ -580,10 +621,14 @@
             </div>
           </div>
           <div class="card" style="margin-bottom:16px">
-            <div class="card-header">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
               <div class="card-title">🔑 API Key Status</div>
+              <button class="btn btn-secondary" style="font-size:12px" onclick="loadAPIKeyStatus()">↻ Re-test
+                All</button>
             </div>
-            <div id="api-key-status" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>
+            <div id="api-key-status">
+              <div class="spinner"></div>
+            </div>
           </div>
           <div class="card" style="margin-bottom:16px">
             <div class="card-header">
@@ -598,6 +643,10 @@
   </div><!-- /app-layout -->
 
   <div class="toast-container" id="toast-container"></div>
+
+  <!-- CVE Panel backdrop -->
+  <div id="cve-backdrop" onclick="closeCVEPanel()"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:999"></div>
 
   <script src="/static/js/app.js"></script>
 </body>

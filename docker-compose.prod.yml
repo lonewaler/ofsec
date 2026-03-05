@@ -1,0 +1,56 @@
+# Production overrides — use with:
+# docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  backend:
+    restart: always
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - LOG_LEVEL=WARNING
+    # Use gunicorn + uvicorn workers in production (not hot-reload)
+    command: >
+      gunicorn app.main:app
+      --workers 4
+      --worker-class uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8000
+      --timeout 120
+      --access-logfile -
+      --error-logfile -
+    volumes:
+      # Remove dev volume mount — use the built image only
+      []
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  worker:
+    restart: always
+    environment:
+      - ENVIRONMENT=production
+    volumes:
+      []
+
+  nginx:
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/docker/nginx/nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./infra/certs:/etc/nginx/certs:ro
+
+  postgres:
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    # Remove exposed port in production (only accessible within Docker network)
+    ports: []
+
+  redis:
+    restart: always
+    ports: []

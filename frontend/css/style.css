@@ -1108,3 +1108,18 @@ a:hover {
 .line-dim {
   color: var(--text-muted);
 }
+
+/* ─── Alert Flash Animation ────────────────── */
+@keyframes alertFlash {
+  0% {
+    background: rgba(239, 68, 68, 0.25);
+  }
+
+  100% {
+    background: transparent;
+  }
+}
+
+.alert-new {
+  animation: alertFlash 2s ease-out forwards;
+}

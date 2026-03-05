@@ -26,6 +26,9 @@ logger = structlog.get_logger()
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan — startup and shutdown events."""
     # ─── Startup ──────────────────────────────────
+    from app.core.startup_checks import validate_environment
+    validate_environment(settings.ENVIRONMENT)
+
     setup_logging()
     logger.info(
         "ofsec.startup",
@@ -65,7 +68,7 @@ def create_app() -> FastAPI:
     # ─── Middleware ────────────────────────────────
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
+        allow_origins=settings.cors_origins_list,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
