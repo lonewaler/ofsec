@@ -16,8 +16,6 @@ Sub-enhancements:
 10. JavaScript file archival
 """
 
-from typing import Optional
-from datetime import datetime
 
 import httpx
 import structlog
@@ -35,7 +33,7 @@ class WebArchiveScraper:
     WAYBACK_URL = "https://web.archive.org/web"
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:

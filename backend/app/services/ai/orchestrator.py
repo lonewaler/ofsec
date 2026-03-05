@@ -4,37 +4,36 @@ OfSec V3 — AI/ML Engine Orchestrator
 Central orchestrator for all AI/ML modules (#46-65).
 """
 
-import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
 
 from app.core.telemetry import get_tracer
 from app.services.ai.anomaly_detection import (
-    NetworkAnomalyDetector,
     BehavioralAnomalyDetector,
     LogAnomalyDetector,
+    NetworkAnomalyDetector,
+)
+from app.services.ai.llm_engine import (
+    AIReportGenerator,
+    EmbeddingSearch,
+    LLMIntegration,
 )
 from app.services.ai.nlp_intelligence import (
-    ThreatReportParser,
     CVEAnalyzer,
     DarkWebMonitor,
+    ThreatReportParser,
 )
 from app.services.ai.predictive_models import (
     AttackPredictionEngine,
-    VulnerabilityForecaster,
     MLRiskScorer,
+    VulnerabilityForecaster,
 )
 from app.services.ai.self_learning import (
-    FeedbackLoopManager,
     AdaptiveScanner,
-    ModelRetrainer,
     FeatureEngineering,
-)
-from app.services.ai.llm_engine import (
-    LLMIntegration,
-    EmbeddingSearch,
-    AIReportGenerator,
+    FeedbackLoopManager,
+    ModelRetrainer,
 )
 
 logger = structlog.get_logger()
@@ -100,7 +99,7 @@ class AIOrchestrator:
                 "risk_assessment": risk,
                 "attack_predictions": predictions,
                 "features": features,
-                "analyzed_at": datetime.now(timezone.utc).isoformat(),
+                "analyzed_at": datetime.now(UTC).isoformat(),
             }
 
     async def parse_threat_report(self, text: str) -> dict:

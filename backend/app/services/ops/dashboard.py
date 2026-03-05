@@ -6,8 +6,7 @@ Dashboard analytics, report generation, scheduling, and notification systems.
 
 import secrets
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import structlog
 
@@ -30,7 +29,7 @@ class DashboardAnalytics:
         self._metrics[name].append({
             "value": value,
             "tags": tags or {},
-            "ts": datetime.now(timezone.utc).isoformat(),
+            "ts": datetime.now(UTC).isoformat(),
         })
 
     def get_overview(self) -> dict:
@@ -52,7 +51,7 @@ class DashboardAnalytics:
                 "api_latency_ms": self._latest("api_latency_ms", 45),
                 "active_users": self._latest("active_users", 1),
             },
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_trend(self, metric_name: str, limit: int = 50) -> dict:
@@ -68,7 +67,7 @@ class DashboardAnalytics:
         return data[-1]["value"] if data else default
 
     def register_widget(self, widget_id: str, config: dict) -> dict:
-        widget = {"id": widget_id, "config": config, "created_at": datetime.now(timezone.utc).isoformat()}
+        widget = {"id": widget_id, "config": config, "created_at": datetime.now(UTC).isoformat()}
         self._widgets[widget_id] = widget
         return widget
 
@@ -131,7 +130,7 @@ class ReportGenerator:
                 "name": template["name"],
                 "audience": template["audience"],
                 "target": scan_data.get("target", ""),
-                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "generated_at": datetime.now(UTC).isoformat(),
                 "sections": self._build_sections(template["sections"], scan_data, severity_counts),
                 "metadata": {
                     "total_findings": len(findings),
@@ -209,7 +208,7 @@ class NotificationSystem:
             "message": message,
             "severity": severity,
             "channels": targets,
-            "sent_at": datetime.now(timezone.utc).isoformat(),
+            "sent_at": datetime.now(UTC).isoformat(),
             "status": "sent",
         }
         self._notifications.append(notification)

@@ -1,7 +1,6 @@
 """Audit log persistence."""
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import AuditLog
@@ -25,7 +24,7 @@ class AuditRepository:
             resource=resource,
             details=details or {},
             ip_address=ip_address,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
         self.db.add(entry)
         await self.db.flush()

@@ -7,7 +7,6 @@ Checks: HSTS, CSP, X-Frame-Options, X-Content-Type-Options,
 Referrer-Policy, Permissions-Policy, CORS, cookie flags, server info leakage.
 """
 
-from typing import Optional
 
 import httpx
 import structlog
@@ -83,7 +82,7 @@ class HeaderSecurityAnalyzer:
     """Analyze HTTP security headers for misconfigurations."""
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:

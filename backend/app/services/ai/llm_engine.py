@@ -7,8 +7,7 @@ AI-powered report generation.
 
 import hashlib
 import json
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import httpx
 import structlog
@@ -50,7 +49,7 @@ Keep responses concise and professional."""
     def __init__(self, provider: str = "gemini", api_key: str = ""):
         self._provider = provider
         self._api_key = api_key
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
         self._config = self.PROVIDERS.get(provider, self.PROVIDERS["gemini"])
 
     async def _get_client(self) -> httpx.AsyncClient:
@@ -79,7 +78,7 @@ Findings:
                 "findings_analyzed": len(findings[:20]),
                 "provider": self._provider,
                 "model": self._config["model"],
-                "analyzed_at": datetime.now(timezone.utc).isoformat(),
+                "analyzed_at": datetime.now(UTC).isoformat(),
             }
 
     async def generate_remediation(self, finding: dict) -> dict:
@@ -183,7 +182,7 @@ class EmbeddingSearch:
     def __init__(self, qdrant_host: str = "localhost", qdrant_port: int = 6333):
         self._qdrant_host = qdrant_host
         self._qdrant_port = qdrant_port
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
         self._collection = "security_knowledge"
 
     async def _get_client(self) -> httpx.AsyncClient:
@@ -284,7 +283,7 @@ class EmbeddingSearch:
 class AIReportGenerator:
     """AI-powered comprehensive security report generation."""
 
-    def __init__(self, llm: Optional[LLMIntegration] = None):
+    def __init__(self, llm: LLMIntegration | None = None):
         self._llm = llm
 
     async def generate_executive_report(self, scan_data: dict) -> dict:
@@ -319,7 +318,7 @@ class AIReportGenerator:
 
             report = {
                 "report_type": "executive",
-                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "generated_at": datetime.now(UTC).isoformat(),
                 "target": scan_data.get("target", ""),
                 "executive_summary": {
                     "risk_score": risk_score,

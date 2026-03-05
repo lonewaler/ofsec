@@ -18,7 +18,6 @@ Sub-enhancements:
 """
 
 import asyncio
-from typing import Optional
 
 import httpx
 import structlog
@@ -36,7 +35,7 @@ class SocialMediaMiner:
 
     def __init__(self, github_token: str | None = None):
         self._github_token = github_token
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
@@ -115,7 +114,7 @@ class SocialMediaMiner:
         # Use a public paste search if available
         try:
             response = await client.get(
-                "https://psbdmp.ws/api/v3/search/{domain}".format(domain=domain),
+                f"https://psbdmp.ws/api/v3/search/{domain}",
             )
             if response.status_code == 200:
                 data = response.json()

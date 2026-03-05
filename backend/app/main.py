@@ -4,9 +4,10 @@ OfSec V3 — FastAPI Application Entry Point
 Main application factory with middleware, routers, and lifecycle events.
 """
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
+import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
@@ -15,9 +16,7 @@ from prometheus_client import make_asgi_app
 
 from app.config import settings
 from app.core.logging import setup_logging
-from app.database import engine, async_session_factory
-
-import structlog
+from app.database import engine
 
 logger = structlog.get_logger()
 
@@ -47,14 +46,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         logger.error("ofsec.db.connection_failed", error=str(e))
 
     # Start APScheduler
-    from app.core.scheduler import start_scheduler, stop_scheduler
+    from app.core.scheduler import register_threat_sweep, start_scheduler, stop_scheduler
     start_scheduler()
+    register_threat_sweep()           # daily IOC sweep at 03:00 UTC
     logger.info("ofsec.scheduler.started")
 
     # Seed default admin if no users exist yet
     try:
-        from app.workers.db_utils import worker_db_session
         from app.repositories.user_repo import UserRepository as _UR
+        from app.workers.db_utils import worker_db_session
         async with worker_db_session() as _seed_db:
             _repo = _UR(_seed_db)
             if await _repo.count() == 0:
@@ -129,8 +129,9 @@ def create_app() -> FastAPI:
 
     # ─── Frontend Static Files ────────────────────
     import pathlib
-    from fastapi.staticfiles import StaticFiles
+
     from fastapi.responses import FileResponse
+    from fastapi.staticfiles import StaticFiles
 
     frontend_dir = pathlib.Path(__file__).resolve().parent.parent.parent / "frontend"
     if frontend_dir.exists():

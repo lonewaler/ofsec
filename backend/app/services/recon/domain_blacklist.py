@@ -17,7 +17,6 @@ Sub-enhancements:
 """
 
 import asyncio
-from typing import Optional
 
 import dns.asyncresolver
 import httpx
@@ -57,7 +56,7 @@ class DomainBlacklistAuditor:
         self._resolver = dns.asyncresolver.Resolver()
         self._resolver.timeout = 3
         self._resolver.lifetime = 5
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:

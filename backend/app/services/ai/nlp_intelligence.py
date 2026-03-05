@@ -7,8 +7,7 @@ and dark web monitoring.
 
 import re
 from collections import Counter
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import httpx
 import structlog
@@ -101,7 +100,7 @@ class ThreatReportParser:
                 "key_findings": key_sentences,
                 "word_frequency": dict(word_freq),
                 "text_length": len(text),
-                "analyzed_at": datetime.now(timezone.utc).isoformat(),
+                "analyzed_at": datetime.now(UTC).isoformat(),
             }
 
 
@@ -113,7 +112,7 @@ class CVEAnalyzer:
     NVD_API = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
         self._cache: dict[str, dict] = {}
 
     async def _get_client(self) -> httpx.AsyncClient:
@@ -215,7 +214,7 @@ class DarkWebMonitor:
     }
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:

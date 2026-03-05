@@ -7,8 +7,7 @@ Attack prediction, vulnerability forecasting, and ML-based risk scoring.
 import math
 import statistics
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import structlog
 
@@ -66,7 +65,7 @@ class AttackPredictionEngine:
                 "indicators_found": indicators,
                 "predictions": predictions,
                 "highest_risk": predictions[0] if predictions else None,
-                "analyzed_at": datetime.now(timezone.utc).isoformat(),
+                "analyzed_at": datetime.now(UTC).isoformat(),
             }
 
     def _classify_findings(self, findings: list[dict]) -> list[str]:
@@ -110,7 +109,7 @@ class VulnerabilityForecaster:
     def add_scan_result(self, target: str, vuln_count: int, severity_breakdown: dict) -> None:
         """Record a scan result for trend analysis."""
         self._history[target].append({
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "total_vulns": vuln_count,
             "severity": severity_breakdown,
         })
@@ -230,7 +229,7 @@ class MLRiskScorer:
                 "top_risk_factors": [
                     {"feature": f, "contribution": s} for f, s in top_factors
                 ],
-                "scored_at": datetime.now(timezone.utc).isoformat(),
+                "scored_at": datetime.now(UTC).isoformat(),
             }
 
     def compare_scans(self, previous: dict, current: dict) -> dict:

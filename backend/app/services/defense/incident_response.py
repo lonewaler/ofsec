@@ -6,8 +6,7 @@ Automated incident response playbooks, alert triage, and evidence collection.
 
 import secrets
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import structlog
 
@@ -119,7 +118,7 @@ class PlaybookEngine:
             "severity": playbook["severity"],
             "assignee": assignee,
             "status": "active",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "steps": [
                 {**step, "status": "pending", "completed_at": None}
                 for step in playbook["steps"]
@@ -139,7 +138,7 @@ class PlaybookEngine:
         current = incident["current_step"] - 1
         if current < len(incident["steps"]):
             incident["steps"][current]["status"] = "completed"
-            incident["steps"][current]["completed_at"] = datetime.now(timezone.utc).isoformat()
+            incident["steps"][current]["completed_at"] = datetime.now(UTC).isoformat()
             incident["steps"][current]["notes"] = notes
 
         incident["current_step"] += 1
@@ -195,14 +194,14 @@ class AlertTriageEngine:
                 "priority_score": round(priority, 1),
                 "priority_level": "P1" if priority >= 10 else "P2" if priority >= 7 else "P3" if priority >= 4 else "P4",
                 "similar_alerts": similar_count,
-                "triaged_at": datetime.now(timezone.utc).isoformat(),
+                "triaged_at": datetime.now(UTC).isoformat(),
                 "status": "open",
             }
             self._alerts.append(triaged)
             return triaged
 
     def add_suppression_rule(self, name: str, conditions: dict) -> dict:
-        rule = {"name": name, "conditions": conditions, "created_at": datetime.now(timezone.utc).isoformat()}
+        rule = {"name": name, "conditions": conditions, "created_at": datetime.now(UTC).isoformat()}
         self._suppression_rules.append(rule)
         return rule
 
@@ -233,10 +232,10 @@ class EvidenceCollector:
             "incident_id": incident_id,
             "type": evidence_type,
             "data": data,
-            "collected_at": datetime.now(timezone.utc).isoformat(),
+            "collected_at": datetime.now(UTC).isoformat(),
             "hash": secrets.token_hex(32),  # In production, hash actual data
             "chain_of_custody": [
-                {"action": "collected", "timestamp": datetime.now(timezone.utc).isoformat(), "by": "system"}
+                {"action": "collected", "timestamp": datetime.now(UTC).isoformat(), "by": "system"}
             ],
         }
         self._evidence_store[incident_id].append(evidence)

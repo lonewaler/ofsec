@@ -4,14 +4,14 @@ OfSec V3 — Operations Orchestrator
 Central orchestrator for dashboard, reporting, scheduling, and security (#83-100).
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
 
 from app.core.telemetry import get_tracer
-from app.services.ops.dashboard import DashboardAnalytics, ReportGenerator, NotificationSystem
-from app.services.ops.scheduler import JobScheduler, AuditLogger, AssetManager, TeamManager
-from app.services.ops.security import RateLimiter, PlatformConfig, APIKeyManager
+from app.services.ops.dashboard import DashboardAnalytics, NotificationSystem, ReportGenerator
+from app.services.ops.scheduler import AssetManager, AuditLogger, JobScheduler, TeamManager
+from app.services.ops.security import APIKeyManager, PlatformConfig, RateLimiter
 
 logger = structlog.get_logger()
 tracer = get_tracer("ops.orchestrator")
@@ -47,5 +47,5 @@ class OpsOrchestrator:
             "security": {
                 "rate_limiter": self.rate_limiter.get_stats(),
             },
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
         }

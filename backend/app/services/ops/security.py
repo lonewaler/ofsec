@@ -7,9 +7,7 @@ Platform security, API rate limiting, and configuration management.
 import hashlib
 import secrets
 import time
-from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import structlog
 
@@ -99,7 +97,7 @@ class PlatformConfig:
             "old_value": old,
             "new_value": value,
             "changed_by": changed_by,
-            "changed_at": datetime.now(timezone.utc).isoformat(),
+            "changed_at": datetime.now(UTC).isoformat(),
         }
         self._history.append(change)
         logger.info("ops.config.changed", key=key, value=value)
@@ -130,7 +128,7 @@ class APIKeyManager:
             "role": role,
             "scopes": scopes or ["read", "scan"],
             "key_prefix": key[:8] + "...",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "last_used": None,
             "status": "active",
             "usage_count": 0,
@@ -143,7 +141,7 @@ class APIKeyManager:
         key_hash = hashlib.sha256(key.encode()).hexdigest()
         entry = self._keys.get(key_hash)
         if entry and entry["status"] == "active":
-            entry["last_used"] = datetime.now(timezone.utc).isoformat()
+            entry["last_used"] = datetime.now(UTC).isoformat()
             entry["usage_count"] += 1
             return entry
         return None

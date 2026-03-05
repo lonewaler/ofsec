@@ -8,7 +8,6 @@ OfSec V3 — #11-15 Additional Recon Modules
 #15 Subdomain Takeover Detection
 """
 
-from typing import Optional
 
 import httpx
 import structlog
@@ -61,7 +60,7 @@ class TechFingerprinter:
     }
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
@@ -154,7 +153,7 @@ class PortScanner:
                         "state": "open",
                         "service": self._guess_service(port),
                     })
-                except (asyncio.TimeoutError, ConnectionRefusedError, OSError):
+                except (TimeoutError, ConnectionRefusedError, OSError):
                     pass
 
         tasks = [check_port(p) for p in target_ports]
@@ -194,7 +193,7 @@ class CloudAssetDiscovery:
     }
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
@@ -265,7 +264,7 @@ class SubdomainTakeoverChecker:
         import dns.asyncresolver
         self._resolver = dns.asyncresolver.Resolver()
         self._resolver.timeout = 5
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:

@@ -4,12 +4,12 @@ OfSec V3 — Scanner Task Workers (Full Implementation)
 Taskiq async tasks wired to vulnerability scanner modules.
 """
 
-from app.workers.taskiq_app import broker
-from app.workers.db_utils import worker_db_session
-from app.services.scanner.orchestrator import ScannerOrchestrator
-from app.repositories import ScanRepository
-
 import structlog
+
+from app.repositories import ScanRepository
+from app.services.scanner.orchestrator import ScannerOrchestrator
+from app.workers.db_utils import worker_db_session
+from app.workers.taskiq_app import broker
 
 logger = structlog.get_logger()
 

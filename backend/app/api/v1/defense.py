@@ -4,7 +4,8 @@ OfSec V3 — Defense & Operations API Endpoints
 REST API for defense, incident response, SIEM, and operations (#66–82).
 """
 
-from fastapi import APIRouter, HTTPException
+import structlog
+from fastapi import APIRouter
 
 from app.api.deps import CurrentUser, DbSession
 from app.repositories import AlertRepository, IOCRepository
@@ -12,12 +13,7 @@ from app.schemas import SuccessResponse
 from app.services.defense.orchestrator import DefenseOrchestrator
 from app.workers.defense_tasks import (
     process_security_event,
-    run_health_checks,
-    sweep_for_iocs,
-    run_correlation,
 )
-
-import structlog
 
 logger = structlog.get_logger()
 
@@ -324,3 +320,36 @@ async def check_compliance_drift(
 async def sla_report(user: CurrentUser) -> dict:
     orchestrator = DefenseOrchestrator()
     return orchestrator.sla.get_compliance_report()
+
+
+# ─── Threat Intelligence Auto-Ingestion ──────
+
+@router.post("/intel/sweep")
+async def trigger_intel_sweep(user: CurrentUser) -> dict:
+    """
+    Manually trigger a threat intelligence IOC sweep.
+    Runs OTX + AbuseIPDB + VirusTotal ingestion immediately.
+    The same sweep also runs automatically at 03:00 UTC daily.
+    """
+    from app.workers.intel_tasks import run_threat_intel_sweep
+    task = await run_threat_intel_sweep.kiq()
+    logger.info("api.defense.intel_sweep.triggered")
+    return {
+        "status": "queued",
+        "task_id": str(task.task_id),
+        "message": "IOC sweep running in background — check /api/v1/defense/ioc/history for results",
+    }
+
+
+@router.get("/intel/sweep/status")
+async def intel_sweep_status(user: CurrentUser) -> dict:
+    """Returns info about the scheduled daily sweep."""
+    from app.core.scheduler import get_scheduler
+    sched = get_scheduler()
+    job = sched.get_job("__threat_intel_sweep__")
+    return {
+        "schedule": "daily at 03:00 UTC",
+        "next_run": job.next_run_time.isoformat() if job and job.next_run_time else None,
+        "status": "active" if job else "not_registered",
+    }
+

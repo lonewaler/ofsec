@@ -7,8 +7,7 @@ Request/Response models for the API.
 from datetime import datetime
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field, EmailStr
-
+from pydantic import BaseModel, EmailStr, Field
 
 # ─── Common / Shared ─────────────────────────
 
@@ -50,7 +49,7 @@ class TokenResponse(BaseModel):
 class UserResponse(BaseModel):
     id: int
     email: str
-    display_name: Optional[str] = None
+    display_name: str | None = None
     role: str = "admin"
     is_active: bool = True
     created_at: datetime
@@ -79,7 +78,7 @@ class ReconResultResponse(BaseModel):
     modules_completed: list[str] = []
     findings_count: int = 0
     started_at: datetime
-    finished_at: Optional[datetime] = None
+    finished_at: datetime | None = None
     results: dict = {}
 
     model_config = {"from_attributes": True}
@@ -103,13 +102,13 @@ class VulnerabilityResponse(BaseModel):
     id: int
     title: str
     severity: str
-    cwe: Optional[str] = None
-    cvss: Optional[float] = None
-    description: Optional[str] = None
-    url: Optional[str] = None
-    parameter: Optional[str] = None
+    cwe: str | None = None
+    cvss: float | None = None
+    description: str | None = None
+    url: str | None = None
+    parameter: str | None = None
     evidence: dict = {}
-    remediation: Optional[str] = None
+    remediation: str | None = None
     discovered_at: datetime
 
     model_config = {"from_attributes": True}
@@ -124,7 +123,7 @@ class ScanResultResponse(BaseModel):
     vulnerabilities: list[VulnerabilityResponse] = []
     summary: dict = {}
     started_at: datetime
-    finished_at: Optional[datetime] = None
+    finished_at: datetime | None = None
 
     model_config = {"from_attributes": True}
 
@@ -136,7 +135,7 @@ class AlertResponse(BaseModel):
     severity: str
     source: str
     title: str
-    message: Optional[str] = None
+    message: str | None = None
     status: str
     created_at: datetime
 

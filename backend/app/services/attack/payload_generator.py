@@ -18,10 +18,6 @@ Categories:
 """
 
 import base64
-import hashlib
-import random
-import string
-from typing import Optional
 from urllib.parse import quote
 
 import structlog

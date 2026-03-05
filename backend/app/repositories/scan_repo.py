@@ -1,8 +1,7 @@
 """Scan and Vulnerability persistence."""
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
-from sqlalchemy import select, func, and_
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Scan, Vulnerability
@@ -24,7 +23,7 @@ class ScanRepository:
             scan_type=scan_type,
             status="running",
             config=config or {},
-            started_at=datetime.now(timezone.utc),
+            started_at=datetime.now(UTC),
         )
         self.db.add(scan)
         await self.db.flush()   # get the auto-increment id without committing
@@ -41,7 +40,7 @@ class ScanRepository:
         if not scan:
             return None
         scan.status = "failed" if error else "completed"
-        scan.finished_at = datetime.now(timezone.utc)
+        scan.finished_at = datetime.now(UTC)
         scan.result_summary = result_summary
         if error:
             scan.error_message = error
@@ -64,7 +63,7 @@ class ScanRepository:
                 remediation=f.get("remediation"),
                 url=f.get("url") or f.get("target_url"),
                 parameter=f.get("parameter"),
-                discovered_at=datetime.now(timezone.utc),
+                discovered_at=datetime.now(UTC),
             )
             self.db.add(vuln)
             vulns.append(vuln)

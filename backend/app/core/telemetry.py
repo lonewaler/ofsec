@@ -4,14 +4,13 @@ OfSec V3 — OpenTelemetry Instrumentation
 Distributed tracing for backend services.
 """
 
+import structlog
 from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
 
 from app.config import settings
-
-import structlog
 
 logger = structlog.get_logger()
 

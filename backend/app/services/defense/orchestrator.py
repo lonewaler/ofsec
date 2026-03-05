@@ -4,24 +4,33 @@ OfSec V3 — Defense Engine Orchestrator
 Central orchestrator for all defense and operations modules (#66-82).
 """
 
-import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
 
 from app.core.telemetry import get_tracer
 from app.services.defense.incident_response import (
-    PlaybookEngine, AlertTriageEngine, EvidenceCollector,
-)
-from app.services.defense.siem_integration import (
-    LogAggregator, CorrelationEngine, SecurityDashboardData,
-)
-from app.services.defense.threat_hunting import (
-    ThreatHuntingEngine, IOCSweepEngine, BehavioralHunter,
+    AlertTriageEngine,
+    EvidenceCollector,
+    PlaybookEngine,
 )
 from app.services.defense.operations import (
-    FirewallRuleManager, PatchManager, QuarantineManager,
-    HealthMonitor, ComplianceDriftMonitor, SLATracker,
+    ComplianceDriftMonitor,
+    FirewallRuleManager,
+    HealthMonitor,
+    PatchManager,
+    QuarantineManager,
+    SLATracker,
+)
+from app.services.defense.siem_integration import (
+    CorrelationEngine,
+    LogAggregator,
+    SecurityDashboardData,
+)
+from app.services.defense.threat_hunting import (
+    BehavioralHunter,
+    IOCSweepEngine,
+    ThreatHuntingEngine,
 )
 
 logger = structlog.get_logger()
@@ -120,5 +129,5 @@ class DefenseOrchestrator:
             "correlation_rules": len(self.correlation.list_rules()),
             "sla_compliance": self.sla.get_compliance_report(),
             "log_stats": self.log_aggregator.get_stats(),
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
         }

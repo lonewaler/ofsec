@@ -4,10 +4,9 @@ OfSec V3 — Custom Exceptions
 Application-level exceptions and FastAPI error handlers.
 """
 
+import structlog
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-
-import structlog
 
 logger = structlog.get_logger()
 

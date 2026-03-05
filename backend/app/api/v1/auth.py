@@ -4,14 +4,13 @@ OfSec V3 — Auth API (DB-backed)
 Login, register, profile, change-password, list-users.
 """
 
+import structlog
 from fastapi import APIRouter, HTTPException, status
 
-from app.api.deps import DbSession, CurrentUser
+from app.api.deps import CurrentUser, DbSession
 from app.core.security import create_access_token
 from app.repositories.user_repo import UserRepository
-from app.schemas import LoginRequest, TokenResponse, UserResponse, SuccessResponse
-
-import structlog
+from app.schemas import LoginRequest, SuccessResponse, TokenResponse, UserResponse
 
 logger = structlog.get_logger()
 router = APIRouter(prefix="/auth", tags=["Authentication"])

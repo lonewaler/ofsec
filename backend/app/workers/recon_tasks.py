@@ -5,12 +5,12 @@ Taskiq async tasks wired to recon service modules.
 All tasks persist results to the database via ScanRepository.
 """
 
-from app.workers.taskiq_app import broker
-from app.workers.db_utils import worker_db_session
-from app.services.recon.orchestrator import ReconOrchestrator
-from app.repositories import ScanRepository
-
 import structlog
+
+from app.repositories import ScanRepository
+from app.services.recon.orchestrator import ReconOrchestrator
+from app.workers.db_utils import worker_db_session
+from app.workers.taskiq_app import broker
 
 logger = structlog.get_logger()
 

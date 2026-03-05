@@ -4,22 +4,18 @@ OfSec V3 — AI/ML Engine API Endpoints
 REST API for AI-powered security intelligence (Upgrades #46–65).
 """
 
-from fastapi import APIRouter, HTTPException
+import structlog
+from fastapi import APIRouter
 
 from app.api.deps import CurrentUser
 from app.schemas import SuccessResponse
 from app.services.ai.orchestrator import AIOrchestrator
 from app.workers.ai_tasks import (
     analyze_scan_results,
-    parse_threat_report,
-    analyze_cves,
-    monitor_darkweb,
-    run_llm_analysis,
     generate_ai_report,
-    run_anomaly_detection,
+    monitor_darkweb,
+    parse_threat_report,
 )
-
-import structlog
 
 logger = structlog.get_logger()
 

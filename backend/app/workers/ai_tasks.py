@@ -4,10 +4,10 @@ OfSec V3 — AI/ML Task Workers
 Taskiq async tasks for AI/ML modules.
 """
 
-from app.workers.taskiq_app import broker
-from app.services.ai.orchestrator import AIOrchestrator
-
 import structlog
+
+from app.services.ai.orchestrator import AIOrchestrator
+from app.workers.taskiq_app import broker
 
 logger = structlog.get_logger()
 

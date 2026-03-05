@@ -4,7 +4,7 @@ OfSec V3 — Application Configuration
 Pydantic Settings for environment management.
 """
 
-from typing import List
+
 from pydantic_settings import BaseSettings
 
 
@@ -67,15 +67,28 @@ class Settings(BaseSettings):
     OTEL_EXPORTER_OTLP_ENDPOINT: str = "http://localhost:9090"
     OTEL_SERVICE_NAME: str = "ofsec-backend"
 
+    # ─── Alerting ─────────────────────────────────
+    ALERT_EMAIL_ENABLED: bool = False
+    ALERT_EMAIL_SMTP_HOST: str = "smtp.gmail.com"
+    ALERT_EMAIL_SMTP_PORT: int = 587
+    ALERT_EMAIL_USERNAME: str = ""
+    ALERT_EMAIL_PASSWORD: str = ""
+    ALERT_EMAIL_FROM: str = "OfSec V3 <alerts@ofsec.io>"
+    ALERT_EMAIL_TO: str = ""          # comma-separated recipients
+
+    ALERT_WEBHOOK_ENABLED: bool = False
+    ALERT_WEBHOOK_URL: str = ""
+    ALERT_WEBHOOK_URL_2: str = ""     # optional second webhook
+
     # ─── CORS / Hosts ────────────────────────────
-    CORS_ORIGINS: List[str] = [
+    CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
         "http://localhost:80",
         "http://localhost",
     ]
-    ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1"]
+    ALLOWED_HOSTS: list[str] = ["localhost", "127.0.0.1"]
 
     model_config = {
         "env_file": ".env",
@@ -85,7 +98,7 @@ class Settings(BaseSettings):
     }
 
     @property
-    def cors_origins_list(self) -> List[str]:
+    def cors_origins_list(self) -> list[str]:
         """Return CORS origins — locked down in production."""
         if self.ENVIRONMENT == "production":
             # In production, only allow the configured origins (no wildcards)

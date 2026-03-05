@@ -4,21 +4,21 @@ OfSec V3 — Dashboard & Operations API Endpoints
 REST API for dashboard, reports, scheduling, and administration.
 """
 
+import secrets as _sec
+
+import structlog
 from fastapi import APIRouter, HTTPException
 
 from app.api.deps import CurrentUser
-from app.schemas import SuccessResponse
+from app.core.scheduler import add_scan_job, list_scheduled_jobs, remove_scan_job
 from app.services.ops.orchestrator import OpsOrchestrator
-
-import secrets as _sec
-from app.core.scheduler import add_scan_job, remove_scan_job, list_scheduled_jobs
-
-import structlog
 
 logger = structlog.get_logger()
 
 router = APIRouter(prefix="/ops", tags=["Dashboard & Operations"])
 
+from app.config import settings as _settings
+from app.core.notifier import send_test_alert
 
 # ─── Platform Status ────────────────────────
 
@@ -323,3 +323,42 @@ async def delete_schedule(job_id: str, user: CurrentUser = None) -> dict:
     if not remove_scan_job(job_id):
         raise HTTPException(status_code=404, detail=f"Schedule {job_id} not found")
     return {"deleted": job_id}
+
+
+# ─── Notification Test & Config ─────────────────────────────────────
+
+@router.post("/notifications/test")
+async def test_notification(user: CurrentUser) -> dict:
+    """Send a test alert to all configured channels."""
+    result = await send_test_alert()
+    if not result["channels"]:
+        return {
+            "status": "no_channels",
+            "message": "No channels configured. Set ALERT_EMAIL_ENABLED=true or "
+                       "ALERT_WEBHOOK_ENABLED=true in your .env file.",
+        }
+    return {"status": "sent", "channels": result["channels"]}
+
+
+@router.get("/notifications/config")
+async def notification_config(user: CurrentUser) -> dict:
+    """Return current notification channel configuration (no secrets)."""
+    return {
+        "email": {
+            "enabled": _settings.ALERT_EMAIL_ENABLED,
+            "smtp_host": _settings.ALERT_EMAIL_SMTP_HOST,
+            "smtp_port": _settings.ALERT_EMAIL_SMTP_PORT,
+            "from": _settings.ALERT_EMAIL_FROM,
+            "to": _settings.ALERT_EMAIL_TO,
+            "configured": bool(_settings.ALERT_EMAIL_USERNAME and _settings.ALERT_EMAIL_TO),
+        },
+        "webhook": {
+            "enabled": _settings.ALERT_WEBHOOK_ENABLED,
+            "url_configured": bool(_settings.ALERT_WEBHOOK_URL),
+            "url_2_configured": bool(_settings.ALERT_WEBHOOK_URL_2),
+            "url_preview": _settings.ALERT_WEBHOOK_URL[:40] + "..."
+                           if len(_settings.ALERT_WEBHOOK_URL) > 40
+                           else _settings.ALERT_WEBHOOK_URL,
+        },
+    }
+

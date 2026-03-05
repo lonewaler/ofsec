@@ -6,8 +6,7 @@ Log aggregation, correlation rules, and security event management.
 
 import re
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import structlog
 
@@ -36,7 +35,7 @@ class LogAggregator:
         """Ingest and normalize a log entry."""
         normalized = self._normalize(raw_log, log_format)
         normalized["source"] = source
-        normalized["ingested_at"] = datetime.now(timezone.utc).isoformat()
+        normalized["ingested_at"] = datetime.now(UTC).isoformat()
 
         self._logs.append(normalized)
         self._sources[source] += 1
@@ -144,7 +143,7 @@ class CorrelationEngine:
         """Add a security event and check correlation rules."""
         self._events.append({
             **event,
-            "received_at": datetime.now(timezone.utc).isoformat(),
+            "received_at": datetime.now(UTC).isoformat(),
         })
 
         triggered = []
@@ -156,7 +155,7 @@ class CorrelationEngine:
                     "severity": rule["severity"],
                     "mitre": rule.get("mitre"),
                     "event": event,
-                    "triggered_at": datetime.now(timezone.utc).isoformat(),
+                    "triggered_at": datetime.now(UTC).isoformat(),
                 }
                 triggered.append(alert)
                 self._triggered.append(alert)
@@ -212,7 +211,7 @@ class SecurityDashboardData:
         self._metrics[metric_name].append({
             "value": value,
             "dimensions": dimensions or {},
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
 
     def get_summary(self) -> dict:

@@ -118,6 +118,8 @@ function navigate(page) {
   if (page === 'settings') {
     loadSchedules();
     loadAccountInfo();
+    loadIntelSweepStatus();
+    loadNotifConfig();
   }
 }
 
@@ -1618,3 +1620,83 @@ async function changePassword() {
   }
 }
 
+
+// ─── Threat Intel Sweep ───────────────────────────────────────────────
+async function runIntelSweep() {
+  const btn = document.getElementById('btn-intel-sweep');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Sweeping...'; }
+
+  try {
+    const data = await api('/api/v1/defense/intel/sweep', { method: 'POST' });
+    toast('IOC sweep started — results will appear in IOC History shortly', 'success');
+
+    // Poll for new IOCs after a short delay
+    setTimeout(async () => {
+      await loadIOCHistory?.();
+      if (btn) { btn.disabled = false; btn.textContent = '🔄 Run Sweep Now'; }
+    }, 8000);
+  } catch (e) {
+    toast('Sweep failed: ' + e.message, 'error');
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 Run Sweep Now'; }
+  }
+}
+
+async function loadIntelSweepStatus() {
+  try {
+    const data = await api('/api/v1/defense/intel/sweep/status');
+    const el = document.getElementById('intel-sweep-status');
+    if (!el) return;
+    const next = data.next_run
+      ? new Date(data.next_run).toLocaleString() : 'unknown';
+    el.textContent = `Auto-sweep: daily at 03:00 UTC · Next: ${next}`;
+  } catch (_) { }
+}
+
+
+// ─── Notification Config ──────────────────────────────────────────────
+async function loadNotifConfig() {
+  const el = document.getElementById('notif-config-display');
+  if (!el) return;
+  try {
+    const cfg = await api('/api/v1/ops/notifications/config');
+
+    const row = (label, value, ok) => `
+      <div style="display:flex;justify-content:space-between;align-items:center;
+                  padding:6px 0;border-bottom:1px solid rgba(55,65,81,0.3)">
+        <span style="font-size:12px;color:var(--text-secondary)">${label}</span>
+        <span style="font-size:12px;color:${ok ? 'var(--accent-green)' : 'var(--text-muted)'}">
+          ${ok ? '● ' : '○ '}${value}
+        </span>
+      </div>`;
+
+    el.innerHTML = `
+      ${row('Email',
+      cfg.email.enabled ? `${cfg.email.to || 'no recipient'}` : 'Disabled',
+      cfg.email.enabled && cfg.email.configured)}
+      ${row('Webhook',
+        cfg.webhook.enabled
+          ? (cfg.webhook.url_configured ? cfg.webhook.url_preview : 'no URL')
+          : 'Disabled',
+        cfg.webhook.enabled && cfg.webhook.url_configured)}
+      ${row('Webhook 2',
+          cfg.webhook.url_2_configured ? 'Configured' : 'Not set',
+          cfg.webhook.url_2_configured)}
+    `;
+  } catch (e) {
+    el.innerHTML = `<span style="color:var(--accent-red);font-size:13px">
+      Could not load config</span>`;
+  }
+}
+
+async function sendTestAlert() {
+  try {
+    const data = await api('/api/v1/ops/notifications/test', { method: 'POST' });
+    if (data.status === 'no_channels') {
+      toast('No channels configured — set ALERT_EMAIL_ENABLED or ALERT_WEBHOOK_ENABLED in .env', 'warning');
+    } else {
+      toast(`Test alert sent to: ${data.channels.join(', ')}`, 'success');
+    }
+  } catch (e) {
+    toast('Test failed: ' + e.message, 'error');
+  }
+}

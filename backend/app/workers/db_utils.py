@@ -5,8 +5,8 @@ Provides database session access for Taskiq workers that run
 outside the FastAPI request/response lifecycle.
 """
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
 

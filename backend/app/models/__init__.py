@@ -5,9 +5,10 @@ All database models for the platform.
 Compatible with both SQLite (dev) and PostgreSQL (production).
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     DateTime,
@@ -15,7 +16,6 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
-    JSON,
     String,
     Text,
 )
@@ -26,7 +26,7 @@ from app.database import Base
 
 # ─── Utility ──────────────────────────────────
 def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 # ─── Asset Models ─────────────────────────────

@@ -12,8 +12,8 @@ from app.config import settings
 # Derive a Fernet key from the secret (in production, use a proper KMS)
 def _get_fernet() -> Fernet:
     """Get Fernet encryption instance from secret key."""
-    import hashlib
     import base64
+    import hashlib
     key = base64.urlsafe_b64encode(
         hashlib.sha256(settings.SECRET_KEY.encode()).digest()
     )

@@ -5,7 +5,6 @@ OfSec V3 — #20 Container Security + #21 Cloud Config + #23 Credential + #27-30
 
 import asyncio
 import re
-from typing import Optional
 
 import httpx
 import structlog
@@ -211,7 +210,7 @@ class CredentialTester:
     ]
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:

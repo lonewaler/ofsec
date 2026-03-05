@@ -6,8 +6,7 @@ Job scheduling, audit logging, asset inventory, and user management.
 
 import secrets
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import structlog
 
@@ -42,7 +41,7 @@ class JobScheduler:
             "target": target,
             "config": config or {},
             "status": "active",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "last_run": None,
             "next_run": None,
             "run_count": 0,
@@ -69,7 +68,7 @@ class JobScheduler:
         job = self._jobs.get(job_id)
         if not job:
             return {"error": "Job not found"}
-        job["last_run"] = datetime.now(timezone.utc).isoformat()
+        job["last_run"] = datetime.now(UTC).isoformat()
         job["run_count"] += 1
         return {"job_id": job_id, "run_count": job["run_count"], "result": result}
 
@@ -102,7 +101,7 @@ class AuditLogger:
             "resource": resource,
             "details": details or {},
             "result": result,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "ip_address": details.get("ip", "") if details else "",
         }
         self._log.append(entry)
@@ -154,7 +153,7 @@ class AssetManager:
             "last_scanned": None,
             "vulnerability_count": 0,
             "risk_score": 0,
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
         }
         self._assets[asset_id] = asset
         return asset
@@ -163,7 +162,7 @@ class AssetManager:
         asset = self._assets.get(asset_id)
         if not asset:
             return {"error": "Asset not found"}
-        asset["last_scanned"] = datetime.now(timezone.utc).isoformat()
+        asset["last_scanned"] = datetime.now(UTC).isoformat()
         asset["vulnerability_count"] = vuln_count
         asset["risk_score"] = risk_score
         return asset
@@ -221,7 +220,7 @@ class TeamManager:
             "permissions": self.ROLES[role]["permissions"],
             "email": email,
             "status": "active",
-            "added_at": datetime.now(timezone.utc).isoformat(),
+            "added_at": datetime.now(UTC).isoformat(),
         }
         self._members[username] = member
         return member

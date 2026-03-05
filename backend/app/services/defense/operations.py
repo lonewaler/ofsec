@@ -7,8 +7,7 @@ Automated security remediation and 24/7 monitoring capabilities.
 import asyncio
 import secrets
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import httpx
 import structlog
@@ -35,8 +34,8 @@ class FirewallRuleManager:
             "value": ip,
             "direction": "inbound",
             "reason": reason,
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "expires_at": None if duration_hours == 0 else datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
+            "expires_at": None if duration_hours == 0 else datetime.now(UTC).isoformat(),
             "status": "active",
         }
         self._rules.append(rule)
@@ -51,7 +50,7 @@ class FirewallRuleManager:
             "port": port,
             "protocol": protocol,
             "reason": reason,
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "status": "active",
         }
         self._rules.append(rule)
@@ -102,7 +101,7 @@ class PatchManager:
             "severity": severity,
             "patch_url": patch_url,
             "status": "pending",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
         }
         self._advisories.append(advisory)
         return advisory
@@ -149,7 +148,7 @@ class QuarantineManager:
             "reason": reason,
             "severity": severity,
             "status": "quarantined",
-            "quarantined_at": datetime.now(timezone.utc).isoformat(),
+            "quarantined_at": datetime.now(UTC).isoformat(),
             "network_isolated": True,
             "actions_taken": ["Network isolation", "Agent communication only"],
         }
@@ -163,7 +162,7 @@ class QuarantineManager:
             return {"error": f"Host {host} not in quarantine"}
 
         entry["status"] = "released"
-        entry["released_at"] = datetime.now(timezone.utc).isoformat()
+        entry["released_at"] = datetime.now(UTC).isoformat()
         entry["cleared_by"] = cleared_by
         return entry
 
@@ -182,11 +181,11 @@ class HealthMonitor:
 
     async def check_endpoint(self, name: str, url: str, expected_status: int = 200) -> dict:
         """Check if an endpoint is healthy."""
-        start = datetime.now(timezone.utc)
+        start = datetime.now(UTC)
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 resp = await client.get(url)
-                elapsed = (datetime.now(timezone.utc) - start).total_seconds()
+                elapsed = (datetime.now(UTC) - start).total_seconds()
                 healthy = resp.status_code == expected_status
 
                 result = {
@@ -195,7 +194,7 @@ class HealthMonitor:
                     "status": "healthy" if healthy else "unhealthy",
                     "status_code": resp.status_code,
                     "response_time_ms": round(elapsed * 1000, 1),
-                    "checked_at": datetime.now(timezone.utc).isoformat(),
+                    "checked_at": datetime.now(UTC).isoformat(),
                 }
         except Exception as e:
             result = {
@@ -203,7 +202,7 @@ class HealthMonitor:
                 "url": url,
                 "status": "down",
                 "error": str(e),
-                "checked_at": datetime.now(timezone.utc).isoformat(),
+                "checked_at": datetime.now(UTC).isoformat(),
             }
 
         self._checks[name] = result
@@ -284,7 +283,7 @@ class ComplianceDriftMonitor:
         self._baselines[framework] = {
             "framework": framework,
             "controls": control_statuses,
-            "set_at": datetime.now(timezone.utc).isoformat(),
+            "set_at": datetime.now(UTC).isoformat(),
         }
         return {"framework": framework, "controls_baselined": len(control_statuses)}
 
@@ -309,7 +308,7 @@ class ComplianceDriftMonitor:
             "total_controls": len(current_statuses),
             "drifts_detected": len(drifts),
             "drifts": drifts,
-            "checked_at": datetime.now(timezone.utc).isoformat(),
+            "checked_at": datetime.now(UTC).isoformat(),
         }
         if drifts:
             self._drift_events.append(result)
@@ -352,7 +351,7 @@ class SLATracker:
             "target_minutes": target,
             "actual_minutes": actual_minutes,
             "met": met,
-            "recorded_at": datetime.now(timezone.utc).isoformat(),
+            "recorded_at": datetime.now(UTC).isoformat(),
         }
         self._records.append(record)
         return record

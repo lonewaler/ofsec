@@ -17,8 +17,7 @@ Sub-enhancements:
 10. Bulk domain monitoring
 """
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import httpx
 import structlog
@@ -35,7 +34,7 @@ class CertTransparencyMonitor:
     CRT_SH_URL = "https://crt.sh"
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
@@ -127,7 +126,7 @@ class CertTransparencyMonitor:
             return False
         try:
             expiry = datetime.fromisoformat(not_after.replace("Z", "+00:00"))
-            return expiry < datetime.now(timezone.utc)
+            return expiry < datetime.now(UTC)
         except (ValueError, TypeError):
             return False
 
@@ -174,7 +173,7 @@ class CertTransparencyMonitor:
                         expiry = datetime.fromisoformat(
                             cert["not_after"].replace("Z", "+00:00")
                         )
-                        days_left = (expiry - datetime.now(timezone.utc)).days
+                        days_left = (expiry - datetime.now(UTC)).days
                         if 0 < days_left <= 30:
                             cert["days_until_expiry"] = days_left
                             expiring_soon.append(cert)

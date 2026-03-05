@@ -13,7 +13,7 @@ Lifecycle:
 """
 
 import asyncio
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 import structlog
 
@@ -64,7 +64,7 @@ async def subscribe(scan_id: str) -> AsyncGenerator[dict, None]:
             if event is _SENTINEL:
                 break
             yield event
-    except asyncio.TimeoutError:
+    except TimeoutError:
         yield {"type": "error", "message": "Stream timed out"}
     finally:
         # Clean up the queue after consumer is done

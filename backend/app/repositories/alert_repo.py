@@ -1,10 +1,10 @@
 """Alert and Incident persistence."""
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import select, func, and_
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Alert, Incident
+from app.models import Alert
 
 
 class AlertRepository:
@@ -26,7 +26,7 @@ class AlertRepository:
             message=message,
             status="new",
             metadata_=metadata or {},
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         self.db.add(alert)
         await self.db.flush()
@@ -62,7 +62,7 @@ class AlertRepository:
             return None
         alert.status = status
         if status == "resolved":
-            alert.resolved_at = datetime.now(timezone.utc)
+            alert.resolved_at = datetime.now(UTC)
         return alert
 
     async def count_open(self) -> int:

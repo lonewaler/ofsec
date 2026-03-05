@@ -6,11 +6,8 @@ Phishing campaign simulation and social engineering assessment tools.
 
 import hashlib
 import secrets
-import string
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
-import httpx
 import structlog
 
 from app.core.telemetry import get_tracer
@@ -136,7 +133,7 @@ IT Security
                     octet1=secrets.randbelow(256),
                     octet2=secrets.randbelow(256),
                     location=kwargs.get("location", "Moscow, Russia"),
-                    time=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+                    time=datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
                     sender=kwargs.get("sender", "John Smith"),
                     document_name=kwargs.get("document_name", "Q4 Financial Report.xlsx"),
                 )

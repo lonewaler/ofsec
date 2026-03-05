@@ -17,10 +17,8 @@ Sub-enhancements:
 10. Payload generation
 """
 
-import asyncio
 import re
-from typing import Optional
-from urllib.parse import urljoin, urlparse, parse_qs, urlencode, urlunparse
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 import httpx
 import structlog
@@ -92,7 +90,7 @@ class WebApplicationScanner:
     """Comprehensive web application vulnerability scanner."""
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
@@ -137,7 +135,7 @@ class WebApplicationScanner:
                             "url": url,
                             "parameter": param_name,
                             "payload": payload,
-                            "evidence": f"Payload reflected in response body",
+                            "evidence": "Payload reflected in response body",
                         })
                         break  # One finding per param is enough
                 except Exception:

@@ -5,10 +5,8 @@ Proactive threat hunting capabilities: hypothesis-driven, IOC sweeps,
 and behavioral hunting.
 """
 
-import re
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import httpx
 import structlog
@@ -91,13 +89,13 @@ class ThreatHuntingEngine:
         if not hyp:
             return {"error": f"Unknown hypothesis: {hypothesis_id}"}
 
-        hunt_id = f"HUNT-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{hypothesis_id}"
+        hunt_id = f"HUNT-{datetime.now(UTC).strftime('%Y%m%d')}-{hypothesis_id}"
         hunt = {
             "id": hunt_id,
             "hypothesis": hyp,
             "hunter": hunter,
             "status": "active",
-            "started_at": datetime.now(timezone.utc).isoformat(),
+            "started_at": datetime.now(UTC).isoformat(),
             "findings": [],
         }
         self._active_hunts[hunt_id] = hunt
@@ -109,7 +107,7 @@ class ThreatHuntingEngine:
         if not hunt:
             return {"error": f"Hunt not found: {hunt_id}"}
 
-        finding["found_at"] = datetime.now(timezone.utc).isoformat()
+        finding["found_at"] = datetime.now(UTC).isoformat()
         hunt["findings"].append(finding)
         return finding
 
@@ -120,7 +118,7 @@ class ThreatHuntingEngine:
 
         hunt["status"] = "closed"
         hunt["conclusion"] = conclusion
-        hunt["closed_at"] = datetime.now(timezone.utc).isoformat()
+        hunt["closed_at"] = datetime.now(UTC).isoformat()
         return hunt
 
 
@@ -176,7 +174,7 @@ class IOCSweepEngine:
             # Check AbuseIPDB
             try:
                 resp = await client.get(
-                    f"https://api.abuseipdb.com/api/v2/check",
+                    "https://api.abuseipdb.com/api/v2/check",
                     params={"ipAddress": ioc_value},
                     headers={"Key": "", "Accept": "application/json"},
                 )

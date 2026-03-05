@@ -18,16 +18,14 @@ Sub-enhancements:
 """
 
 import asyncio
-from typing import Optional
 
 import dns.asyncresolver
-import dns.reversename
 import dns.name
+import dns.reversename
 import httpx
 import structlog
 
 from app.core.telemetry import get_tracer
-from app.config import settings
 
 logger = structlog.get_logger()
 tracer = get_tracer("recon.passive_dns")
@@ -57,7 +55,7 @@ class PassiveDNSHarvester:
         self._resolver = dns.asyncresolver.Resolver()
         self._resolver.timeout = 5
         self._resolver.lifetime = 10
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
@@ -148,8 +146,8 @@ class PassiveDNSHarvester:
                 ns_host = str(ns).rstrip(".")
                 results["nameservers"].append(ns_host)
                 try:
-                    import dns.zone
                     import dns.query
+                    import dns.zone
                     zone = dns.zone.from_xfr(dns.query.xfr(ns_host, domain, timeout=5))
                     results["vulnerable"] = True
                     results["records"] = [str(name) for name in zone.nodes.keys()]

@@ -758,6 +758,63 @@
             </div>
           </div>
 
+          <!-- Threat Intelligence Feed -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="card-title">🌐 Threat Intelligence Feed</div>
+                <div id="intel-sweep-status" style="font-size:11px;color:var(--text-muted);margin-top:2px">
+                  Loading sweep schedule...
+                </div>
+              </div>
+              <button id="btn-intel-sweep" class="btn btn-primary" style="font-size:12px" onclick="runIntelSweep()">
+                🔄 Run Sweep Now
+              </button>
+            </div>
+            <div style="padding:12px 16px;font-size:12px;color:var(--text-muted)">
+              Sources: AlienVault OTX · AbuseIPDB · VirusTotal
+              <span style="margin-left:12px;color:var(--accent-blue)">
+                Configure API keys in Settings to enable each source.
+              </span>
+            </div>
+          </div>
+
+          <!-- Alert Channels -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+              <div class="card-title">🔔 Alert Channels</div>
+              <button class="btn btn-secondary" style="font-size:12px" onclick="loadNotifConfig()">↻ Refresh</button>
+            </div>
+            <div style="padding:16px">
+              <div id="notif-config-display" style="margin-bottom:14px">
+                <div style="color:var(--text-muted);font-size:13px">Loading...</div>
+              </div>
+
+              <div style="border-top:1px solid var(--border-color);padding-top:14px;
+                          display:flex;gap:10px;align-items:center">
+                <button class="btn btn-primary" style="font-size:12px" onclick="sendTestAlert()">
+                  📤 Send Test Alert
+                </button>
+                <span style="font-size:11px;color:var(--text-muted)">
+                  Fires to all enabled channels. Configure in <code>.env</code>.
+                </span>
+              </div>
+
+              <div style="margin-top:12px;padding:10px 12px;background:rgba(55,65,81,0.15);
+                          border-radius:var(--radius-sm);font-size:11px;color:var(--text-muted);
+                          font-family:monospace;line-height:1.8">
+                ALERT_EMAIL_ENABLED=true<br>
+                ALERT_EMAIL_SMTP_HOST=smtp.gmail.com<br>
+                ALERT_EMAIL_USERNAME=you@gmail.com<br>
+                ALERT_EMAIL_PASSWORD=your_app_password<br>
+                ALERT_EMAIL_TO=you@gmail.com<br>
+                <br>
+                ALERT_WEBHOOK_ENABLED=true<br>
+                ALERT_WEBHOOK_URL=https://hooks.slack.com/...
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 

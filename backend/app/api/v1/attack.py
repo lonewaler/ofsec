@@ -4,25 +4,24 @@ OfSec V3 — Attack Simulator API Endpoints
 REST API for attack simulation operations (Upgrades #31–45).
 """
 
+import structlog
 from fastapi import APIRouter, HTTPException, status
 
-from app.api.deps import DbSession, CurrentUser
+from app.api.deps import CurrentUser
 from app.schemas import SuccessResponse
-from app.workers.attack_tasks import (
-    run_payload_generation,
-    run_exploit_search,
-    run_brute_force,
-    run_phishing_campaign,
-    run_social_engineering,
-    run_privesc_scan,
-    run_lateral_movement,
-    run_exfiltration_test,
-    run_c2_action,
-    run_full_attack_simulation,
-)
 from app.services.attack.orchestrator import AttackOrchestrator
-
-import structlog
+from app.workers.attack_tasks import (
+    run_brute_force,
+    run_c2_action,
+    run_exfiltration_test,
+    run_exploit_search,
+    run_full_attack_simulation,
+    run_lateral_movement,
+    run_payload_generation,
+    run_phishing_campaign,
+    run_privesc_scan,
+    run_social_engineering,
+)
 
 logger = structlog.get_logger()
 

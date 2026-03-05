@@ -16,8 +16,7 @@ Sub-enhancements:
 10. Bulk WHOIS queries
 """
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import httpx
 import structlog
@@ -34,7 +33,7 @@ class WHOISCorrelator:
     RDAP_URL = "https://rdap.org"
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
@@ -87,7 +86,7 @@ class WHOISCorrelator:
         if created:
             try:
                 created_dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
-                domain_age_days = (datetime.now(timezone.utc) - created_dt).days
+                domain_age_days = (datetime.now(UTC) - created_dt).days
             except (ValueError, TypeError):
                 pass
 

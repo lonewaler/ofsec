@@ -18,7 +18,6 @@ Sub-enhancements:
 """
 
 import asyncio
-from typing import Optional
 
 import httpx
 import structlog
@@ -47,7 +46,7 @@ class SearchEngineRecon:
     """Search engine-based reconnaissance and Google dorking."""
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:

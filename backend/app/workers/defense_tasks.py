@@ -4,10 +4,10 @@ OfSec V3 — Defense Task Workers
 Taskiq async tasks for defense and operations modules.
 """
 
-from app.workers.taskiq_app import broker
-from app.services.defense.orchestrator import DefenseOrchestrator
-
 import structlog
+
+from app.services.defense.orchestrator import DefenseOrchestrator
+from app.workers.taskiq_app import broker
 
 logger = structlog.get_logger()
 

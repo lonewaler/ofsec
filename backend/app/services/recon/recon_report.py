@@ -17,7 +17,7 @@ Sub-enhancements:
 10. Report template customization
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import structlog
@@ -126,7 +126,7 @@ class ReconReportGenerator:
             template = Template(REPORT_TEMPLATE)
             html = template.render(
                 domain=domain,
-                generated_at=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+                generated_at=datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
                 modules_count=len(scan_results),
                 stats=stats,
                 modules=scan_results,
@@ -141,7 +141,7 @@ class ReconReportGenerator:
             "report_type": "reconnaissance",
             "version": "3.0.0",
             "domain": domain,
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "stats": self._calculate_stats(scan_results),
             "modules": scan_results,
         }

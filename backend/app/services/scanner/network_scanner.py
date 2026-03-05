@@ -6,7 +6,6 @@ Combined module for network-level scanning capabilities.
 
 import asyncio
 import re
-from typing import Optional
 
 import httpx
 import structlog
@@ -74,7 +73,7 @@ class NetworkDiscoveryScanner:
                             "banner": banner[:200] if banner else "",
                             "version": self._extract_version(banner),
                         })
-                    except (asyncio.TimeoutError, ConnectionRefusedError, OSError):
+                    except (TimeoutError, ConnectionRefusedError, OSError):
                         pass
 
             tasks = [probe_port(p) for p in target_ports]
@@ -149,7 +148,7 @@ class CMSScanner:
     }
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
@@ -286,7 +285,7 @@ class ComplianceAuditor:
     }
 
     def __init__(self):
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:

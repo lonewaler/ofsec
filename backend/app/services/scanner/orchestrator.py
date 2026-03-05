@@ -5,29 +5,29 @@ Central orchestrator coordinating all scanner modules (#16-30).
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
 
 from app.core.telemetry import get_tracer
-from app.services.scanner.web_scanner import WebApplicationScanner
-from app.services.scanner.header_analyzer import HeaderSecurityAnalyzer
-from app.services.scanner.api_scanner import APISecurityScanner
-from app.services.scanner.dependency_scanner import DependencyScanner
-from app.services.scanner.ssl_auditor import SSLTLSAuditor
-from app.services.scanner.network_scanner import (
-    NetworkDiscoveryScanner,
-    CMSScanner,
-    ComplianceAuditor,
-)
 from app.services.scanner.advanced_scanner import (
-    ContainerSecurityScanner,
     CloudConfigAuditor,
+    ContainerSecurityScanner,
     CredentialTester,
-    WAFDetector,
     SubdomainBruteforcer,
     VulnerabilityCorrelator,
+    WAFDetector,
 )
+from app.services.scanner.api_scanner import APISecurityScanner
+from app.services.scanner.dependency_scanner import DependencyScanner
+from app.services.scanner.header_analyzer import HeaderSecurityAnalyzer
+from app.services.scanner.network_scanner import (
+    CMSScanner,
+    ComplianceAuditor,
+    NetworkDiscoveryScanner,
+)
+from app.services.scanner.ssl_auditor import SSLTLSAuditor
+from app.services.scanner.web_scanner import WebApplicationScanner
 
 logger = structlog.get_logger()
 tracer = get_tracer("scanner.orchestrator")
@@ -140,7 +140,7 @@ class ScannerOrchestrator:
             selected = modules or default_modules
             results: dict = {}
             semaphore = asyncio.Semaphore(concurrency)
-            start_time = datetime.now(timezone.utc)
+            start_time = datetime.now(UTC)
 
             async def run_with_semaphore(mod_name: str):
                 async with semaphore:
@@ -151,7 +151,7 @@ class ScannerOrchestrator:
             tasks = [run_with_semaphore(m) for m in selected]
             await asyncio.gather(*tasks, return_exceptions=True)
 
-            elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
+            elapsed = (datetime.now(UTC) - start_time).total_seconds()
 
             # Correlate findings
             correlation = self._correlator.correlate(results)

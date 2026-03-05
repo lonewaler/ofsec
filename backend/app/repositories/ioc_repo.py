@@ -1,7 +1,7 @@
 """Threat IOC persistence."""
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import select, func, and_
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import ThreatIOC
@@ -30,7 +30,7 @@ class IOCRepository:
         existing = result.scalar_one_or_none()
 
         if existing:
-            existing.last_seen = datetime.now(timezone.utc)
+            existing.last_seen = datetime.now(UTC)
             existing.confidence = max(existing.confidence, confidence)
             return existing
 
@@ -41,8 +41,8 @@ class IOCRepository:
             confidence=confidence,
             tags=tags or [],
             metadata_=metadata or {},
-            first_seen=datetime.now(timezone.utc),
-            last_seen=datetime.now(timezone.utc),
+            first_seen=datetime.now(UTC),
+            last_seen=datetime.now(UTC),
         )
         self.db.add(ioc)
         await self.db.flush()

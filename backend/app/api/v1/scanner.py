@@ -4,29 +4,28 @@ OfSec V3 — Vulnerability Scanner API Endpoints (Full Implementation)
 REST API for vulnerability scanning operations (Upgrades #16–30).
 """
 
+import structlog
 from fastapi import APIRouter, HTTPException, status
 
-from app.api.deps import DbSession, CurrentUser
+from app.api.deps import CurrentUser, DbSession
 from app.repositories import ScanRepository
 from app.schemas import SuccessResponse
+from app.services.scanner.orchestrator import ScannerOrchestrator
 from app.workers.scan_tasks import (
-    run_web_scan,
-    run_header_analysis,
     run_api_scan,
-    run_dependency_scan,
-    run_container_scan,
     run_cloud_audit,
-    run_network_discovery,
-    run_credential_test,
-    run_ssl_audit,
     run_cms_scan,
     run_compliance_audit,
-    run_waf_detection,
+    run_container_scan,
+    run_credential_test,
+    run_dependency_scan,
     run_full_vulnerability_scan,
+    run_header_analysis,
+    run_network_discovery,
+    run_ssl_audit,
+    run_waf_detection,
+    run_web_scan,
 )
-from app.services.scanner.orchestrator import ScannerOrchestrator
-
-import structlog
 
 logger = structlog.get_logger()
 

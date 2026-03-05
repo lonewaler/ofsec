@@ -5,24 +5,24 @@ Central orchestrator for all attack simulation modules (#31-45).
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
 
 from app.core.telemetry import get_tracer
+from app.services.attack.c2_framework import (
+    AttackReportGenerator,
+    C2Framework,
+    MITREAttackMapper,
+    WirelessAttackModule,
+)
+from app.services.attack.exploit_engine import BruteForceEngine, ExploitFramework
 from app.services.attack.payload_generator import PayloadGenerator
-from app.services.attack.exploit_engine import ExploitFramework, BruteForceEngine
 from app.services.attack.phishing_engine import PhishingSimulator, SocialEngineeringToolkit
 from app.services.attack.post_exploitation import (
-    PrivilegeEscalationScanner,
-    LateralMovementSimulator,
     DataExfiltrationTester,
-)
-from app.services.attack.c2_framework import (
-    C2Framework,
-    WirelessAttackModule,
-    MITREAttackMapper,
-    AttackReportGenerator,
+    LateralMovementSimulator,
+    PrivilegeEscalationScanner,
 )
 
 logger = structlog.get_logger()
@@ -111,7 +111,7 @@ class AttackOrchestrator:
                     return module.generate_campaign(
                         template_name=cfg.get("template", "password_reset"),
                         targets=cfg.get("targets", [{"name": "Test User", "email": "test@example.com"}]),
-                        phishing_url=cfg.get("phishing_url", f"https://phish.example.com/verify"),
+                        phishing_url=cfg.get("phishing_url", "https://phish.example.com/verify"),
                     )
 
                 elif module_name == "social_engineering":
@@ -186,7 +186,7 @@ class AttackOrchestrator:
             selected = modules or default_modules
             results: dict = {}
             semaphore = asyncio.Semaphore(concurrency)
-            start_time = datetime.now(timezone.utc)
+            start_time = datetime.now(UTC)
 
             async def run_with_semaphore(mod_name: str):
                 async with semaphore:
@@ -195,7 +195,7 @@ class AttackOrchestrator:
             tasks = [run_with_semaphore(m) for m in selected]
             await asyncio.gather(*tasks, return_exceptions=True)
 
-            elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
+            elapsed = (datetime.now(UTC) - start_time).total_seconds()
 
             # Aggregate findings
             all_findings = []

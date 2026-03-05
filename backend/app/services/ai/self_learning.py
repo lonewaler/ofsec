@@ -6,10 +6,8 @@ Adaptive scanning, feedback loops, model management, and feature engineering.
 
 import hashlib
 import json
-import statistics
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import structlog
 
@@ -45,7 +43,7 @@ class FeedbackLoopManager:
             "is_true_positive": is_true_positive,
             "analyst_notes": analyst_notes,
             "severity_override": severity_override,
-            "submitted_at": datetime.now(timezone.utc).isoformat(),
+            "submitted_at": datetime.now(UTC).isoformat(),
         }
         self._feedback.append(feedback)
 
@@ -145,7 +143,7 @@ class AdaptiveScanner:
             "last_scanned": None,
         })
         profile["scan_count"] += 1
-        profile["last_scanned"] = datetime.now(timezone.utc).isoformat()
+        profile["last_scanned"] = datetime.now(UTC).isoformat()
 
         findings = scan_result.get("findings", [])
         for f in findings:
@@ -180,7 +178,7 @@ class ModelRetrainer:
             "version": version,
             "type": model_type,
             "metrics": metrics,
-            "registered_at": datetime.now(timezone.utc).isoformat(),
+            "registered_at": datetime.now(UTC).isoformat(),
             "status": "active",
         }
         self._model_registry[f"{name}:{version}"] = model

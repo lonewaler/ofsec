@@ -13,7 +13,6 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.config import settings
 
-
 # Async engine with connection pooling
 # SQLite doesn't support pool_size/max_overflow, so we handle it conditionally
 _is_sqlite = settings.DATABASE_URL.startswith("sqlite")

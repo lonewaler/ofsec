@@ -5,26 +5,26 @@ Central orchestrator that coordinates all recon modules and aggregates results.
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
 
 from app.core.telemetry import get_tracer
+from app.services.recon.advanced_modules import (
+    CloudAssetDiscovery,
+    PortScanner,
+    SubdomainTakeoverChecker,
+    TechFingerprinter,
+)
 from app.services.recon.cert_transparency import CertTransparencyMonitor
-from app.services.recon.passive_dns import PassiveDNSHarvester
 from app.services.recon.domain_blacklist import DomainBlacklistAuditor
-from app.services.recon.whois_correlation import WHOISCorrelator
-from app.services.recon.web_archive import WebArchiveScraper
+from app.services.recon.osint_feed import OSINTFeedIntegrator
+from app.services.recon.passive_dns import PassiveDNSHarvester
+from app.services.recon.recon_report import ReconReportGenerator
 from app.services.recon.search_engine import SearchEngineRecon
 from app.services.recon.social_mining import SocialMediaMiner
-from app.services.recon.osint_feed import OSINTFeedIntegrator
-from app.services.recon.recon_report import ReconReportGenerator
-from app.services.recon.advanced_modules import (
-    TechFingerprinter,
-    PortScanner,
-    CloudAssetDiscovery,
-    SubdomainTakeoverChecker,
-)
+from app.services.recon.web_archive import WebArchiveScraper
+from app.services.recon.whois_correlation import WHOISCorrelator
 
 logger = structlog.get_logger()
 tracer = get_tracer("recon.orchestrator")
@@ -139,7 +139,7 @@ class ReconOrchestrator:
             selected = modules or list(self.MODULES.keys())
             results: dict = {}
             semaphore = asyncio.Semaphore(concurrency)
-            start_time = datetime.now(timezone.utc)
+            start_time = datetime.now(UTC)
 
             async def run_with_semaphore(mod_name: str):
                 async with semaphore:
@@ -150,7 +150,7 @@ class ReconOrchestrator:
             tasks = [run_with_semaphore(m) for m in selected]
             await asyncio.gather(*tasks, return_exceptions=True)
 
-            elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
+            elapsed = (datetime.now(UTC) - start_time).total_seconds()
 
             logger.info(
                 "recon.orchestrator.complete",

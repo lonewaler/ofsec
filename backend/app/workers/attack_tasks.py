@@ -4,10 +4,10 @@ OfSec V3 — Attack Simulator Task Workers
 Taskiq async tasks for attack simulation modules.
 """
 
-from app.workers.taskiq_app import broker
-from app.services.attack.orchestrator import AttackOrchestrator
-
 import structlog
+
+from app.services.attack.orchestrator import AttackOrchestrator
+from app.workers.taskiq_app import broker
 
 logger = structlog.get_logger()
 

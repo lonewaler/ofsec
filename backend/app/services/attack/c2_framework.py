@@ -4,12 +4,9 @@ OfSec V3 — #40 C2 Framework + #41-45 Advanced Attack Modules
 Command & Control integration, wireless attacks, and advanced techniques.
 """
 
-import asyncio
 import secrets
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
-import httpx
 import structlog
 
 from app.core.telemetry import get_tracer
@@ -51,7 +48,7 @@ class C2Framework:
             "host": host,
             "port": port,
             "status": "active",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "connections": 0,
         }
         self._listeners[listener_id] = listener
@@ -80,7 +77,7 @@ class C2Framework:
             "callback": f"{protocol}://{callback_host}:{callback_port}",
             "format": format_type,
             "obfuscation": obfuscation,
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "status": "generated",
             # Simulated — in production, Sliver gRPC generates actual binary
             "note": "Use Sliver gRPC API to generate actual implant binary",
@@ -99,8 +96,8 @@ class C2Framework:
             "username": session_data.get("username", "unknown"),
             "pid": session_data.get("pid", 0),
             "status": "active",
-            "registered_at": datetime.now(timezone.utc).isoformat(),
-            "last_checkin": datetime.now(timezone.utc).isoformat(),
+            "registered_at": datetime.now(UTC).isoformat(),
+            "last_checkin": datetime.now(UTC).isoformat(),
         }
         self._sessions[session_id] = session
         logger.info("attack.c2.session_registered", session_id=session_id)
@@ -284,7 +281,7 @@ class AttackReportGenerator:
 
         return {
             "report_type": "attack_simulation",
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "target": attack_results.get("target", ""),
             "modules_run": attack_results.get("modules_run", []),
             "executive_summary": {

@@ -1,11 +1,11 @@
 """User persistence repository."""
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import User
 from app.core.security import hash_password, verify_password
+from app.models import User
 
 
 class UserRepository:
@@ -42,7 +42,7 @@ class UserRepository:
             display_name=display_name or email.split("@")[0].capitalize(),
             role=role,
             is_active=True,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         self.db.add(user)
         await self.db.flush()
@@ -54,7 +54,7 @@ class UserRepository:
             return None
         if not verify_password(password, user.password_hash):
             return None
-        user.last_login = datetime.now(timezone.utc)
+        user.last_login = datetime.now(UTC)
         return user
 
     async def change_password(

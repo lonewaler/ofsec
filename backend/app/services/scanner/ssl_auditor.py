@@ -8,10 +8,9 @@ OCSP stapling, certificate chain, key size, known vulns (POODLE, BEAST, Heartble
 """
 
 import asyncio
-import ssl
 import socket
-from datetime import datetime, timezone
-from typing import Optional
+import ssl
+from datetime import UTC, datetime
 
 import structlog
 
@@ -123,9 +122,9 @@ class SSLTLSAuditor:
             issuer = dict(x[0] for x in cert.get("issuer", ()))
             san = [entry[1] for entry in cert.get("subjectAltName", ())]
 
-            not_before = datetime.strptime(cert["notBefore"], "%b %d %H:%M:%S %Y %Z").replace(tzinfo=timezone.utc)
-            not_after = datetime.strptime(cert["notAfter"], "%b %d %H:%M:%S %Y %Z").replace(tzinfo=timezone.utc)
-            days_remaining = (not_after - datetime.now(timezone.utc)).days
+            not_before = datetime.strptime(cert["notBefore"], "%b %d %H:%M:%S %Y %Z").replace(tzinfo=UTC)
+            not_after = datetime.strptime(cert["notAfter"], "%b %d %H:%M:%S %Y %Z").replace(tzinfo=UTC)
+            days_remaining = (not_after - datetime.now(UTC)).days
 
             return {
                 "common_name": subject.get("commonName", ""),

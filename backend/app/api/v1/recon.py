@@ -8,36 +8,33 @@ import asyncio
 import json
 import json as _json
 
-from fastapi import APIRouter, HTTPException, status, WebSocket, WebSocketDisconnect
+import structlog
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
 from fastapi.responses import HTMLResponse, StreamingResponse
 
+from app.api.deps import CurrentUser, DbSession
 from app.config import settings
-
-from app.api.deps import DbSession, CurrentUser
+from app.core import stream_bus
 from app.repositories import ScanRepository
 from app.schemas import (
     ReconScanRequest,
-    ReconResultResponse,
     SuccessResponse,
 )
+from app.services.recon.orchestrator import ReconOrchestrator
 from app.workers.recon_tasks import (
     run_cert_transparency_scan,
-    run_passive_dns_harvest,
+    run_cloud_discovery,
     run_domain_blacklist_audit,
-    run_whois_correlation,
-    run_web_archive_scrape,
+    run_full_recon,
+    run_osint_feed_scan,
+    run_passive_dns_harvest,
+    run_port_scan,
     run_search_engine_recon,
     run_social_mining,
-    run_osint_feed_scan,
     run_tech_fingerprint,
-    run_port_scan,
-    run_cloud_discovery,
-    run_full_recon,
+    run_web_archive_scrape,
+    run_whois_correlation,
 )
-from app.services.recon.orchestrator import ReconOrchestrator
-from app.core import stream_bus
-
-import structlog
 
 logger = structlog.get_logger()
 
@@ -231,8 +228,8 @@ async def _run_recon_streaming(
                     "modules_completed": i,
                     "findings_so_far": len(all_findings),
                 })
-                from app.workers.db_utils import worker_db_session
                 from app.repositories import ScanRepository as SR
+                from app.workers.db_utils import worker_db_session
                 async with worker_db_session() as db2:
                     await SR(db2).complete_scan(
                         int(scan_id),
@@ -273,8 +270,8 @@ async def _run_recon_streaming(
                 })
 
         # Persist accumulated findings
-        from app.workers.db_utils import worker_db_session
         from app.repositories import ScanRepository as SR
+        from app.workers.db_utils import worker_db_session
         async with worker_db_session() as db2:
             repo2 = SR(db2)
             if all_findings:
@@ -388,7 +385,7 @@ async def websocket_scan_stream(websocket: WebSocket, scan_id: str):
                 elif action == "ping":
                     await websocket.send_json({"type": "pong"})
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 await websocket.send_json({"type": "ping"})
 
     except WebSocketDisconnect:

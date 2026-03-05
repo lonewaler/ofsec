@@ -7,11 +7,9 @@ Uses statistical methods (Z-score, IQR, Isolation Forest concepts)
 for real-time anomaly identification without heavy ML dependencies.
 """
 
-import math
 import statistics
 from collections import defaultdict, deque
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import structlog
 
@@ -55,7 +53,7 @@ class StatisticalModel:
                 "stdev": round(stdev, 3),
                 "severity": "critical" if abs(z_score) > 5 else "high" if abs(z_score) > 4 else "medium",
                 "direction": "above" if z_score > 0 else "below",
-                "detected_at": datetime.now(timezone.utc).isoformat(),
+                "detected_at": datetime.now(UTC).isoformat(),
             }
         return None
 
@@ -152,7 +150,7 @@ class BehavioralAnomalyDetector:
         anomalies = []
 
         # Time-based anomaly
-        hour = datetime.now(timezone.utc).hour
+        hour = datetime.now(UTC).hour
         if profile["typical_hours"] and hour not in profile["typical_hours"]:
             anomalies.append({
                 "type": "Unusual Login Time",
@@ -175,7 +173,7 @@ class BehavioralAnomalyDetector:
 
         # Update profile
         profile["login_count"] += 1
-        profile["last_seen"] = datetime.now(timezone.utc).isoformat()
+        profile["last_seen"] = datetime.now(UTC).isoformat()
         if len(profile["typical_hours"]) < 24:
             profile["typical_hours"].append(hour)
         if ip:
@@ -239,7 +237,7 @@ class LogAnomalyDetector:
                     "pattern": check["pattern"],
                     "source": source,
                     "log_line": log_line[:200],
-                    "detected_at": datetime.now(timezone.utc).isoformat(),
+                    "detected_at": datetime.now(UTC).isoformat(),
                 })
 
         # Track event rate
