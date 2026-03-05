@@ -108,6 +108,11 @@ function navigate(page) {
   } else {
     stopAlertPolling();
   }
+
+  // Load queue status when viewing scan page
+  if (page === 'scan') {
+    loadQueueStatus();
+  }
 }
 
 window.addEventListener('beforeunload', stopAlertPolling);
@@ -241,44 +246,46 @@ async function launchScan() {
   termLine(terminal, `[${now()}] ─────────────────────────────────`, 'dim');
 
   try {
-    // Recon scan
+    // Recon scan — uses SSE streaming
     if (scanType === 'recon' || scanType === 'full') {
       termLine(terminal, `[${now()}] Starting reconnaissance on ${target}...`, 'info');
-      termProgress(terminal, 'Initializing recon modules', 0);
+      termLine(terminal, `[${now()}] Streaming results in real-time...`, 'dim');
 
       try {
-        termProgress(terminal, 'Running passive recon (DNS, WHOIS, OSINT)...', 25);
-        const reconData = await api('/api/v1/recon/passive', {
+        // Start scan in streaming mode
+        const initRes = await api('/api/v1/recon/passive?stream=true', {
           method: 'POST',
           body: { target, modules: selectedMods }
         });
-        termProgress(terminal, 'Processing results', 75);
-        termLine(terminal, `[${now()}] ✓ Passive recon completed`, 'success');
 
-        const dns = reconData?.dns || reconData?.results?.dns || {};
-        const recs = dns?.records || dns || {};
-        if (recs && typeof recs === 'object') {
-          Object.entries(recs).forEach(([type, vals]) => {
-            if (type !== 'error') termLine(terminal, `  DNS ${type}: ${Array.isArray(vals) ? vals.join(', ') : vals}`, 'info');
-          });
-        }
-        const subs = reconData?.subdomains || reconData?.results?.subdomains || [];
-        const subCount = Array.isArray(subs) ? subs.length : (subs?.count || 0);
-        if (subCount > 0) termLine(terminal, `  Found ${subCount} subdomains`, 'success');
+        const dbScanId = initRes.scan_id;
+        termLine(terminal, `[${now()}] Scan started (ID: ${dbScanId}) -- streaming results...`, 'success');
 
-        const whois = reconData?.whois || reconData?.results?.whois || {};
-        if (whois?.registrar) termLine(terminal, `  WHOIS: ${whois.registrar}`, 'info');
+        // Open SSE stream
+        await streamScanResults(dbScanId, terminal, target);
 
-        // Show OSINT source summary
-        const sources = reconData?.sources || {};
-        if (Object.keys(sources).length > 0) {
-          termLine(terminal, `  OSINT sources queried: ${Object.keys(sources).join(', ')}`, 'info');
-        }
-
-        termProgress(terminal, 'Recon complete', 100);
-        scanHistory.push({ id: scanId, target, type: 'recon', status: 'done', findings: 0, time: now(), data: reconData });
       } catch (e) {
-        termLine(terminal, `[${now()}] ⚠ Recon module: ${e.message}`, 'warning');
+        termLine(terminal, `[${now()}] SSE not available, falling back to blocking mode...`, 'warning');
+        // Fallback: blocking mode
+        try {
+          const reconData = await api('/api/v1/recon/passive', {
+            method: 'POST',
+            body: { target, modules: selectedMods }
+          });
+          termLine(terminal, `[${now()}] Passive recon completed`, 'success');
+
+          const dns = reconData?.dns || reconData?.results?.dns || {};
+          const recs = dns?.records || dns || {};
+          if (recs && typeof recs === 'object') {
+            Object.entries(recs).forEach(([type, vals]) => {
+              if (type !== 'error') termLine(terminal, `  DNS ${type}: ${Array.isArray(vals) ? vals.join(', ') : vals}`, 'info');
+            });
+          }
+
+          scanHistory.push({ id: scanId, target, type: 'recon', status: 'done', findings: 0, time: now(), data: reconData });
+        } catch (fallbackErr) {
+          termLine(terminal, `[${now()}] Recon module: ${fallbackErr.message}`, 'warning');
+        }
       }
     }
 
@@ -294,7 +301,7 @@ async function launchScan() {
           body: { target, scan_types: ['web', 'ssl', 'headers'] }
         });
         termProgress(terminal, 'Analyzing findings', 75);
-        termLine(terminal, `[${now()}] ✓ Vulnerability scan completed`, 'success');
+        termLine(terminal, `[${now()}] Vulnerability scan completed`, 'success');
 
         const findings = vulnData?.results || vulnData?.findings || [];
         if (Array.isArray(findings)) {
@@ -317,12 +324,12 @@ async function launchScan() {
           badge.textContent = vulnResults.length;
         }
       } catch (e) {
-        termLine(terminal, `[${now()}] ⚠ Scanner module: ${e.message}`, 'warning');
+        termLine(terminal, `[${now()}] Scanner module: ${e.message}`, 'warning');
       }
     }
 
     termLine(terminal, `[${now()}] ─────────────────────────────────`, 'dim');
-    termLine(terminal, `[${now()}] ✓ Scan complete for ${target}`, 'success');
+    termLine(terminal, `[${now()}] Scan complete for ${target}`, 'success');
     document.getElementById('scan-status-text').textContent = 'Completed';
     document.getElementById('scan-spinner').style.display = 'none';
 
@@ -331,15 +338,98 @@ async function launchScan() {
     document.getElementById('kpi-vulns').textContent = vulnResults.length;
     updateRecentScans();
     updateResults();
+    if (typeof updateDashboardKPIs === 'function') updateDashboardKPIs();
 
     toast(`Scan complete: ${target}`, 'success');
   } catch (e) {
-    termLine(terminal, `[${now()}] ✗ Error: ${e.message}`, 'error');
+    termLine(terminal, `[${now()}] Error: ${e.message}`, 'error');
     toast('Scan failed: ' + e.message, 'error');
   } finally {
     btn.disabled = false;
     btn.innerHTML = '⚡ Launch Scan';
   }
+}
+
+function streamScanResults(scanId, terminal, target) {
+  return new Promise((resolve, reject) => {
+    const url = `${API}/api/v1/recon/stream/${scanId}`;
+    const es = new EventSource(url);
+    let moduleCount = 0;
+
+    es.onmessage = (e) => {
+      try {
+        const event = JSON.parse(e.data);
+
+        if (event.type === 'module_complete') {
+          moduleCount++;
+          const pct = Math.round((event.index / event.total) * 100);
+          termLine(terminal,
+            `[${now()}] [${pct}%] ${event.module.replace(/_/g, ' ')} -- ${event.findings_count} finding${event.findings_count !== 1 ? 's' : ''}`,
+            event.findings_count > 0 ? 'warning' : 'success'
+          );
+
+          // Render finding details inline
+          const findings = event.data?.findings || event.data?.vulnerabilities || [];
+          findings.slice(0, 3).forEach(f => {
+            const sev = (f.severity || 'INFO').toUpperCase();
+            const cls = sev === 'CRITICAL' || sev === 'HIGH' ? 'error' : sev === 'MEDIUM' ? 'warning' : 'dim';
+            termLine(terminal, `    [${sev}] ${f.title || f.name || f.type || 'Finding'}`, cls);
+            vulnResults.push({ target, ...f, found: now() });
+          });
+          if (findings.length > 3) {
+            termLine(terminal, `    ... and ${findings.length - 3} more`, 'dim');
+          }
+
+        } else if (event.type === 'module_error') {
+          termLine(terminal, `[${now()}] [!] ${event.module}: ${event.error}`, 'warning');
+
+        } else if (event.type === 'done') {
+          termLine(terminal, `[${now()}] ─────────────────────────────────────`, 'dim');
+          termLine(terminal, `[${now()}] Scan complete -- ${event.total_findings} total findings`, 'success');
+          renderVulnSummary(terminal, vulnResults.filter(v => v.target === target));
+          scanHistory.push({
+            id: event.scan_id,
+            target,
+            type: 'recon',
+            status: 'done',
+            findings: event.total_findings,
+            time: now(),
+          });
+          updateRecentScans();
+          updateResults();
+          if (typeof updateDashboardKPIs === 'function') updateDashboardKPIs();
+          toast('Scan complete', 'success');
+          es.close();
+          resolve();
+
+        } else if (event.type === 'error' || event.type === 'stream_closed') {
+          if (event.type === 'error') {
+            termLine(terminal, `[${now()}] Stream error: ${event.error || event.message}`, 'error');
+          }
+          es.close();
+          resolve();
+        }
+
+      } catch (parseErr) {
+        console.warn('SSE parse error:', parseErr);
+      }
+    };
+
+    es.onerror = () => {
+      termLine(terminal, `[${now()}] Connection lost -- scan may still be running`, 'warning');
+      es.close();
+      resolve(); // don't reject — scan continues server-side
+    };
+
+    // Safety timeout: close stream after 10 minutes regardless
+    setTimeout(() => {
+      if (es.readyState !== EventSource.CLOSED) {
+        termLine(terminal, `[${now()}] Stream timeout after 10 minutes`, 'warning');
+        es.close();
+        resolve();
+      }
+    }, 600_000);
+  });
 }
 
 // ─── Update Tables ──────────────────────────
@@ -1226,5 +1316,136 @@ function updateDashboardKPIs() {
   if (kpiCrit) {
     kpiCrit.textContent = critCount;
     kpiCrit.style.color = critCount > 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+  }
+}
+
+// ─── Scan Queue ─────────────────────────────────────────────────────
+let queuePollInterval = null;
+
+async function submitScanQueue() {
+  const raw = document.getElementById('queue-targets')?.value?.trim();
+  if (!raw) return toast('Enter at least one target', 'error');
+
+  const targets = raw.split('\n')
+    .map(t => t.trim())
+    .filter(t => t.length > 0);
+
+  if (targets.length === 0) return toast('No valid targets found', 'error');
+  if (targets.length > 50) return toast('Maximum 50 targets per batch', 'error');
+
+  const scanType = document.getElementById('queue-scan-type')?.value || 'recon';
+  const priority = document.getElementById('queue-priority')?.value || 'normal';
+
+  toast(`Submitting ${targets.length} target(s)...`, 'info');
+
+  try {
+    const data = await api('/api/v1/ops/queue/submit', {
+      method: 'POST',
+      body: { targets, scan_type: scanType, priority }
+    });
+
+    toast(`${data.submitted} scan(s) queued`, 'success');
+    document.getElementById('queue-targets').value = '';
+    loadQueueStatus();
+
+    // Auto-poll while jobs are running
+    startQueuePolling();
+  } catch (e) {
+    toast('Queue submission failed: ' + e.message, 'error');
+  }
+}
+
+async function loadQueueStatus() {
+  try {
+    const data = await api('/api/v1/ops/queue/status');
+    const jobs = data.jobs || [];
+    const counts = data.status_counts || {};
+
+    // Update summary line
+    const summary = document.getElementById('queue-summary');
+    if (summary) {
+      const runningCount = counts.running || counts.active || 0;
+      const doneCount = counts.completed || 0;
+      summary.textContent = jobs.length === 0
+        ? 'Queue is empty'
+        : `${jobs.length} job${jobs.length !== 1 ? 's' : ''} -- ${runningCount} running, ${doneCount} completed`;
+    }
+
+    // Render table
+    const tbody = document.getElementById('queue-table-body');
+    if (!tbody) return;
+
+    if (jobs.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px">No jobs in queue</td></tr>`;
+      stopQueuePolling();
+      return;
+    }
+
+    tbody.innerHTML = jobs.map(job => {
+      const cfg = job.config || {};
+      const jobStatus = job.status || 'active';
+      const statusColor = jobStatus === 'completed' ? 'var(--accent-green)'
+        : jobStatus === 'failed' ? 'var(--accent-red)'
+          : jobStatus === 'running' ? 'var(--accent-orange)'
+            : 'var(--text-muted)';
+      const statusIcon = jobStatus === 'completed' ? 'V'
+        : jobStatus === 'failed' ? 'X'
+          : jobStatus === 'running' ? 'o'
+            : '-';
+      return `
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis">
+            ${job.target || cfg.target || '--'}
+          </td>
+          <td style="font-size:11px">
+            <span style="background:rgba(59,130,246,0.15);color:var(--accent-blue);
+                         padding:1px 6px;border-radius:3px">
+              ${(cfg.scan_type || 'recon').toUpperCase()}
+            </span>
+          </td>
+          <td>
+            <span style="color:${statusColor};font-size:12px;font-weight:600">
+              ${statusIcon} ${jobStatus}
+            </span>
+          </td>
+          <td style="font-size:11px;color:var(--text-muted)">
+            ${job.created_at ? new Date(job.created_at).toLocaleTimeString() : '--'}
+          </td>
+          <td>
+            ${jobStatus !== 'completed' ? `
+              <button onclick="cancelQueueJob('${job.id}')"
+                style="background:none;border:none;color:var(--accent-red);cursor:pointer;font-size:11px;padding:2px 6px">
+                X
+              </button>` : ''
+        }
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+  } catch (e) {
+    console.warn('Queue status error:', e.message);
+  }
+}
+
+async function cancelQueueJob(jobId) {
+  try {
+    await api(`/api/v1/ops/queue/${jobId}/cancel`, { method: 'POST' });
+    toast('Job cancelled', 'info');
+    loadQueueStatus();
+  } catch (e) {
+    toast('Cancel failed: ' + e.message, 'error');
+  }
+}
+
+function startQueuePolling() {
+  if (queuePollInterval) return; // already polling
+  queuePollInterval = setInterval(loadQueueStatus, 10_000);
+}
+
+function stopQueuePolling() {
+  if (queuePollInterval) {
+    clearInterval(queuePollInterval);
+    queuePollInterval = null;
   }
 }

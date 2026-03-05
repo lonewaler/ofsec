@@ -37,12 +37,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         debug=settings.DEBUG,
     )
 
-    # Create tables (SQLite) or verify DB connectivity (PostgreSQL)
+    # Verify DB connectivity (no schema changes — Alembic handles that)
     try:
-        from app.database import Base
+        from sqlalchemy import text
         async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-        logger.info("ofsec.db.connected", database=settings.DATABASE_URL.split("///")[-1])
+            await conn.execute(text("SELECT 1"))
+        logger.info("ofsec.db.connected", url=settings.DATABASE_URL.split("@")[-1])
     except Exception as e:
         logger.error("ofsec.db.connection_failed", error=str(e))
 

@@ -2,6 +2,10 @@
 # OfSec V3 — Production start script
 set -euo pipefail
 
+echo "[OfSec] Running database migrations..."
+alembic upgrade head
+echo "[OfSec] Migrations complete."
+
 if [ "${ENVIRONMENT:-development}" = "production" ]; then
   echo "[OfSec] Starting in PRODUCTION mode"
   exec gunicorn app.main:app \

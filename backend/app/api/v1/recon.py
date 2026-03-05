@@ -4,8 +4,11 @@ OfSec V3 — Recon API Endpoints (Full Implementation)
 REST API for reconnaissance operations (Upgrades #1–15).
 """
 
+import asyncio
+import json
+
 from fastapi import APIRouter, HTTPException, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 
 from app.api.deps import DbSession, CurrentUser
 from app.repositories import ScanRepository
@@ -29,6 +32,7 @@ from app.workers.recon_tasks import (
     run_full_recon,
 )
 from app.services.recon.orchestrator import ReconOrchestrator
+from app.core import stream_bus
 
 import structlog
 
@@ -138,17 +142,35 @@ async def run_passive_recon(
     request: ReconScanRequest,
     db: DbSession,
     user: CurrentUser,
-) -> dict:
-    """Run passive recon and persist results."""
+    stream: bool = False,
+):
+    """
+    Run passive recon.
+    - stream=false (default): blocks until complete, returns full JSON
+    - stream=true: returns scan_id immediately; use GET /stream/{scan_id} for live events
+    """
     repo = ScanRepository(db)
 
-    # Create scan record
     scan = await repo.create_scan(
         target=request.target,
         scan_type="recon",
         config={"modules": request.modules, "mode": "passive"},
     )
+    scan_id = str(scan.id)
 
+    if stream:
+        # Non-blocking: create the bus, kick off the scan in background, return scan_id
+        stream_bus.create(scan_id)
+        asyncio.create_task(
+            _run_recon_streaming(scan_id, request, repo)
+        )
+        return {
+            "scan_id": scan.id,
+            "status": "started",
+            "stream_url": f"/api/v1/recon/stream/{scan_id}",
+        }
+
+    # Blocking (existing behavior)
     orchestrator = ReconOrchestrator()
     try:
         if "all" in request.modules:
@@ -158,7 +180,6 @@ async def run_passive_recon(
         else:
             results = await orchestrator.run_full_recon(request.target, modules=request.modules)
 
-        # Extract any findings and persist them
         findings = results.get("findings") or results.get("vulnerabilities") or []
         if findings:
             await repo.add_vulnerabilities(scan.id, findings)
@@ -167,8 +188,6 @@ async def run_passive_recon(
             "modules_run": request.modules,
             "findings_count": len(findings),
         })
-
-        # Attach scan_id to response for frontend cross-reference
         results["scan_id"] = scan.id
         return results
 
@@ -177,6 +196,103 @@ async def run_passive_recon(
         raise
     finally:
         await orchestrator.close()
+
+
+async def _run_recon_streaming(
+    scan_id: str,
+    request: ReconScanRequest,
+    repo: ScanRepository,
+) -> None:
+    """
+    Background coroutine: runs each recon module in sequence,
+    publishing a stream event after each one completes.
+    """
+    orchestrator = ReconOrchestrator()
+    all_findings = []
+    modules = request.modules if request.modules and "all" not in request.modules \
+              else list(getattr(orchestrator, 'MODULES', {}).keys()) or request.modules
+
+    try:
+        for i, module_name in enumerate(modules):
+            try:
+                result = await orchestrator.run_module(module_name, request.target)
+                findings = result.get("findings") or result.get("vulnerabilities") or []
+                all_findings.extend(findings)
+
+                await stream_bus.publish(scan_id, {
+                    "type": "module_complete",
+                    "module": module_name,
+                    "index": i + 1,
+                    "total": len(modules),
+                    "findings_count": len(findings),
+                    "data": result,
+                })
+            except Exception as e:
+                await stream_bus.publish(scan_id, {
+                    "type": "module_error",
+                    "module": module_name,
+                    "error": str(e),
+                })
+
+        # Persist all findings via a fresh DB session
+        if all_findings:
+            from app.workers.db_utils import worker_db_session
+            from app.repositories import ScanRepository as SR
+            async with worker_db_session() as db2:
+                repo2 = SR(db2)
+                await repo2.add_vulnerabilities(int(scan_id), all_findings)
+                await repo2.complete_scan(int(scan_id), result_summary={
+                    "modules_run": modules,
+                    "findings_count": len(all_findings),
+                })
+        else:
+            from app.workers.db_utils import worker_db_session
+            from app.repositories import ScanRepository as SR
+            async with worker_db_session() as db2:
+                repo2 = SR(db2)
+                await repo2.complete_scan(int(scan_id), result_summary={
+                    "modules_run": modules,
+                    "findings_count": 0,
+                })
+
+        await stream_bus.publish(scan_id, {
+            "type": "done",
+            "scan_id": scan_id,
+            "total_findings": len(all_findings),
+        })
+
+    except Exception as e:
+        await stream_bus.publish(scan_id, {"type": "error", "error": str(e)})
+    finally:
+        await stream_bus.close(scan_id)
+        await orchestrator.close()
+
+
+@router.get("/stream/{scan_id}", tags=["Reconnaissance"])
+async def stream_scan_results(
+    scan_id: str,
+    user: CurrentUser,
+) -> StreamingResponse:
+    """
+    Server-Sent Events stream for a running scan.
+    Connect with EventSource in the browser.
+    Each event is a JSON-encoded module result.
+    Stream closes automatically when the scan completes.
+    """
+    async def event_generator():
+        async for event in stream_bus.subscribe(scan_id):
+            yield f"data: {json.dumps(event)}\n\n"
+        yield 'data: {"type": "stream_closed"}\n\n'
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
+    )
 
 
 @router.post("/report", tags=["Reconnaissance"], response_model=None)

@@ -5,7 +5,9 @@ Taskiq async tasks wired to vulnerability scanner modules.
 """
 
 from app.workers.taskiq_app import broker
+from app.workers.db_utils import worker_db_session
 from app.services.scanner.orchestrator import ScannerOrchestrator
+from app.repositories import ScanRepository
 
 import structlog
 
@@ -146,10 +148,48 @@ async def run_waf_detection(target: str, config: dict | None = None) -> dict:
 
 @broker.task
 async def run_full_vulnerability_scan(target: str, modules: list[str] | None = None) -> dict:
-    """Run all vulnerability scanner modules on a target."""
+    """Run all vulnerability scanner modules -- persists scan + findings to DB."""
     logger.info("task.scanner.full.start", target=target, modules=modules)
-    orchestrator = ScannerOrchestrator()
-    try:
-        return await orchestrator.run_full_scan(target, modules=modules)
-    finally:
-        await orchestrator.close()
+
+    async with worker_db_session() as db:
+        repo = ScanRepository(db)
+        scan = await repo.create_scan(
+            target=target,
+            scan_type="vuln",
+            config={"modules": modules or "all"},
+        )
+
+        orchestrator = ScannerOrchestrator()
+        try:
+            result = await orchestrator.run_full_scan(target, modules=modules)
+
+            findings = (
+                result.get("findings")
+                or result.get("vulnerabilities")
+                or []
+            )
+            if findings:
+                await repo.add_vulnerabilities(scan.id, findings)
+
+            severity_summary = {}
+            for f in findings:
+                sev = (f.get("severity") or "INFO").upper()
+                severity_summary[sev] = severity_summary.get(sev, 0) + 1
+
+            await repo.complete_scan(
+                scan.id,
+                result_summary={
+                    "total_findings": len(findings),
+                    "severity_summary": severity_summary,
+                },
+            )
+
+            result["scan_id"] = scan.id
+            return result
+
+        except Exception as e:
+            await repo.complete_scan(scan.id, result_summary={}, error=str(e))
+            logger.error("task.scanner.full.error", target=target, error=str(e))
+            raise
+        finally:
+            await orchestrator.close()

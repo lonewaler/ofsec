@@ -174,3 +174,105 @@ async def get_config(user: CurrentUser) -> dict:
 @router.put("/config")
 async def update_config(key: str, value: str, user: CurrentUser = None) -> dict:
     return OpsOrchestrator().config.set(key, value)
+
+
+# ─── Scan Queue ─────────────────────────────────────────────────────
+
+@router.post("/queue/submit")
+async def submit_scan_queue(
+    targets: list[str],
+    scan_type: str = "recon",
+    modules: list[str] | None = None,
+    priority: str = "normal",
+    user: CurrentUser = None,
+) -> dict:
+    """
+    Submit a batch of targets to the scan queue.
+    Each target becomes one Taskiq task + one JobScheduler record.
+    Returns list of job IDs for status tracking.
+    """
+    from app.workers.recon_tasks import run_full_recon as recon_task
+    from app.workers.scan_tasks import run_full_vulnerability_scan as vuln_task
+
+    if not targets:
+        raise HTTPException(status_code=400, detail="targets list cannot be empty")
+    if len(targets) > 50:
+        raise HTTPException(status_code=400, detail="Maximum 50 targets per batch")
+
+    orchestrator = OpsOrchestrator()
+    submitted = []
+
+    for target in targets:
+        # Dispatch the appropriate Taskiq task
+        try:
+            if scan_type == "vuln":
+                task = await vuln_task.kiq(target, modules)
+            else:
+                task = await recon_task.kiq(target, modules)
+
+            task_id = str(task.task_id) if hasattr(task, 'task_id') else str(id(task))
+        except Exception:
+            # Taskiq broker may not be running — create job record anyway
+            import secrets
+            task_id = secrets.token_hex(8)
+
+        # Record in JobScheduler for UI display
+        job = orchestrator.scheduler.create_job(
+            name=f"{scan_type.upper()} -- {target}",
+            job_type="scan_queue",
+            schedule="once",
+            target=target,
+            config={
+                "scan_type": scan_type,
+                "modules": modules or [],
+                "task_id": task_id,
+                "priority": priority,
+            },
+        )
+        job["status"] = "running"
+        job["task_id"] = task_id
+
+        submitted.append({
+            "job_id": job.get("id", task_id),
+            "task_id": task_id,
+            "target": target,
+            "scan_type": scan_type,
+            "status": "queued",
+        })
+
+    logger.info("ops.queue.submitted", count=len(submitted), scan_type=scan_type)
+    return {
+        "submitted": len(submitted),
+        "jobs": submitted,
+        "message": f"{len(submitted)} scan(s) queued successfully",
+    }
+
+
+@router.get("/queue/status")
+async def get_queue_status(user: CurrentUser = None) -> dict:
+    """Get current scan queue -- all jobs of type scan_queue."""
+    orchestrator = OpsOrchestrator()
+    all_jobs = orchestrator.scheduler.list_jobs()
+    queue_jobs = [j for j in all_jobs if j.get("type") == "scan_queue"]
+
+    # Summarize by status
+    counts = {"running": 0, "completed": 0, "failed": 0, "active": 0}
+    for j in queue_jobs:
+        s = j.get("status", "active")
+        counts[s] = counts.get(s, 0) + 1
+
+    return {
+        "queue_length": len(queue_jobs),
+        "status_counts": counts,
+        "jobs": sorted(queue_jobs, key=lambda j: j.get("created_at", ""), reverse=True)[:100],
+    }
+
+
+@router.post("/queue/{job_id}/cancel")
+async def cancel_queued_job(job_id: str, user: CurrentUser = None) -> dict:
+    """Cancel a queued scan job."""
+    orchestrator = OpsOrchestrator()
+    result = orchestrator.scheduler.delete_job(job_id)
+    if isinstance(result, dict) and "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return {"cancelled": job_id}

@@ -1,144 +1,184 @@
 """
-OfSec V3 — Recon Task Workers (Full Implementation)
-=====================================================
+OfSec V3 — Recon Task Workers
+================================
 Taskiq async tasks wired to recon service modules.
+All tasks persist results to the database via ScanRepository.
 """
 
 from app.workers.taskiq_app import broker
+from app.workers.db_utils import worker_db_session
 from app.services.recon.orchestrator import ReconOrchestrator
+from app.repositories import ScanRepository
 
 import structlog
 
 logger = structlog.get_logger()
 
 
+async def _run_and_persist(
+    module_name: str,
+    target: str,
+    config: dict | None = None,
+    scan_type: str = "recon",
+) -> dict:
+    """
+    Shared helper: run a recon module and persist the scan + findings.
+    Used by every individual module task.
+    """
+    async with worker_db_session() as db:
+        repo = ScanRepository(db)
+        scan = await repo.create_scan(
+            target=target,
+            scan_type=scan_type,
+            config={"module": module_name, **(config or {})},
+        )
+
+        orchestrator = ReconOrchestrator()
+        try:
+            result = await orchestrator.run_module(module_name, target, config)
+
+            findings = (
+                result.get("findings")
+                or result.get("vulnerabilities")
+                or []
+            )
+            if findings:
+                await repo.add_vulnerabilities(scan.id, findings)
+
+            await repo.complete_scan(
+                scan.id,
+                result_summary={
+                    "module": module_name,
+                    "findings_count": len(findings),
+                    "result_keys": list(result.keys()),
+                },
+            )
+            result["scan_id"] = scan.id
+            return result
+
+        except Exception as e:
+            await repo.complete_scan(scan.id, result_summary={}, error=str(e))
+            logger.error("task.recon.error", module=module_name, target=target, error=str(e))
+            raise
+        finally:
+            await orchestrator.close()
+
+
 @broker.task
 async def run_cert_transparency_scan(target: str, config: dict | None = None) -> dict:
-    """#1 Certificate Transparency monitoring scan."""
     logger.info("task.recon.ct_scan.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("cert_transparency", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("cert_transparency", target, config)
 
 
 @broker.task
 async def run_passive_dns_harvest(target: str, config: dict | None = None) -> dict:
-    """#2 Passive DNS harvesting."""
     logger.info("task.recon.dns_harvest.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("passive_dns", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("passive_dns", target, config)
 
 
 @broker.task
 async def run_domain_blacklist_audit(target: str, config: dict | None = None) -> dict:
-    """#4 Domain blacklist audit."""
     logger.info("task.recon.blacklist.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("domain_blacklist", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("domain_blacklist", target, config)
 
 
 @broker.task
 async def run_whois_correlation(target: str, config: dict | None = None) -> dict:
-    """#5 Historical WHOIS correlation."""
     logger.info("task.recon.whois.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("whois_correlation", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("whois_correlation", target, config)
 
 
 @broker.task
 async def run_web_archive_scrape(target: str, config: dict | None = None) -> dict:
-    """#6 Web archive scraping."""
     logger.info("task.recon.archive.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("web_archive", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("web_archive", target, config)
 
 
 @broker.task
 async def run_search_engine_recon(target: str, config: dict | None = None) -> dict:
-    """#7 Search engine dorking."""
     logger.info("task.recon.search.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("search_engine", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("search_engine", target, config)
 
 
 @broker.task
 async def run_social_mining(target: str, config: dict | None = None) -> dict:
-    """#8 Social media mining."""
     logger.info("task.recon.social.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("social_mining", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("social_mining", target, config)
 
 
 @broker.task
 async def run_osint_feed_scan(target: str, config: dict | None = None) -> dict:
-    """#9 OSINT feed scan (Shodan, Censys, VirusTotal)."""
     logger.info("task.recon.osint.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("osint_feed", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("osint_feed", target, config)
 
 
 @broker.task
 async def run_tech_fingerprint(target: str, config: dict | None = None) -> dict:
-    """#11 Technology fingerprinting."""
     logger.info("task.recon.tech.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("tech_fingerprint", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("tech_fingerprint", target, config)
 
 
 @broker.task
 async def run_port_scan(target: str, config: dict | None = None) -> dict:
-    """#12 Port & service discovery."""
     logger.info("task.recon.port_scan.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("port_scan", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("port_scan", target, config)
 
 
 @broker.task
 async def run_cloud_discovery(target: str, config: dict | None = None) -> dict:
-    """#13 Cloud asset discovery."""
     logger.info("task.recon.cloud.start", target=target)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_module("cloud_discovery", target, config)
-    finally:
-        await orchestrator.close()
+    return await _run_and_persist("cloud_discovery", target, config)
 
 
 @broker.task
 async def run_full_recon(target: str, modules: list[str] | None = None) -> dict:
-    """Run all recon modules on a target."""
+    """
+    Run all recon modules -- creates one parent Scan record,
+    then dispatches each module and persists their findings together.
+    """
     logger.info("task.recon.full.start", target=target, modules=modules)
-    orchestrator = ReconOrchestrator()
-    try:
-        return await orchestrator.run_full_recon(target, modules=modules)
-    finally:
-        await orchestrator.close()
+
+    async with worker_db_session() as db:
+        repo = ScanRepository(db)
+        scan = await repo.create_scan(
+            target=target,
+            scan_type="recon",
+            config={"modules": modules or "all", "mode": "full"},
+        )
+
+        orchestrator = ReconOrchestrator()
+        try:
+            result = await orchestrator.run_full_recon(target, modules=modules)
+
+            # Aggregate findings from all module results
+            all_findings = []
+            for module_result in result.get("results", {}).values():
+                if isinstance(module_result, dict):
+                    findings = (
+                        module_result.get("findings")
+                        or module_result.get("vulnerabilities")
+                        or []
+                    )
+                    all_findings.extend(findings)
+
+            if all_findings:
+                await repo.add_vulnerabilities(scan.id, all_findings)
+
+            await repo.complete_scan(
+                scan.id,
+                result_summary={
+                    "modules_run": result.get("modules_run", []),
+                    "elapsed_seconds": result.get("elapsed_seconds"),
+                    "findings_count": len(all_findings),
+                },
+            )
+
+            result["scan_id"] = scan.id
+            return result
+
+        except Exception as e:
+            await repo.complete_scan(scan.id, result_summary={}, error=str(e))
+            logger.error("task.recon.full.error", target=target, error=str(e))
+            raise
+        finally:
+            await orchestrator.close()

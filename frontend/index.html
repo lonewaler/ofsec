@@ -264,6 +264,64 @@
             <button class="btn btn-primary btn-lg" id="launch-scan-btn" onclick="launchScan()">⚡ Launch Scan</button>
           </div>
 
+          <!-- ─── Multi-Target Queue Panel ─── -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="card-title">📋 Scan Queue</div>
+                <div style="font-size:11px;color:var(--text-muted)">Submit multiple targets for batch scanning</div>
+              </div>
+              <button class="btn" style="font-size:12px" onclick="loadQueueStatus()">↻ Refresh</button>
+            </div>
+
+            <!-- Target input -->
+            <div style="margin-bottom:12px">
+              <textarea id="queue-targets" class="input" rows="4"
+                placeholder="Enter targets — one per line&#10;example.com&#10;192.168.1.1&#10;testsite.org"
+                style="width:100%;resize:vertical;font-family:monospace;font-size:12px"></textarea>
+            </div>
+
+            <!-- Options row -->
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+              <select id="queue-scan-type" class="input" style="flex:1;min-width:120px">
+                <option value="recon">Recon</option>
+                <option value="vuln">Vulnerability</option>
+                <option value="full">Full (Recon + Vuln)</option>
+              </select>
+              <select id="queue-priority" class="input" style="flex:1;min-width:100px">
+                <option value="normal">Normal Priority</option>
+                <option value="high">High Priority</option>
+                <option value="low">Low Priority</option>
+              </select>
+              <button class="btn btn-primary" onclick="submitScanQueue()" style="white-space:nowrap">
+                ▶ Queue Scans
+              </button>
+            </div>
+
+            <!-- Queue status table -->
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px" id="queue-summary">
+              Queue is empty
+            </div>
+            <div style="overflow-x:auto;max-height:280px;overflow-y:auto">
+              <table style="width:100%;font-size:12px;border-collapse:collapse">
+                <thead>
+                  <tr style="color:var(--text-muted);text-align:left;position:sticky;top:0;background:var(--bg-card)">
+                    <th style="padding:6px 8px">Target</th>
+                    <th style="padding:6px 8px">Type</th>
+                    <th style="padding:6px 8px">Status</th>
+                    <th style="padding:6px 8px">Queued</th>
+                    <th style="padding:6px 8px"></th>
+                  </tr>
+                </thead>
+                <tbody id="queue-table-body">
+                  <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px">
+                    No jobs in queue
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <div class="card" id="scan-output-card" style="display:none;margin-top:20px">
             <div class="card-header">
               <div>
