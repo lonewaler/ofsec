@@ -314,9 +314,11 @@
                   </tr>
                 </thead>
                 <tbody id="queue-table-body">
-                  <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px">
-                    No jobs in queue
-                  </td></tr>
+                  <tr>
+                    <td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px">
+                      No jobs in queue
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -694,6 +696,68 @@
             </div>
             <div id="platform-info"></div>
           </div>
+
+          <!-- Scheduled Scans Panel -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+              <div class="card-title">⏰ Scheduled Scans</div>
+              <button class="btn btn-secondary" style="font-size:12px" onclick="loadSchedules()">↻ Refresh</button>
+            </div>
+            <div style="padding:16px">
+              <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:12px">
+                <input id="sched-target" type="text" class="input" placeholder="Target (e.g. example.com)">
+                <input id="sched-cron" type="text" class="input" placeholder="Cron (e.g. 0 2 * * *)">
+                <button class="btn" onclick="createSchedule()">＋ Add</button>
+              </div>
+              <div id="schedule-list" style="font-size:13px;max-height:200px;overflow-y:auto">
+                <span style="color:var(--text-dim)">No schedules loaded</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Management -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header">
+              <div class="card-title">👤 Account</div>
+            </div>
+            <div style="padding:16px">
+              <div id="account-info" style="margin-bottom:12px;font-size:13px;color:var(--text-dim)">Loading...</div>
+              <details style="margin-top:8px">
+                <summary style="cursor:pointer;font-size:13px;color:var(--text-primary)">🔒 Change Password</summary>
+                <div style="display:grid;gap:8px;margin-top:8px;max-width:360px">
+                  <input id="pw-old" type="password" class="input" placeholder="Current password">
+                  <input id="pw-new" type="password" class="input" placeholder="New password (min 8 chars)">
+                  <button class="btn" style="justify-self:start" onclick="changePassword()">Update Password</button>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <!-- Observability -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header">
+              <div class="card-title">📊 Observability</div>
+            </div>
+            <div style="padding:16px;font-size:13px">
+              <div style="display:flex;gap:16px;align-items:center;margin-bottom:8px">
+                <a href="http://localhost:3000" target="_blank"
+                  style="color:var(--accent-blue);text-decoration:none;font-weight:600">
+                  ↗ Open Grafana Dashboard
+                </a>
+                <span style="color:var(--text-dim)">|</span>
+                <a href="http://localhost:9090" target="_blank"
+                  style="color:var(--text-secondary);text-decoration:none">
+                  ↗ Prometheus
+                </a>
+              </div>
+              <p style="color:var(--text-dim);margin:0">
+                Run <code
+                  style="background:var(--bg-tertiary);padding:2px 6px;border-radius:4px">docker compose -f docker-compose.grafana.yml up -d</code>
+                to start the observability stack.
+              </p>
+            </div>
+          </div>
+
         </div>
       </div>
 

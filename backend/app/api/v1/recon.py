@@ -6,9 +6,12 @@ REST API for reconnaissance operations (Upgrades #1–15).
 
 import asyncio
 import json
+import json as _json
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, StreamingResponse
+
+from app.config import settings
 
 from app.api.deps import DbSession, CurrentUser
 from app.repositories import ScanRepository
@@ -161,6 +164,7 @@ async def run_passive_recon(
     if stream:
         # Non-blocking: create the bus, kick off the scan in background, return scan_id
         stream_bus.create(scan_id)
+        stream_bus.init_control(scan_id)
         asyncio.create_task(
             _run_recon_streaming(scan_id, request, repo)
         )
@@ -168,6 +172,7 @@ async def run_passive_recon(
             "scan_id": scan.id,
             "status": "started",
             "stream_url": f"/api/v1/recon/stream/{scan_id}",
+            "ws_url": f"/api/v1/recon/ws/{scan_id}",
         }
 
     # Blocking (existing behavior)
@@ -200,23 +205,55 @@ async def run_passive_recon(
 
 async def _run_recon_streaming(
     scan_id: str,
-    request: ReconScanRequest,
-    repo: ScanRepository,
+    request,
+    repo,
 ) -> None:
     """
-    Background coroutine: runs each recon module in sequence,
-    publishing a stream event after each one completes.
+    Background coroutine — runs modules sequentially, publishes events to stream_bus.
+    Checks for cancel/pause between each module.
     """
     orchestrator = ReconOrchestrator()
-    all_findings = []
-    modules = request.modules if request.modules and "all" not in request.modules \
-              else list(getattr(orchestrator, 'MODULES', {}).keys()) or request.modules
+    all_findings: list[dict] = []
+    modules = (
+        request.modules
+        if request.modules and "all" not in request.modules
+        else list(getattr(orchestrator, 'MODULES', {}).keys()) or request.modules
+    )
 
     try:
         for i, module_name in enumerate(modules):
+
+            # Cancel check
+            if stream_bus.is_cancelled(scan_id):
+                await stream_bus.publish(scan_id, {
+                    "type": "cancelled",
+                    "scan_id": scan_id,
+                    "modules_completed": i,
+                    "findings_so_far": len(all_findings),
+                })
+                from app.workers.db_utils import worker_db_session
+                from app.repositories import ScanRepository as SR
+                async with worker_db_session() as db2:
+                    await SR(db2).complete_scan(
+                        int(scan_id),
+                        result_summary={"cancelled_at_module": module_name},
+                        error="Cancelled by user",
+                    )
+                return
+
+            # Pause loop — 0.5s polling, exits on cancel or resume
+            while stream_bus.is_paused(scan_id):
+                await asyncio.sleep(0.5)
+                if stream_bus.is_cancelled(scan_id):
+                    break
+
             try:
                 result = await orchestrator.run_module(module_name, request.target)
-                findings = result.get("findings") or result.get("vulnerabilities") or []
+                findings = (
+                    result.get("findings")
+                    or result.get("vulnerabilities")
+                    or []
+                )
                 all_findings.extend(findings)
 
                 await stream_bus.publish(scan_id, {
@@ -227,6 +264,7 @@ async def _run_recon_streaming(
                     "findings_count": len(findings),
                     "data": result,
                 })
+
             except Exception as e:
                 await stream_bus.publish(scan_id, {
                     "type": "module_error",
@@ -234,26 +272,20 @@ async def _run_recon_streaming(
                     "error": str(e),
                 })
 
-        # Persist all findings via a fresh DB session
-        if all_findings:
-            from app.workers.db_utils import worker_db_session
-            from app.repositories import ScanRepository as SR
-            async with worker_db_session() as db2:
-                repo2 = SR(db2)
+        # Persist accumulated findings
+        from app.workers.db_utils import worker_db_session
+        from app.repositories import ScanRepository as SR
+        async with worker_db_session() as db2:
+            repo2 = SR(db2)
+            if all_findings:
                 await repo2.add_vulnerabilities(int(scan_id), all_findings)
-                await repo2.complete_scan(int(scan_id), result_summary={
+            await repo2.complete_scan(
+                int(scan_id),
+                result_summary={
                     "modules_run": modules,
                     "findings_count": len(all_findings),
-                })
-        else:
-            from app.workers.db_utils import worker_db_session
-            from app.repositories import ScanRepository as SR
-            async with worker_db_session() as db2:
-                repo2 = SR(db2)
-                await repo2.complete_scan(int(scan_id), result_summary={
-                    "modules_run": modules,
-                    "findings_count": 0,
-                })
+                },
+            )
 
         await stream_bus.publish(scan_id, {
             "type": "done",
@@ -263,8 +295,10 @@ async def _run_recon_streaming(
 
     except Exception as e:
         await stream_bus.publish(scan_id, {"type": "error", "error": str(e)})
+
     finally:
         await stream_bus.close(scan_id)
+        stream_bus.cleanup_control(scan_id)
         await orchestrator.close()
 
 
@@ -293,6 +327,75 @@ async def stream_scan_results(
             "Connection": "keep-alive",
         },
     )
+
+
+@router.websocket("/ws/{scan_id}")
+async def websocket_scan_stream(websocket: WebSocket, scan_id: str):
+    """
+    Bidirectional WebSocket for scan streaming + control.
+
+    Auth: pass API key as query param ?token=<api_key>
+    Server → Client: module_complete, module_error, ack, done, cancelled, error, ping
+    Client → Server: {"action": "cancel"} | {"action": "pause"} | {"action": "resume"} | {"action": "ping"}
+    """
+    await websocket.accept()
+
+    token = websocket.query_params.get("token", "")
+    if token != settings.API_KEY:
+        await websocket.send_json({"type": "error", "error": "Unauthorized"})
+        await websocket.close(code=4001)
+        return
+
+    async def _forward_events() -> None:
+        """Forward stream_bus events to WebSocket until done/cancelled/error."""
+        async for event in stream_bus.subscribe(scan_id):
+            try:
+                await websocket.send_json(event)
+                if event.get("type") in ("done", "cancelled", "error"):
+                    break
+            except Exception:
+                break
+
+    forward_task = asyncio.create_task(_forward_events())
+
+    try:
+        while True:
+            try:
+                raw = await asyncio.wait_for(
+                    websocket.receive_text(), timeout=120.0
+                )
+                msg = _json.loads(raw)
+                action = msg.get("action", "")
+
+                if action == "cancel":
+                    stream_bus.cancel(scan_id)
+                    await websocket.send_json({
+                        "type": "ack", "action": "cancel", "status": "cancelling"
+                    })
+
+                elif action == "pause":
+                    stream_bus.pause(scan_id)
+                    await websocket.send_json({
+                        "type": "ack", "action": "pause", "status": "paused"
+                    })
+
+                elif action == "resume":
+                    stream_bus.resume(scan_id)
+                    await websocket.send_json({
+                        "type": "ack", "action": "resume", "status": "running"
+                    })
+
+                elif action == "ping":
+                    await websocket.send_json({"type": "pong"})
+
+            except asyncio.TimeoutError:
+                await websocket.send_json({"type": "ping"})
+
+    except WebSocketDisconnect:
+        stream_bus.cancel(scan_id)     # tab closed = cancel the scan
+
+    finally:
+        forward_task.cancel()
 
 
 @router.post("/report", tags=["Reconnaissance"], response_model=None)

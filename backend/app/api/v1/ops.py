@@ -1,7 +1,7 @@
 """
 OfSec V3 — Dashboard & Operations API Endpoints
 ==================================================
-REST API for dashboard, reports, scheduling, and administration (#83–100).
+REST API for dashboard, reports, scheduling, and administration.
 """
 
 from fastapi import APIRouter, HTTPException
@@ -9,6 +9,9 @@ from fastapi import APIRouter, HTTPException
 from app.api.deps import CurrentUser
 from app.schemas import SuccessResponse
 from app.services.ops.orchestrator import OpsOrchestrator
+
+import secrets as _sec
+from app.core.scheduler import add_scan_job, remove_scan_job, list_scheduled_jobs
 
 import structlog
 
@@ -203,20 +206,16 @@ async def submit_scan_queue(
     submitted = []
 
     for target in targets:
-        # Dispatch the appropriate Taskiq task
         try:
             if scan_type == "vuln":
                 task = await vuln_task.kiq(target, modules)
             else:
                 task = await recon_task.kiq(target, modules)
-
             task_id = str(task.task_id) if hasattr(task, 'task_id') else str(id(task))
         except Exception:
-            # Taskiq broker may not be running — create job record anyway
             import secrets
             task_id = secrets.token_hex(8)
 
-        # Record in JobScheduler for UI display
         job = orchestrator.scheduler.create_job(
             name=f"{scan_type.upper()} -- {target}",
             job_type="scan_queue",
@@ -231,7 +230,6 @@ async def submit_scan_queue(
         )
         job["status"] = "running"
         job["task_id"] = task_id
-
         submitted.append({
             "job_id": job.get("id", task_id),
             "task_id": task_id,
@@ -255,7 +253,6 @@ async def get_queue_status(user: CurrentUser = None) -> dict:
     all_jobs = orchestrator.scheduler.list_jobs()
     queue_jobs = [j for j in all_jobs if j.get("type") == "scan_queue"]
 
-    # Summarize by status
     counts = {"running": 0, "completed": 0, "failed": 0, "active": 0}
     for j in queue_jobs:
         s = j.get("status", "active")
@@ -276,3 +273,53 @@ async def cancel_queued_job(job_id: str, user: CurrentUser = None) -> dict:
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=404, detail=result["error"])
     return {"cancelled": job_id}
+
+
+# ─── Scheduled Scans (APScheduler-backed) ────────────────────────────
+
+@router.post("/schedules")
+async def create_schedule(
+    target: str,
+    scan_type: str = "recon",
+    schedule_type: str = "cron",
+    schedule_value: str = "0 2 * * *",
+    modules: list[str] | None = None,
+    name: str = "",
+    user: CurrentUser = None,
+) -> dict:
+    """
+    Create a recurring scan schedule.
+
+    Examples:
+      schedule_type=cron,     schedule_value="0 2 * * *"    → daily 02:00 UTC
+      schedule_type=cron,     schedule_value="0 */6 * * *"  → every 6 hours
+      schedule_type=interval, schedule_value="3600"          → every hour
+    """
+    job_id = f"SCHED-{_sec.token_hex(4).upper()}"
+    try:
+        info = add_scan_job(
+            job_id=job_id,
+            target=target,
+            scan_type=scan_type,
+            schedule_type=schedule_type,
+            schedule_value=schedule_value,
+            modules=modules,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    logger.info("ops.schedule.created", job_id=job_id, target=target)
+    return info
+
+
+@router.get("/schedules")
+async def list_schedules(user: CurrentUser = None) -> dict:
+    jobs = list_scheduled_jobs()
+    return {"schedules": jobs, "total": len(jobs)}
+
+
+@router.delete("/schedules/{job_id}")
+async def delete_schedule(job_id: str, user: CurrentUser = None) -> dict:
+    if not remove_scan_job(job_id):
+        raise HTTPException(status_code=404, detail=f"Schedule {job_id} not found")
+    return {"deleted": job_id}

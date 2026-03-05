@@ -46,9 +46,36 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         logger.error("ofsec.db.connection_failed", error=str(e))
 
+    # Start APScheduler
+    from app.core.scheduler import start_scheduler, stop_scheduler
+    start_scheduler()
+    logger.info("ofsec.scheduler.started")
+
+    # Seed default admin if no users exist yet
+    try:
+        from app.workers.db_utils import worker_db_session
+        from app.repositories.user_repo import UserRepository as _UR
+        async with worker_db_session() as _seed_db:
+            _repo = _UR(_seed_db)
+            if await _repo.count() == 0:
+                await _repo.create(
+                    email="admin@ofsec.io",
+                    password="ChangeMe123!",
+                    display_name="Admin",
+                    role="admin",
+                )
+                logger.warning(
+                    "ofsec.user.default_admin_created",
+                    email="admin@ofsec.io",
+                    action_required="CHANGE THIS PASSWORD IMMEDIATELY",
+                )
+    except Exception as _e:
+        logger.error("ofsec.user.seed_failed", error=str(_e))
+
     yield
 
     # ─── Shutdown ─────────────────────────────────
+    stop_scheduler()
     logger.info("ofsec.shutdown")
     await engine.dispose()
 

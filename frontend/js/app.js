@@ -5,7 +5,7 @@
  */
 
 const API = '';  // Same origin
-let API_KEY = '';
+const API_KEY = 'dev-api-key';  // WebSocket auth token — matches settings.API_KEY
 let scanHistory = [];
 let vulnResults = [];
 
@@ -112,6 +112,12 @@ function navigate(page) {
   // Load queue status when viewing scan page
   if (page === 'scan') {
     loadQueueStatus();
+  }
+
+  // Load settings sub-panels when visiting settings page
+  if (page === 'settings') {
+    loadSchedules();
+    loadAccountInfo();
   }
 }
 
@@ -351,86 +357,139 @@ async function launchScan() {
 }
 
 function streamScanResults(scanId, terminal, target) {
-  return new Promise((resolve, reject) => {
-    const url = `${API}/api/v1/recon/stream/${scanId}`;
-    const es = new EventSource(url);
-    let moduleCount = 0;
+  return new Promise((resolve) => {
+    const wsUrl = `ws://${location.host}/api/v1/recon/ws/${scanId}?token=${API_KEY}`;
+    let ws;
 
-    es.onmessage = (e) => {
-      try {
-        const event = JSON.parse(e.data);
+    try { ws = new WebSocket(wsUrl); }
+    catch (e) {
+      termLine(terminal, `[${now()}] WebSocket unavailable`, 'warning');
+      return resolve();
+    }
 
-        if (event.type === 'module_complete') {
-          moduleCount++;
-          const pct = Math.round((event.index / event.total) * 100);
-          termLine(terminal,
-            `[${now()}] [${pct}%] ${event.module.replace(/_/g, ' ')} -- ${event.findings_count} finding${event.findings_count !== 1 ? 's' : ''}`,
-            event.findings_count > 0 ? 'warning' : 'success'
-          );
+    // Store reference for control buttons
+    window._activeScanWS = window._activeScanWS || {};
+    window._activeScanWS[scanId] = ws;
 
-          // Render finding details inline
-          const findings = event.data?.findings || event.data?.vulnerabilities || [];
-          findings.slice(0, 3).forEach(f => {
-            const sev = (f.severity || 'INFO').toUpperCase();
-            const cls = sev === 'CRITICAL' || sev === 'HIGH' ? 'error' : sev === 'MEDIUM' ? 'warning' : 'dim';
-            termLine(terminal, `    [${sev}] ${f.title || f.name || f.type || 'Finding'}`, cls);
-            vulnResults.push({ target, ...f, found: now() });
-          });
-          if (findings.length > 3) {
-            termLine(terminal, `    ... and ${findings.length - 3} more`, 'dim');
-          }
+    // Inject pause / resume / cancel controls above terminal
+    const ctrlId = `scan-ctrl-${scanId}`;
+    if (!document.getElementById(ctrlId)) {
+      const ctrl = document.createElement('div');
+      ctrl.id = ctrlId;
+      ctrl.style.cssText = 'display:flex;gap:8px;margin-bottom:8px';
+      ctrl.innerHTML = `
+        <button id="btn-pause-${scanId}" class="btn" style="font-size:11px;padding:4px 12px"
+          onclick="wsScanPause('${scanId}')">⏸ Pause</button>
+        <button id="btn-resume-${scanId}" class="btn" style="font-size:11px;padding:4px 12px;display:none"
+          onclick="wsScanResume('${scanId}')">▶ Resume</button>
+        <button class="btn" style="font-size:11px;padding:4px 12px;
+          background:rgba(239,68,68,0.15);border-color:var(--accent-red);color:var(--accent-red)"
+          onclick="wsScanCancel('${scanId}')">✕ Cancel</button>
+      `;
+      terminal.parentElement?.insertBefore(ctrl, terminal);
+    }
 
-        } else if (event.type === 'module_error') {
-          termLine(terminal, `[${now()}] [!] ${event.module}: ${event.error}`, 'warning');
+    ws.onmessage = ({ data }) => {
+      let event;
+      try { event = JSON.parse(data); } catch { return; }
 
-        } else if (event.type === 'done') {
-          termLine(terminal, `[${now()}] ─────────────────────────────────────`, 'dim');
-          termLine(terminal, `[${now()}] Scan complete -- ${event.total_findings} total findings`, 'success');
-          renderVulnSummary(terminal, vulnResults.filter(v => v.target === target));
-          scanHistory.push({
-            id: event.scan_id,
-            target,
-            type: 'recon',
-            status: 'done',
-            findings: event.total_findings,
-            time: now(),
-          });
-          updateRecentScans();
-          updateResults();
-          if (typeof updateDashboardKPIs === 'function') updateDashboardKPIs();
-          toast('Scan complete', 'success');
-          es.close();
-          resolve();
+      if (event.type === 'module_complete') {
+        const pct = Math.round((event.index / event.total) * 100);
+        termLine(terminal,
+          `[${now()}] ✓ ${event.module.replace(/_/g, ' ')}` +
+          ` — ${event.findings_count} finding${event.findings_count !== 1 ? 's' : ''}  [${pct}%]`,
+          event.findings_count > 0 ? 'warning' : 'success'
+        );
+        const findings = event.data?.findings || event.data?.vulnerabilities || [];
+        findings.slice(0, 3).forEach(f => {
+          const sev = (f.severity || 'INFO').toUpperCase();
+          const cls = ['CRITICAL', 'HIGH'].includes(sev) ? 'error'
+            : sev === 'MEDIUM' ? 'warning' : 'dim';
+          termLine(terminal, `    [${sev}] ${f.title || f.name || f.type || 'Finding'}`, cls);
+          vulnResults.push({ target, ...f, found: now() });
+        });
+        if (findings.length > 3)
+          termLine(terminal, `    ... and ${findings.length - 3} more`, 'dim');
 
-        } else if (event.type === 'error' || event.type === 'stream_closed') {
-          if (event.type === 'error') {
-            termLine(terminal, `[${now()}] Stream error: ${event.error || event.message}`, 'error');
-          }
-          es.close();
-          resolve();
+      } else if (event.type === 'ack') {
+        const icons = { cancel: '🛑', pause: '⏸', resume: '▶' };
+        termLine(terminal, `[${now()}] ${icons[event.action] || '•'} ${event.status}`, 'warning');
+        if (event.action === 'pause') {
+          document.getElementById(`btn-pause-${scanId}`)?.style.setProperty('display', 'none');
+          document.getElementById(`btn-resume-${scanId}`)?.style.removeProperty('display');
+        } else if (event.action === 'resume') {
+          document.getElementById(`btn-resume-${scanId}`)?.style.setProperty('display', 'none');
+          document.getElementById(`btn-pause-${scanId}`)?.style.removeProperty('display');
         }
 
-      } catch (parseErr) {
-        console.warn('SSE parse error:', parseErr);
+      } else if (event.type === 'module_error') {
+        termLine(terminal, `[${now()}] ⚠ ${event.module}: ${event.error}`, 'warning');
+
+      } else if (event.type === 'cancelled') {
+        termLine(terminal,
+          `[${now()}] 🛑 Scan cancelled — ${event.modules_completed} module(s) run, ` +
+          `${event.findings_so_far} finding(s) saved`, 'warning');
+        _cleanupScanWS(scanId);
+        toast('Scan cancelled', 'info');
+        resolve();
+
+      } else if (event.type === 'done') {
+        termLine(terminal, `[${now()}] ───────────────────────────────────`, 'dim');
+        termLine(terminal, `[${now()}] ✓ Scan complete — ${event.total_findings} total findings`, 'success');
+        scanHistory.push({
+          id: event.scan_id, target, type: 'recon',
+          status: 'done', findings: event.total_findings, time: now(),
+        });
+        updateScanHistory?.();
+        updateResults?.();
+        updateDashboardKPIs?.();
+        _cleanupScanWS(scanId);
+        toast('Scan complete', 'success');
+        resolve();
+
+      } else if (event.type === 'error') {
+        termLine(terminal, `[${now()}] ✗ ${event.error}`, 'error');
+        _cleanupScanWS(scanId);
+        resolve();
+
+      } else if (event.type === 'ping') {
+        ws.send(JSON.stringify({ action: 'ping' }));
       }
     };
 
-    es.onerror = () => {
-      termLine(terminal, `[${now()}] Connection lost -- scan may still be running`, 'warning');
-      es.close();
-      resolve(); // don't reject — scan continues server-side
+    ws.onerror = () => {
+      termLine(terminal, `[${now()}] WebSocket error — scan continues server-side`, 'warning');
+      _cleanupScanWS(scanId);
+      resolve();
     };
 
-    // Safety timeout: close stream after 10 minutes regardless
+    ws.onclose = (e) => {
+      if (e.code === 4001)
+        termLine(terminal, `[${now()}] ✗ WebSocket auth failed`, 'error');
+      document.getElementById(`scan-ctrl-${scanId}`)?.remove();
+      resolve();
+    };
+
+    // 10-minute safety timeout
     setTimeout(() => {
-      if (es.readyState !== EventSource.CLOSED) {
-        termLine(terminal, `[${now()}] Stream timeout after 10 minutes`, 'warning');
-        es.close();
+      if (ws.readyState === WebSocket.OPEN) {
+        termLine(terminal, `[${now()}] Stream timeout after 10min`, 'warning');
+        ws.close();
         resolve();
       }
     }, 600_000);
   });
 }
+
+function _cleanupScanWS(scanId) {
+  const ws = window._activeScanWS?.[scanId];
+  if (ws?.readyState === WebSocket.OPEN) ws.close();
+  delete window._activeScanWS?.[scanId];
+  document.getElementById(`scan-ctrl-${scanId}`)?.remove();
+}
+function wsScanPause(id) { window._activeScanWS?.[id]?.send(JSON.stringify({ action: 'pause' })); }
+function wsScanResume(id) { window._activeScanWS?.[id]?.send(JSON.stringify({ action: 'resume' })); }
+function wsScanCancel(id) { window._activeScanWS?.[id]?.send(JSON.stringify({ action: 'cancel' })); }
 
 // ─── Update Tables ──────────────────────────
 function updateRecentScans() {
@@ -1449,3 +1508,113 @@ function stopQueuePolling() {
     queuePollInterval = null;
   }
 }
+
+
+// ─── Schedule Management ────────────────────────────────
+
+async function loadSchedules() {
+  const el = document.getElementById('schedule-list');
+  if (!el) return;
+  try {
+    const data = await api('/api/v1/ops/schedules');
+    const jobs = data.schedules || [];
+    if (jobs.length === 0) {
+      el.innerHTML = '<span style="color:var(--text-dim)">No scheduled scans</span>';
+      return;
+    }
+    el.innerHTML = jobs.map(j => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;
+        border-bottom:1px solid var(--border-color)">
+        <div>
+          <strong>${j.kwargs?.target || j.job_id}</strong>
+          <span style="color:var(--text-dim);margin-left:8px">${j.status}</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:11px;color:var(--text-dim)">
+            Next: ${j.next_run ? new Date(j.next_run).toLocaleString() : 'N/A'}
+          </span>
+          <button class="btn btn-secondary" style="font-size:11px;padding:2px 8px"
+            onclick="deleteSchedule('${j.job_id}')">✕</button>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {
+    el.innerHTML = `<span style="color:var(--accent-red)">${e.message}</span>`;
+  }
+}
+
+async function createSchedule() {
+  const target = document.getElementById('sched-target')?.value?.trim();
+  const cron = document.getElementById('sched-cron')?.value?.trim() || '0 2 * * *';
+  if (!target) return toast('Target required', 'warning');
+
+  try {
+    await api('/api/v1/ops/schedules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        target,
+        scan_type: 'recon',
+        schedule_type: 'cron',
+        schedule_value: cron,
+      }),
+    });
+    toast('Schedule created', 'success');
+    document.getElementById('sched-target').value = '';
+    document.getElementById('sched-cron').value = '';
+    loadSchedules();
+  } catch (e) {
+    toast('Failed: ' + e.message, 'error');
+  }
+}
+
+async function deleteSchedule(jobId) {
+  try {
+    await api(`/api/v1/ops/schedules/${jobId}`, { method: 'DELETE' });
+    toast('Schedule removed', 'success');
+    loadSchedules();
+  } catch (e) {
+    toast('Failed: ' + e.message, 'error');
+  }
+}
+
+
+// ─── Account Management ────────────────────────────────
+
+async function loadAccountInfo() {
+  const el = document.getElementById('account-info');
+  if (!el) return;
+  try {
+    const data = await api('/api/v1/auth/me');
+    el.innerHTML = `
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px">
+        <span style="color:var(--text-dim)">Email:</span> <span>${data.email}</span>
+        <span style="color:var(--text-dim)">Role:</span> <span>${data.role}</span>
+        <span style="color:var(--text-dim)">Name:</span> <span>${data.display_name || '—'}</span>
+      </div>
+    `;
+  } catch (e) {
+    el.innerHTML = `<span style="color:var(--accent-red)">Failed to load account info</span>`;
+  }
+}
+
+async function changePassword() {
+  const oldPw = document.getElementById('pw-old')?.value;
+  const newPw = document.getElementById('pw-new')?.value;
+  if (!oldPw || !newPw) return toast('Both fields required', 'warning');
+  if (newPw.length < 8) return toast('Password must be at least 8 characters', 'warning');
+
+  try {
+    await api('/api/v1/auth/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ old_password: oldPw, new_password: newPw }),
+    });
+    toast('Password changed', 'success');
+    document.getElementById('pw-old').value = '';
+    document.getElementById('pw-new').value = '';
+  } catch (e) {
+    toast('Failed: ' + e.message, 'error');
+  }
+}
+

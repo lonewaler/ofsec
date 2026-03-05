@@ -70,3 +70,40 @@ async def subscribe(scan_id: str) -> AsyncGenerator[dict, None]:
         # Clean up the queue after consumer is done
         _queues.pop(scan_id, None)
         logger.debug("stream_bus.consumed", scan_id=scan_id)
+
+
+# ─── Scan control signals ─────────────────────────────────────────────
+# scan_id → {"cancelled": bool, "paused": bool}
+_control: dict[str, dict] = {}
+
+
+def init_control(scan_id: str) -> None:
+    """Create control state for a scan. Must be called before _run_recon_streaming starts."""
+    _control[scan_id] = {"cancelled": False, "paused": False}
+
+
+def cancel(scan_id: str) -> None:
+    if scan_id in _control:
+        _control[scan_id]["cancelled"] = True
+
+
+def pause(scan_id: str) -> None:
+    if scan_id in _control:
+        _control[scan_id]["paused"] = True
+
+
+def resume(scan_id: str) -> None:
+    if scan_id in _control:
+        _control[scan_id]["paused"] = False
+
+
+def is_cancelled(scan_id: str) -> bool:
+    return _control.get(scan_id, {}).get("cancelled", False)
+
+
+def is_paused(scan_id: str) -> bool:
+    return _control.get(scan_id, {}).get("paused", False)
+
+
+def cleanup_control(scan_id: str) -> None:
+    _control.pop(scan_id, None)
