@@ -5,6 +5,7 @@ Distributed tracing for backend services.
 """
 
 from __future__ import annotations
+
 import structlog
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource

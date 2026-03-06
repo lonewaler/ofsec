@@ -6,6 +6,7 @@ rate limiting, information disclosure, mass assignment.
 """
 
 from __future__ import annotations
+
 import asyncio
 
 import httpx
@@ -174,7 +175,8 @@ class APISecurityScanner:
         """Detect and test GraphQL endpoint."""
         client = await self._get_client()
         graphql_paths = ["/graphql", "/graphiql", "/api/graphql"]
-        result = {"graphql_found": False, "findings": []}
+        from typing import Any
+        result: dict[str, Any] = {"graphql_found": False, "findings": []}
 
         for path in graphql_paths:
             url = f"{base_url.rstrip('/')}{path}"
@@ -217,7 +219,7 @@ class APISecurityScanner:
             all_findings = auth_findings + method_findings + graphql.get("findings", [])
 
             # Severity summary
-            severity_counts = {}
+            severity_counts: dict[str, int] = {}
             for f in all_findings:
                 sev = f.get("severity", "info")
                 severity_counts[sev] = severity_counts.get(sev, 0) + 1

@@ -4,6 +4,7 @@ OfSec V3 — #20 Container Security + #21 Cloud Config + #23 Credential + #27-30
 """
 
 from __future__ import annotations
+
 import asyncio
 import re
 
@@ -22,7 +23,8 @@ class ContainerSecurityScanner:
     """Scan Docker/container images for misconfigurations and vulnerabilities."""
 
     # Dockerfile security anti-patterns
-    DOCKERFILE_CHECKS = [
+    from typing import Any
+    DOCKERFILE_CHECKS: list[dict[str, Any]] = [
         {
             "pattern": r"FROM\s+\S+:latest",
             "severity": "medium",
@@ -108,7 +110,7 @@ class ContainerSecurityScanner:
                     "finding": "No HEALTHCHECK defined",
                 })
 
-            severity_counts = {}
+            severity_counts: dict[str, int] = {}
             for f in findings:
                 sev = f["severity"]
                 severity_counts[sev] = severity_counts.get(sev, 0) + 1
@@ -428,7 +430,7 @@ class VulnerabilityCorrelator:
         )
 
         total_score = sum(module_scores.values())
-        severity_counts = {}
+        severity_counts: dict[str, int] = {}
         for f in all_findings:
             sev = f.get("severity", "info")
             severity_counts[sev] = severity_counts.get(sev, 0) + 1

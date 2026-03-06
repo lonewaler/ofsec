@@ -54,7 +54,7 @@ class UserRepository:
             return None
         if not verify_password(password, user.password_hash):
             return None
-        user.last_login = datetime.now(UTC)
+        user.last_login = datetime.now(UTC)  # type: ignore[assignment]
         return user
 
     async def change_password(
@@ -67,5 +67,5 @@ class UserRepository:
             return False, "Current password incorrect"
         if len(new_password) < 8:
             return False, "New password must be at least 8 characters"
-        user.password_hash = hash_password(new_password)
+        user.password_hash = hash_password(new_password)  # type: ignore[assignment]
         return True, ""

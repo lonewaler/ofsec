@@ -11,6 +11,7 @@ High-confidence IOCs trigger alerts via the notification dispatcher.
 """
 
 from __future__ import annotations
+
 import asyncio
 from datetime import UTC, datetime
 

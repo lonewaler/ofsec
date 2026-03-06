@@ -1,0 +1,3644 @@
+﻿F401 [*] `os` imported but unused
+ --> backend\alembic\env.py:7:8
+  |
+6 | import asyncio
+7 | import os
+  |        ^^
+8 | import sys
+9 | from logging.config import fileConfig
+  |
+help: Remove unused import: `os`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\alembic\env.py:17:1
+   |
+15 |   sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+16 |
+17 | / from sqlalchemy import pool
+18 | | from sqlalchemy.ext.asyncio import create_async_engine
+19 | |
+20 | | # Import ALL models so Alembic detects every table
+21 | | from app.database import Base
+22 | | from app.models import *  # noqa: F401, F403
+23 | | from app.config import settings
+   | |_______________________________^
+24 |
+25 |   # ΓöÇΓöÇΓöÇ Alembic config ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+   |
+help: Organize imports
+
+W291 Trailing whitespace
+ --> backend\alembic\versions\c9ca0cb61324_initial_schema.py:4:9
+  |
+3 | Revision ID: c9ca0cb61324
+4 | Revises: 
+  |         ^
+5 | Create Date: 2026-03-05 10:36:04.648534
+6 | """
+  |
+help: Remove trailing whitespace
+
+UP035 [*] Import from `collections.abc` instead: `Sequence`
+  --> backend\alembic\versions\c9ca0cb61324_initial_schema.py:8:1
+   |
+ 6 | """
+ 7 |
+ 8 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 9 |
+10 | from alembic import op
+   |
+help: Import from `collections.abc`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\alembic\versions\c9ca0cb61324_initial_schema.py:8:1
+   |
+ 6 |   """
+ 7 |
+ 8 | / from typing import Sequence, Union
+ 9 | |
+10 | | from alembic import op
+11 | | import sqlalchemy as sa
+   | |_______________________^
+   |
+help: Organize imports
+
+F401 [*] `alembic.op` imported but unused
+  --> backend\alembic\versions\c9ca0cb61324_initial_schema.py:10:21
+   |
+ 8 | from typing import Sequence, Union
+ 9 |
+10 | from alembic import op
+   |                     ^^
+11 | import sqlalchemy as sa
+   |
+help: Remove unused import: `alembic.op`
+
+F401 [*] `sqlalchemy` imported but unused
+  --> backend\alembic\versions\c9ca0cb61324_initial_schema.py:11:22
+   |
+10 | from alembic import op
+11 | import sqlalchemy as sa
+   |                      ^^
+   |
+help: Remove unused import: `sqlalchemy`
+
+UP007 [*] Use `X | Y` for type annotations
+  --> backend\alembic\versions\c9ca0cb61324_initial_schema.py:16:16
+   |
+14 | # revision identifiers, used by Alembic.
+15 | revision: str = 'c9ca0cb61324'
+16 | down_revision: Union[str, None] = None
+   |                ^^^^^^^^^^^^^^^^
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+help: Convert to `X | Y`
+
+UP007 [*] Use `X | Y` for type annotations
+  --> backend\alembic\versions\c9ca0cb61324_initial_schema.py:17:16
+   |
+15 | revision: str = 'c9ca0cb61324'
+16 | down_revision: Union[str, None] = None
+17 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+help: Convert to `X | Y`
+
+UP007 [*] Use `X | Y` for type annotations
+  --> backend\alembic\versions\c9ca0cb61324_initial_schema.py:18:13
+   |
+16 | down_revision: Union[str, None] = None
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+help: Convert to `X | Y`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\__init__.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | from fastapi import APIRouter
+   | |_____________________________^
+ 9 |
+10 |   router = APIRouter()
+   |
+help: Organize imports
+
+E402 Module level import not at top of file
+  --> backend\app\api\__init__.py:13:1
+   |
+12 | # ΓöÇΓöÇΓöÇ Import and include sub-routers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+13 | from app.api.v1.ai import router as ai_router
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+14 | from app.api.v1.attack import router as attack_router
+15 | from app.api.v1.auth import router as auth_router
+   |
+
+E402 Module level import not at top of file
+  --> backend\app\api\__init__.py:14:1
+   |
+12 | # ΓöÇΓöÇΓöÇ Import and include sub-routers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+13 | from app.api.v1.ai import router as ai_router
+14 | from app.api.v1.attack import router as attack_router
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+15 | from app.api.v1.auth import router as auth_router
+16 | from app.api.v1.defense import router as defense_router
+   |
+
+E402 Module level import not at top of file
+  --> backend\app\api\__init__.py:15:1
+   |
+13 | from app.api.v1.ai import router as ai_router
+14 | from app.api.v1.attack import router as attack_router
+15 | from app.api.v1.auth import router as auth_router
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+16 | from app.api.v1.defense import router as defense_router
+17 | from app.api.v1.ops import router as ops_router
+   |
+
+E402 Module level import not at top of file
+  --> backend\app\api\__init__.py:16:1
+   |
+14 | from app.api.v1.attack import router as attack_router
+15 | from app.api.v1.auth import router as auth_router
+16 | from app.api.v1.defense import router as defense_router
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+17 | from app.api.v1.ops import router as ops_router
+18 | from app.api.v1.recon import router as recon_router
+   |
+
+E402 Module level import not at top of file
+  --> backend\app\api\__init__.py:17:1
+   |
+15 | from app.api.v1.auth import router as auth_router
+16 | from app.api.v1.defense import router as defense_router
+17 | from app.api.v1.ops import router as ops_router
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+18 | from app.api.v1.recon import router as recon_router
+19 | from app.api.v1.scanner import router as scanner_router
+   |
+
+E402 Module level import not at top of file
+  --> backend\app\api\__init__.py:18:1
+   |
+16 | from app.api.v1.defense import router as defense_router
+17 | from app.api.v1.ops import router as ops_router
+18 | from app.api.v1.recon import router as recon_router
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+19 | from app.api.v1.scanner import router as scanner_router
+   |
+
+E402 Module level import not at top of file
+  --> backend\app\api\__init__.py:19:1
+   |
+17 | from app.api.v1.ops import router as ops_router
+18 | from app.api.v1.recon import router as recon_router
+19 | from app.api.v1.scanner import router as scanner_router
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+20 |
+21 | router.include_router(recon_router)
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\deps.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | from typing import Annotated
+ 9 | |
+10 | | from fastapi import Depends
+11 | | from sqlalchemy.ext.asyncio import AsyncSession
+12 | |
+13 | | from app.core.security import get_current_user
+14 | | from app.database import get_db
+   | |_______________________________^
+15 |
+16 |   # Type aliases for dependency injection
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> backend\app\api\v1\__init__.py:3:1
+  |
+1 |   """OfSec V3 ΓÇö API v1 package."""
+2 |
+3 | / from __future__ import annotations
+4 | | from app.api import router
+  | |__________________________^
+5 |
+6 |   __all__ = ["router"]
+  |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\v1\ai.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | | from fastapi import APIRouter
+10 | |
+11 | | from app.api.deps import CurrentUser
+12 | | from app.schemas import SuccessResponse
+13 | | from app.services.ai.orchestrator import AIOrchestrator
+14 | | from app.workers.ai_tasks import (
+15 | |     analyze_scan_results,
+16 | |     generate_ai_report,
+17 | |     monitor_darkweb,
+18 | |     parse_threat_report,
+19 | | )
+   | |_^
+20 |
+21 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\v1\attack.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | | from fastapi import APIRouter, HTTPException, status
+10 | |
+11 | | from app.api.deps import CurrentUser
+12 | | from app.schemas import SuccessResponse
+13 | | from app.services.attack.orchestrator import AttackOrchestrator
+14 | | from app.workers.attack_tasks import (
+15 | |     run_brute_force,
+16 | |     run_c2_action,
+17 | |     run_exfiltration_test,
+18 | |     run_exploit_search,
+19 | |     run_full_attack_simulation,
+20 | |     run_lateral_movement,
+21 | |     run_payload_generation,
+22 | |     run_phishing_campaign,
+23 | |     run_privesc_scan,
+24 | |     run_social_engineering,
+25 | | )
+   | |_^
+26 |
+27 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\v1\auth.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | | from fastapi import APIRouter, HTTPException, status
+10 | |
+11 | | from app.api.deps import CurrentUser, DbSession
+12 | | from app.core.security import create_access_token
+13 | | from app.repositories.user_repo import UserRepository
+14 | | from app.schemas import LoginRequest, SuccessResponse, TokenResponse, UserResponse
+   | |__________________________________________________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend\app\api\v1\auth.py:103:9
+    |
+101 |         user_id = int(user["user_id"])
+102 |     except (ValueError, TypeError, KeyError):
+103 |         raise HTTPException(status_code=400, detail="Cannot change password for API key auth")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+104 |
+105 |     repo = UserRepository(db)
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\v1\defense.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | | from fastapi import APIRouter
+10 | |
+11 | | from app.api.deps import CurrentUser, DbSession
+12 | | from app.repositories import AlertRepository, IOCRepository
+13 | | from app.schemas import SuccessResponse
+14 | | from app.services.defense.orchestrator import DefenseOrchestrator
+15 | | from app.workers.defense_tasks import (
+16 | |     process_security_event,
+17 | | )
+   | |_^
+18 |
+19 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (122 > 120)
+   --> backend\app\api\v1\defense.py:218:121
+    |
+217 | @router.post("/logs/ingest")
+218 | async def ingest_logs(logs: list[str], source: str = "app", log_format: str = "syslog", user: CurrentUser = None) -> dict:
+    |                                                                                                                         ^^
+219 |     orchestrator = DefenseOrchestrator()
+220 |     return orchestrator.log_aggregator.ingest_batch(logs, source, log_format)
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\v1\ops.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import secrets as _sec
+ 9 | |
+10 | | import structlog
+11 | | from fastapi import APIRouter, HTTPException
+12 | |
+13 | | from app.api.deps import CurrentUser
+14 | | from app.core.scheduler import add_scan_job, list_scheduled_jobs, remove_scan_job
+15 | | from app.services.ops.orchestrator import OpsOrchestrator
+   | |_________________________________________________________^
+16 |
+17 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E402 Module level import not at top of file
+  --> backend\app\api\v1\ops.py:21:1
+   |
+19 | router = APIRouter(prefix="/ops", tags=["Dashboard & Operations"])
+20 |
+21 | from app.config import settings as _settings
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+22 | from app.core.notifier import send_test_alert
+   |
+
+E402 Module level import not at top of file
+  --> backend\app\api\v1\ops.py:22:1
+   |
+21 | from app.config import settings as _settings
+22 | from app.core.notifier import send_test_alert
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+23 |
+24 | # ΓöÇΓöÇΓöÇ Platform Status ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+   |
+
+W293 [*] Blank line contains whitespace
+  --> backend\app\api\v1\ops.py:74:1
+   |
+72 |     import json
+73 |     from pathlib import Path
+74 |     
+   | ^^^^
+75 |     dlq_dir = Path("/tmp/ofsec_dlq")
+76 |     failed = []
+   |
+help: Remove whitespace from blank line
+
+S108 Probable insecure usage of temporary file or directory: "/tmp/ofsec_dlq"
+  --> backend\app\api\v1\ops.py:75:20
+   |
+73 |     from pathlib import Path
+74 |     
+75 |     dlq_dir = Path("/tmp/ofsec_dlq")
+   |                    ^^^^^^^^^^^^^^^^
+76 |     failed = []
+77 |     if dlq_dir.exists():
+   |
+
+UP015 [*] Unnecessary mode argument
+  --> backend\app\api\v1\ops.py:80:33
+   |
+78 |         for file in dlq_dir.glob("dlq_*.json"):
+79 |             try:
+80 |                 with open(file, "r") as f:
+   |                                 ^^^
+81 |                     data = json.load(f)
+82 |                     data["id"] = file.name
+   |
+help: Remove mode argument
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+  --> backend\app\api\v1\ops.py:84:13
+   |
+82 |                       data["id"] = file.name
+83 |                       failed.append(data)
+84 | /             except Exception:
+85 | |                 pass
+   | |____________________^
+86 |       return {"failed": failed, "count": len(failed)}
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\v1\ops.py:91:5
+   |
+89 |   @router.post("/notifications/retry")
+90 |   async def retry_failed_notifications(user: CurrentUser = None) -> dict:
+91 | /     import httpx
+92 | |     import json
+93 | |     from pathlib import Path
+94 | |     import asyncio
+   | |__________________^
+95 |       
+96 |       dlq_dir = Path("/tmp/ofsec_dlq")
+   |
+help: Organize imports
+
+F401 [*] `asyncio` imported but unused
+  --> backend\app\api\v1\ops.py:94:12
+   |
+92 |     import json
+93 |     from pathlib import Path
+94 |     import asyncio
+   |            ^^^^^^^
+95 |     
+96 |     dlq_dir = Path("/tmp/ofsec_dlq")
+   |
+help: Remove unused import: `asyncio`
+
+W293 [*] Blank line contains whitespace
+  --> backend\app\api\v1\ops.py:95:1
+   |
+93 |     from pathlib import Path
+94 |     import asyncio
+95 |     
+   | ^^^^
+96 |     dlq_dir = Path("/tmp/ofsec_dlq")
+97 |     if not dlq_dir.exists():
+   |
+help: Remove whitespace from blank line
+
+S108 Probable insecure usage of temporary file or directory: "/tmp/ofsec_dlq"
+  --> backend\app\api\v1\ops.py:96:20
+   |
+94 |     import asyncio
+95 |     
+96 |     dlq_dir = Path("/tmp/ofsec_dlq")
+   |                    ^^^^^^^^^^^^^^^^
+97 |     if not dlq_dir.exists():
+98 |         return {"retried": 0, "failed": 0, "message": "No DLQ directory found"}
+   |
+
+W293 [*] Blank line contains whitespace
+   --> backend\app\api\v1\ops.py:99:1
+    |
+ 97 |     if not dlq_dir.exists():
+ 98 |         return {"retried": 0, "failed": 0, "message": "No DLQ directory found"}
+ 99 |         
+    | ^^^^^^^^
+100 |     retried_count = 0
+101 |     failed_count = 0
+    |
+help: Remove whitespace from blank line
+
+W293 [*] Blank line contains whitespace
+   --> backend\app\api\v1\ops.py:103:1
+    |
+101 |     failed_count = 0
+102 |     files = list(dlq_dir.glob("dlq_*.json"))
+103 |     
+    | ^^^^
+104 |     async with httpx.AsyncClient(timeout=15.0) as client:
+105 |         for file in files:
+    |
+help: Remove whitespace from blank line
+
+UP015 [*] Unnecessary mode argument
+   --> backend\app\api\v1\ops.py:107:33
+    |
+105 |         for file in files:
+106 |             try:
+107 |                 with open(file, "r") as f:
+    |                                 ^^^
+108 |                     data = json.load(f)
+    |
+help: Remove mode argument
+
+W293 [*] Blank line contains whitespace
+   --> backend\app\api\v1\ops.py:109:1
+    |
+107 |                 with open(file, "r") as f:
+108 |                     data = json.load(f)
+109 |                 
+    | ^^^^^^^^^^^^^^^^
+110 |                 url = data.get("target_url")
+111 |                 payload = data.get("payload")
+    |
+help: Remove whitespace from blank line
+
+W293 [*] Blank line contains whitespace
+   --> backend\app\api\v1\ops.py:112:1
+    |
+110 |                 url = data.get("target_url")
+111 |                 payload = data.get("payload")
+112 |                 
+    | ^^^^^^^^^^^^^^^^
+113 |                 resp = await client.post(url, json=payload, headers={"Content-Type": "application/json"})
+114 |                 resp.raise_for_status()
+    |
+help: Remove whitespace from blank line
+
+W293 [*] Blank line contains whitespace
+   --> backend\app\api\v1\ops.py:115:1
+    |
+113 |                 resp = await client.post(url, json=payload, headers={"Content-Type": "application/json"})
+114 |                 resp.raise_for_status()
+115 |                 
+    | ^^^^^^^^^^^^^^^^
+116 |                 # If successful, delete the file
+117 |                 file.unlink()
+    |
+help: Remove whitespace from blank line
+
+W293 [*] Blank line contains whitespace
+   --> backend\app\api\v1\ops.py:122:1
+    |
+120 |                 logger.error("ops.dlq.retry_failed", file=file.name, error=str(e))
+121 |                 failed_count += 1
+122 |                 
+    | ^^^^^^^^^^^^^^^^
+123 |     return {
+124 |         "retried": retried_count,
+    |
+help: Remove whitespace from blank line
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend\app\api\v1\ops.py:370:9
+    |
+368 |         )
+369 |     except ValueError as exc:
+370 |         raise HTTPException(status_code=400, detail=str(exc))
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+371 |
+372 |     logger.info("ops.schedule.created", job_id=job_id, target=target)
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\v1\recon.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import asyncio
+ 9 | | import json
+10 | | import json as _json
+11 | |
+12 | | import structlog
+13 | | from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
+14 | | from fastapi.responses import HTMLResponse, StreamingResponse
+15 | |
+16 | | from app.api.deps import CurrentUser, DbSession
+17 | | from app.config import settings
+18 | | from app.core import stream_bus
+19 | | from app.repositories import ScanRepository
+20 | | from app.schemas import (
+21 | |     ReconScanRequest,
+22 | |     SuccessResponse,
+23 | | )
+24 | | from app.services.recon.orchestrator import ReconOrchestrator
+25 | | from app.workers.recon_tasks import (
+26 | |     run_cert_transparency_scan,
+27 | |     run_cloud_discovery,
+28 | |     run_domain_blacklist_audit,
+29 | |     run_full_recon,
+30 | |     run_osint_feed_scan,
+31 | |     run_passive_dns_harvest,
+32 | |     run_port_scan,
+33 | |     run_search_engine_recon,
+34 | |     run_social_mining,
+35 | |     run_tech_fingerprint,
+36 | |     run_web_archive_scrape,
+37 | |     run_whois_correlation,
+38 | | )
+   | |_^
+39 |
+40 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+N817 CamelCase `ScanRepository` imported as acronym `SR`
+   --> backend\app\api\v1\recon.py:232:46
+    |
+230 |                     "findings_so_far": len(all_findings),
+231 |                 })
+232 |                 from app.repositories import ScanRepository as SR
+    |                                              ^^^^^^^^^^^^^^^^^^^^
+233 |                 from app.workers.db_utils import worker_db_session
+234 |                 async with worker_db_session() as db2:
+    |
+
+N817 CamelCase `ScanRepository` imported as acronym `SR`
+   --> backend\app\api\v1\recon.py:274:38
+    |
+273 |         # Persist accumulated findings
+274 |         from app.repositories import ScanRepository as SR
+    |                                      ^^^^^^^^^^^^^^^^^^^^
+275 |         from app.workers.db_utils import worker_db_session
+276 |         async with worker_db_session() as db2:
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\api\v1\scanner.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | | from fastapi import APIRouter, HTTPException, status
+10 | |
+11 | | from app.api.deps import CurrentUser, DbSession
+12 | | from app.repositories import ScanRepository
+13 | | from app.schemas import SuccessResponse
+14 | | from app.services.scanner.orchestrator import ScannerOrchestrator
+15 | | from app.workers.scan_tasks import (
+16 | |     run_api_scan,
+17 | |     run_cloud_audit,
+18 | |     run_cms_scan,
+19 | |     run_compliance_audit,
+20 | |     run_container_scan,
+21 | |     run_credential_test,
+22 | |     run_dependency_scan,
+23 | |     run_full_vulnerability_scan,
+24 | |     run_header_analysis,
+25 | |     run_network_discovery,
+26 | |     run_ssl_audit,
+27 | |     run_waf_detection,
+28 | |     run_web_scan,
+29 | | )
+   | |_^
+30 |
+31 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (128 > 120)
+  --> backend\app\api\v1\scanner.py:56:121
+   |
+54 |     return {
+55 |         "modules": [
+56 |             {"id": "web_scanner", "name": "#16 Web Application Scanner", "category": "active", "tags": ["xss", "sqli", "csrf"]},
+   |                                                                                                                         ^^^^^^^^
+57 |             {"id": "header_analyzer", "name": "#17 Header Security Analyzer", "category": "passive"},
+58 |             {"id": "api_scanner", "name": "#18 API Security Scanner", "category": "active", "tags": ["rest", "graphql"]},
+   |
+
+E501 Line too long (121 > 120)
+  --> backend\app\api\v1\scanner.py:58:121
+   |
+56 |             {"id": "web_scanner", "name": "#16 Web Application Scanner", "category": "active", "tags": ["xss", "sqli", "csrf"]},
+57 |             {"id": "header_analyzer", "name": "#17 Header Security Analyzer", "category": "passive"},
+58 |             {"id": "api_scanner", "name": "#18 API Security Scanner", "category": "active", "tags": ["rest", "graphql"]},
+   |                                                                                                                         ^
+59 |             {"id": "dependency_scanner", "name": "#19 Dependency Vuln Scanner", "category": "passive", "tags": ["sca"]},
+60 |             {"id": "container_scanner", "name": "#20 Container Security", "category": "passive", "tags": ["docker"]},
+   |
+
+E501 Line too long (127 > 120)
+  --> backend\app\api\v1\scanner.py:61:121
+   |
+59 |             {"id": "dependency_scanner", "name": "#19 Dependency Vuln Scanner", "category": "passive", "tags": ["sca"]},
+60 |             {"id": "container_scanner", "name": "#20 Container Security", "category": "passive", "tags": ["docker"]},
+61 |             {"id": "cloud_auditor", "name": "#21 Cloud Config Auditor", "category": "active", "tags": ["aws", "azure", "gcp"]},
+   |                                                                                                                         ^^^^^^^
+62 |             {"id": "network_discovery", "name": "#22 Network Service Discovery", "category": "active"},
+63 |             {"id": "credential_tester", "name": "#23 Credential Tester", "category": "active"},
+   |
+
+S105 Possible hardcoded password assigned to: "SECRET_KEY"
+  --> backend\app\config.py:22:23
+   |
+21 |     # ΓöÇΓöÇΓöÇ Security ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+22 |     SECRET_KEY: str = "change-me-in-production"
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+23 |     API_KEY: str = "dev-api-key"
+24 |     JWT_ALGORITHM: str = "HS256"
+   |
+
+S105 Possible hardcoded password assigned to: "POSTGRES_PASSWORD"
+  --> backend\app\config.py:31:30
+   |
+29 |     POSTGRES_DB: str = "ofsec"
+30 |     POSTGRES_USER: str = "ofsec"
+31 |     POSTGRES_PASSWORD: str = "ofsec_secret"
+   |                              ^^^^^^^^^^^^^^
+32 |     DB_POOL_SIZE: int = 20
+33 |     DB_MAX_OVERFLOW: int = 10
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> backend\app\core\__init__.py:3:1
+  |
+1 |   """OfSec V3 ΓÇö Core utilities package."""
+2 |
+3 | / from __future__ import annotations
+4 | | from app.core.exceptions import OfSecError, ReconError, ScanError
+5 | | from app.core.logging import setup_logging
+6 | | from app.core.security import get_current_user, verify_api_key
+  | |______________________________________________________________^
+7 |
+8 |   __all__ = [
+  |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> backend\app\core\constants.py:7:1
+  |
+5 |   """
+6 |
+7 | / from __future__ import annotations
+8 | | from enum import Enum
+  | |_____________________^
+  |
+help: Organize imports
+
+UP042 Class ScanType inherits from both `str` and `enum.Enum`
+  --> backend\app\core\constants.py:12:7
+   |
+11 | # ΓöÇΓöÇΓöÇ Scan Types ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+12 | class ScanType(str, Enum):
+   |       ^^^^^^^^
+13 |     RECON = "recon"
+14 |     VULNERABILITY = "vulnerability"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class Severity inherits from both `str` and `enum.Enum`
+  --> backend\app\core\constants.py:26:7
+   |
+25 | # ΓöÇΓöÇΓöÇ Severity Levels ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+26 | class Severity(str, Enum):
+   |       ^^^^^^^^
+27 |     CRITICAL = "critical"
+28 |     HIGH = "high"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ScanStatus inherits from both `str` and `enum.Enum`
+  --> backend\app\core\constants.py:35:7
+   |
+34 | # ΓöÇΓöÇΓöÇ Scan Status ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+35 | class ScanStatus(str, Enum):
+   |       ^^^^^^^^^^
+36 |     PENDING = "pending"
+37 |     RUNNING = "running"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class AlertStatus inherits from both `str` and `enum.Enum`
+  --> backend\app\core\constants.py:44:7
+   |
+43 | # ΓöÇΓöÇΓöÇ Alert Status ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+44 | class AlertStatus(str, Enum):
+   |       ^^^^^^^^^^^
+45 |     NEW = "new"
+46 |     ACKNOWLEDGED = "acknowledged"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class AttackStatus inherits from both `str` and `enum.Enum`
+  --> backend\app\core\constants.py:53:7
+   |
+52 | # ΓöÇΓöÇΓöÇ Attack Status ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+53 | class AttackStatus(str, Enum):
+   |       ^^^^^^^^^^^^
+54 |     PLANNED = "planned"
+55 |     RUNNING = "running"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class UserRole inherits from both `str` and `enum.Enum`
+  --> backend\app\core\constants.py:62:7
+   |
+61 | # ΓöÇΓöÇΓöÇ User Roles ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+62 | class UserRole(str, Enum):
+   |       ^^^^^^^^
+63 |     ADMIN = "admin"
+64 |     OPERATOR = "operator"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ReconModule inherits from both `str` and `enum.Enum`
+  --> backend\app\core\constants.py:69:7
+   |
+68 | # ΓöÇΓöÇΓöÇ Recon Module IDs ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+69 | class ReconModule(str, Enum):
+   |       ^^^^^^^^^^^
+70 |     CERT_TRANSPARENCY = "cert_transparency"
+71 |     PASSIVE_DNS = "passive_dns"
+   |
+help: Inherit from `enum.StrEnum`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\core\encryption.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | from cryptography.fernet import Fernet
+ 9 | |
+10 | | from app.config import settings
+   | |_______________________________^
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\core\exceptions.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | | from fastapi import FastAPI, Request
+10 | | from fastapi.responses import JSONResponse
+   | |__________________________________________^
+11 |
+12 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\core\logging.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import logging
+ 9 | | import sys
+10 | |
+11 | | import structlog
+12 | |
+13 | | from app.config import settings
+   | |_______________________________^
+   |
+help: Organize imports
+
+S108 Probable insecure usage of temporary file or directory: "/tmp/ofsec_dlq"
+  --> backend\app\core\notifier.py:48:16
+   |
+47 | # ΓöÇΓöÇΓöÇ Dead Letter Queue Settings ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+48 | DLQ_DIR = Path("/tmp/ofsec_dlq")
+   |                ^^^^^^^^^^^^^^^^
+49 | DLQ_DIR.mkdir(parents=True, exist_ok=True)
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend\app\core\scheduler.py:135:13
+    |
+133 |               seconds = int(schedule_value)
+134 |           except ValueError:
+135 | /             raise ValueError(
+136 | |                 f"Interval schedule_value must be integer seconds, got: '{schedule_value}'"
+137 | |             )
+    | |_____________^
+138 |           trigger = IntervalTrigger(seconds=seconds)
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\core\security.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | from datetime import UTC, datetime, timedelta
+ 9 | |
+10 | | import jwt
+11 | | import bcrypt
+12 | | from fastapi import HTTPException, Security, status
+13 | | from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
+14 | |
+15 | | from app.config import settings
+   | |_______________________________^
+16 |
+17 |   # Security schemes
+   |
+help: Organize imports
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend\app\core\security.py:63:9
+   |
+61 |           return payload
+62 |       except jwt.ExpiredSignatureError:
+63 | /         raise HTTPException(
+64 | |             status_code=status.HTTP_401_UNAUTHORIZED,
+65 | |             detail="Token has expired",
+66 | |         )
+   | |_________^
+67 |       except jwt.InvalidTokenError:
+68 |           raise HTTPException(
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend\app\core\security.py:68:9
+   |
+66 |           )
+67 |       except jwt.InvalidTokenError:
+68 | /         raise HTTPException(
+69 | |             status_code=status.HTTP_401_UNAUTHORIZED,
+70 | |             detail="Invalid token",
+71 | |         )
+   | |_________^
+   |
+
+B008 Do not perform function call `Security` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
+  --> backend\app\core\security.py:87:56
+   |
+86 | async def get_current_user(
+87 |     credentials: HTTPAuthorizationCredentials | None = Security(bearer_scheme),
+   |                                                        ^^^^^^^^^^^^^^^^^^^^^^^
+88 |     api_key: str | None = Security(api_key_header),
+89 | ) -> dict:
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\core\startup_checks.py:7:1
+   |
+ 5 |   Fails fast with clear error messages.
+ 6 |   """
+ 7 | / from __future__ import annotations
+ 8 | | import os
+ 9 | | import sys
+10 | |
+11 | | import structlog
+   | |________________^
+12 |
+13 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\core\stream_bus.py:15:1
+   |
+13 |   """
+14 |
+15 | / from __future__ import annotations
+16 | | import asyncio
+17 | | from collections.abc import AsyncGenerator
+18 | |
+19 | | import structlog
+   | |________________^
+20 |
+21 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\core\telemetry.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | | from opentelemetry import trace
+10 | | from opentelemetry.sdk.resources import Resource
+11 | | from opentelemetry.sdk.trace import TracerProvider
+12 | | from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
+13 | |
+14 | | from app.config import settings
+   | |_______________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+N814 Camelcase `UserRepository` imported as constant `_UR`
+  --> backend\app\main.py:56:48
+   |
+54 |     # Seed default admin if no users exist yet
+55 |     try:
+56 |         from app.repositories.user_repo import UserRepository as _UR
+   |                                                ^^^^^^^^^^^^^^^^^^^^^
+57 |         from app.workers.db_utils import worker_db_session
+58 |         async with worker_db_session() as _seed_db:
+   |
+
+S106 Possible hardcoded password assigned to argument: "password"
+  --> backend\app\main.py:63:21
+   |
+61 |                 await _repo.create(
+62 |                     email="admin@ofsec.io",
+63 |                     password="ChangeMe123!",
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^
+64 |                     display_name="Admin",
+65 |                     role="admin",
+   |
+
+E501 Line too long (127 > 120)
+  --> backend\app\main.py:87:121
+   |
+85 |     app = FastAPI(
+86 |         title="OfSec Vector Triangulum V3",
+87 |         description="Advanced Cybersecurity Operations Platform ΓÇö Recon, Scanning, Attack Simulation, AI/ML Analysis, Defense",
+   |                                                                                                                         ^^^^^^^
+88 |         version="3.0.0",
+89 |         docs_url="/docs" if settings.DEBUG else None,
+   |
+
+F401 `datetime.timezone` imported but unused
+  --> backend\app\models\__init__.py:8:37
+   |
+ 6 | """
+ 7 |
+ 8 | from datetime import UTC, datetime, timezone
+   |                                     ^^^^^^^^
+ 9 |
+10 | from sqlalchemy import (
+   |
+help: Remove unused import: `datetime.timezone`
+
+F401 `typing.Optional` imported but unused
+  --> backend\app\schemas\__init__.py:8:25
+   |
+ 7 | from datetime import datetime
+ 8 | from typing import Any, Optional
+   |                         ^^^^^^^^
+ 9 |
+10 | from pydantic import BaseModel, EmailStr, Field
+   |
+help: Remove unused import: `typing.Optional`
+
+S105 Possible hardcoded password assigned to: "token_type"
+  --> backend\app\schemas\__init__.py:45:23
+   |
+43 | class TokenResponse(BaseModel):
+44 |     access_token: str
+45 |     token_type: str = "bearer"
+   |                       ^^^^^^^^
+46 |     expires_in: int = 86400  # 24 hours
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ai\__init__.py:3:1
+   |
+ 1 |   """OfSec V3 ΓÇö AI/ML Services Package."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | | from app.services.ai.anomaly_detection import (
+ 5 | |     BehavioralAnomalyDetector,
+ 6 | |     LogAnomalyDetector,
+ 7 | |     NetworkAnomalyDetector,
+ 8 | | )
+ 9 | | from app.services.ai.llm_engine import (
+10 | |     AIReportGenerator,
+11 | |     EmbeddingSearch,
+12 | |     LLMIntegration,
+13 | | )
+14 | | from app.services.ai.nlp_intelligence import (
+15 | |     CVEAnalyzer,
+16 | |     DarkWebMonitor,
+17 | |     ThreatReportParser,
+18 | | )
+19 | | from app.services.ai.orchestrator import AIOrchestrator
+20 | | from app.services.ai.predictive_models import (
+21 | |     AttackPredictionEngine,
+22 | |     MLRiskScorer,
+23 | |     VulnerabilityForecaster,
+24 | | )
+25 | | from app.services.ai.self_learning import (
+26 | |     AdaptiveScanner,
+27 | |     FeatureEngineering,
+28 | |     FeedbackLoopManager,
+29 | |     ModelRetrainer,
+30 | | )
+   | |_^
+31 |
+32 |   __all__ = [
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ai\anomaly_detection.py:10:1
+   |
+ 8 |   """
+ 9 |
+10 | / from __future__ import annotations
+11 | | import statistics
+12 | | from collections import defaultdict, deque
+13 | | from datetime import UTC, datetime
+14 | |
+15 | | import structlog
+16 | |
+17 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+18 |
+19 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ai\llm_engine.py:8:1
+   |
+ 6 |   """
+ 7 |
+ 8 | / from __future__ import annotations
+ 9 | | import hashlib
+10 | | import json
+11 | | from datetime import UTC, datetime
+12 | |
+13 | | import httpx
+14 | | import structlog
+15 | |
+16 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+17 |
+18 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+W291 Trailing whitespace
+  --> backend\app\services\ai\llm_engine.py:45:103
+   |
+43 |     }
+44 |
+45 |     SECURITY_SYSTEM_PROMPT = """You are an expert cybersecurity analyst. Analyze the provided security 
+   |                                                                                                       ^
+46 | findings and give actionable, technical advice. Be specific about remediation steps, 
+47 | reference CWE/CVE IDs when applicable, and prioritize findings by risk. 
+   |
+help: Remove trailing whitespace
+
+W291 Trailing whitespace
+  --> backend\app\services\ai\llm_engine.py:46:85
+   |
+45 |     SECURITY_SYSTEM_PROMPT = """You are an expert cybersecurity analyst. Analyze the provided security 
+46 | findings and give actionable, technical advice. Be specific about remediation steps, 
+   |                                                                                     ^
+47 | reference CWE/CVE IDs when applicable, and prioritize findings by risk. 
+48 | Keep responses concise and professional."""
+   |
+help: Remove trailing whitespace
+
+W291 Trailing whitespace
+  --> backend\app\services\ai\llm_engine.py:47:72
+   |
+45 |     SECURITY_SYSTEM_PROMPT = """You are an expert cybersecurity analyst. Analyze the provided security 
+46 | findings and give actionable, technical advice. Be specific about remediation steps, 
+47 | reference CWE/CVE IDs when applicable, and prioritize findings by risk. 
+   |                                                                        ^
+48 | Keep responses concise and professional."""
+   |
+help: Remove trailing whitespace
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\ai\llm_engine.py:204:9
+    |
+202 |               if resp.status_code == 200:
+203 |                   return {"status": "exists"}
+204 | /         except Exception:
+205 | |             pass
+    | |________________^
+206 |
+207 |           try:
+    |
+
+S324 Probable use of insecure hash functions in `hashlib`: `md5`
+   --> backend\app\services\ai\llm_engine.py:221:20
+    |
+219 |         """Index a security finding with its embedding."""
+220 |         client = await self._get_client()
+221 |         point_id = hashlib.md5(json.dumps(finding, default=str).encode()).hexdigest()
+    |                    ^^^^^^^^^^^
+222 |
+223 |         try:
+    |
+
+F841 Local variable `resp` is assigned to but never used
+   --> backend\app\services\ai\llm_engine.py:224:13
+    |
+223 |         try:
+224 |             resp = await client.put(
+    |             ^^^^
+225 |                 f"/collections/{self._collection}/points",
+226 |                 json={
+    |
+help: Remove assignment to unused variable `resp`
+
+F841 Local variable `critical` is assigned to but never used
+   --> backend\app\services\ai\llm_engine.py:301:13
+    |
+299 |                 severity_counts[sev] = severity_counts.get(sev, 0) + 1
+300 |
+301 |             critical = severity_counts.get("critical", 0)
+    |             ^^^^^^^^
+302 |             high = severity_counts.get("high", 0)
+    |
+help: Remove assignment to unused variable `critical`
+
+F841 Local variable `high` is assigned to but never used
+   --> backend\app\services\ai\llm_engine.py:302:13
+    |
+301 |             critical = severity_counts.get("critical", 0)
+302 |             high = severity_counts.get("high", 0)
+    |             ^^^^
+303 |
+304 |             # Risk score
+    |
+help: Remove assignment to unused variable `high`
+
+E501 Line too long (142 > 120)
+   --> backend\app\services\ai\llm_engine.py:326:121
+    |
+324 | ΓÇª
+325 | ΓÇª
+326 | ΓÇªelse "High" if risk_score >= 60 else "Medium" if risk_score >= 30 else "Low",
+    |                                                         ^^^^^^^^^^^^^^^^^^^^^^
+327 | ΓÇª
+328 | ΓÇª
+    |
+
+E501 Line too long (138 > 120)
+   --> backend\app\services\ai\llm_engine.py:346:121
+    |
+345 | ΓÇª
+346 | ΓÇªtication: enforce complex passwords, enable MFA, remove default accounts"),
+    |                                                           ^^^^^^^^^^^^^^^^^^
+347 | ΓÇª, validate inputs, implement WAF rules for SQLi"),
+348 | ΓÇªencoding, sanitize user inputs"),
+    |
+
+E501 Line too long (122 > 120)
+   --> backend\app\services\ai\llm_engine.py:349:121
+    |
+347 |             "sql": ("critical", "Use parameterized queries/ORMs, validate inputs, implement WAF rules for SQLi"),
+348 |             "xss": ("high", "Implement CSP headers, use output encoding, sanitize user inputs"),
+349 |             "rce": ("critical", "Patch vulnerable components immediately, restrict command execution, sandbox processes"),
+    |                                                                                                                         ^^
+350 |             "ssl": ("high", "Upgrade to TLS 1.3, disable weak ciphers, enable HSTS with preload"),
+351 |             "header": ("medium", "Configure security headers: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy"),
+    |
+
+E501 Line too long (126 > 120)
+   --> backend\app\services\ai\llm_engine.py:351:121
+    |
+349 |             "rce": ("critical", "Patch vulnerable components immediately, restrict command execution, sandbox processes"),
+350 |             "ssl": ("high", "Upgrade to TLS 1.3, disable weak ciphers, enable HSTS with preload"),
+351 |             "header": ("medium", "Configure security headers: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy"),
+    |                                                                                                                         ^^^^^^
+352 |             "port": ("medium", "Close unnecessary ports, implement network segmentation, use firewalls"),
+353 |             "outdated": ("high", "Establish automated dependency update pipeline, subscribe to security advisories"),
+    |
+
+E501 Line too long (121 > 120)
+   --> backend\app\services\ai\llm_engine.py:354:121
+    |
+352 |             "port": ("medium", "Close unnecessary ports, implement network segmentation, use firewalls"),
+353 |             "outdated": ("high", "Establish automated dependency update pipeline, subscribe to security advisories"),
+354 |             "cloud": ("high", "Enable cloud security posture management, review IAM policies, enable bucket encryption"),
+    |                                                                                                                         ^
+355 |         }
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ai\nlp_intelligence.py:8:1
+   |
+ 6 |   """
+ 7 |
+ 8 | / from __future__ import annotations
+ 9 | | import re
+10 | | from collections import Counter
+11 | | from datetime import UTC, datetime
+12 | |
+13 | | import httpx
+14 | | import structlog
+15 | |
+16 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+17 |
+18 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (131 > 120)
+  --> backend\app\services\ai\nlp_intelligence.py:31:121
+   |
+29 |         "ipv4": r'\b(?:\d{1,3}\.){3}\d{1,3}\b',
+30 |         "ipv6": r'\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b',
+31 |         "domain": r'\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+(?:com|net|org|io|xyz|info|ru|cn|tk|ml|ga|cf|top|pw)\b',
+   |                                                                                                                         ^^^^^^^^^^^
+32 |         "url": r'https?://[^\s<>"\'{}|\\^`\[\]]+',
+33 |         "email": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ai\orchestrator.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | from datetime import UTC, datetime
+ 9 | |
+10 | | import structlog
+11 | |
+12 | | from app.core.telemetry import get_tracer
+13 | | from app.services.ai.anomaly_detection import (
+14 | |     BehavioralAnomalyDetector,
+15 | |     LogAnomalyDetector,
+16 | |     NetworkAnomalyDetector,
+17 | | )
+18 | | from app.services.ai.llm_engine import (
+19 | |     AIReportGenerator,
+20 | |     EmbeddingSearch,
+21 | |     LLMIntegration,
+22 | | )
+23 | | from app.services.ai.nlp_intelligence import (
+24 | |     CVEAnalyzer,
+25 | |     DarkWebMonitor,
+26 | |     ThreatReportParser,
+27 | | )
+28 | | from app.services.ai.predictive_models import (
+29 | |     AttackPredictionEngine,
+30 | |     MLRiskScorer,
+31 | |     VulnerabilityForecaster,
+32 | | )
+33 | | from app.services.ai.self_learning import (
+34 | |     AdaptiveScanner,
+35 | |     FeatureEngineering,
+36 | |     FeedbackLoopManager,
+37 | |     ModelRetrainer,
+38 | | )
+   | |_^
+39 |
+40 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ai\predictive_models.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import math
+ 9 | | import statistics
+10 | | from collections import defaultdict
+11 | | from datetime import UTC, datetime
+12 | |
+13 | | import structlog
+14 | |
+15 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+16 |
+17 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+F841 Local variable `severity` is assigned to but never used
+  --> backend\app\services\ai\predictive_models.py:77:13
+   |
+75 |         for finding in findings:
+76 |             f_type = finding.get("type", "").lower()
+77 |             severity = finding.get("severity", "").lower()
+   |             ^^^^^^^^
+78 |
+79 |             if "credential" in f_type or "default" in f_type:
+   |
+help: Remove assignment to unused variable `severity`
+
+B905 `zip()` without an explicit `strict=` parameter
+   --> backend\app\services\ai\predictive_models.py:136:69
+    |
+134 |             y_mean = statistics.mean(values)
+135 |
+136 |             numerator = sum((x - x_mean) * (y - y_mean) for x, y in zip(x_values, values))
+    |                                                                     ^^^^^^^^^^^^^^^^^^^^^
+137 |             denominator = sum((x - x_mean) ** 2 for x in x_values)
+    |
+help: Add explicit value for parameter `strict=`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ai\self_learning.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import hashlib
+ 9 | | import json
+10 | | from collections import defaultdict
+11 | | from datetime import UTC, datetime
+12 | |
+13 | | import structlog
+14 | |
+15 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+16 |
+17 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+S324 Probable use of insecure hash functions in `hashlib`: `md5`
+  --> backend\app\services\ai\self_learning.py:66:28
+   |
+65 |         return {
+66 |             "feedback_id": hashlib.md5(json.dumps(feedback, default=str).encode()).hexdigest()[:12],
+   |                            ^^^^^^^^^^^
+67 |             "status": "accepted",
+68 |             "current_accuracy": round(accuracy, 3),
+   |
+
+F841 Local variable `previous_findings` is assigned to but never used
+   --> backend\app\services\ai\self_learning.py:117:9
+    |
+115 |         """Recommend which modules to run based on target profile and effectiveness."""
+116 |         profile = self._target_profiles.get(target, {})
+117 |         previous_findings = profile.get("finding_types", [])
+    |         ^^^^^^^^^^^^^^^^^
+118 |
+119 |         recommendations = []
+    |
+help: Remove assignment to unused variable `previous_findings`
+
+E501 Line too long (127 > 120)
+   --> backend\app\services\ai\self_learning.py:257:121
+    |
+255 |             "exposed_ports": len([s for s in services if s.get("port", 0) < 1024]),
+256 |             "has_ssh": 1 if any(s.get("service") == "ssh" for s in services) else 0,
+257 |             "has_database": 1 if any(s.get("service") in ("mysql", "postgresql", "mongodb", "redis") for s in services) else 0,
+    |                                                                                                                         ^^^^^^^
+258 |             "has_web": 1 if any(s.get("service") in ("http", "https") for s in services) else 0,
+259 |             "attack_surface_size": len(services) * 2,  # Weighted
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> backend\app\services\ai_engine\__init__.py:1:1
+  |
+1 | from __future__ import annotations
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | """OfSec V3 ΓÇö AI Engine services package."""
+  |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\attack\__init__.py:6:1
+   |
+ 4 |   """
+ 5 |
+ 6 | / from __future__ import annotations
+ 7 | | from app.services.attack.c2_framework import (
+ 8 | |     AttackReportGenerator,
+ 9 | |     C2Framework,
+10 | |     MITREAttackMapper,
+11 | |     WirelessAttackModule,
+12 | | )
+13 | | from app.services.attack.exploit_engine import BruteForceEngine, ExploitFramework
+14 | | from app.services.attack.orchestrator import AttackOrchestrator
+15 | | from app.services.attack.payload_generator import PayloadGenerator
+16 | | from app.services.attack.phishing_engine import PhishingSimulator, SocialEngineeringToolkit
+17 | | from app.services.attack.post_exploitation import (
+18 | |     DataExfiltrationTester,
+19 | |     LateralMovementSimulator,
+20 | |     PrivilegeEscalationScanner,
+21 | | )
+   | |_^
+22 |
+23 |   __all__ = [
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\attack\c2_framework.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import secrets
+ 9 | | from datetime import UTC, datetime
+10 | |
+11 | | import structlog
+12 | |
+13 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+14 |
+15 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+S104 Possible binding to all interfaces
+  --> backend\app\services\attack\c2_framework.py:40:21
+   |
+38 |         name: str,
+39 |         protocol: str = "https",
+40 |         host: str = "0.0.0.0",
+   |                     ^^^^^^^^^
+41 |         port: int = 443,
+42 |     ) -> dict:
+   |
+
+E501 Line too long (139 > 120)
+   --> backend\app\services\attack\c2_framework.py:290:121
+    |
+288 | ΓÇª
+289 | ΓÇª
+290 | ΓÇªse "High" if risk_score >= 30 else "Medium" if risk_score >= 15 else "Low",
+    |                                                          ^^^^^^^^^^^^^^^^^^^
+291 | ΓÇª
+292 | ΓÇª
+    |
+
+E501 Line too long (124 > 120)
+   --> backend\app\services\attack\c2_framework.py:309:121
+    |
+307 |             recs.append({"priority": "critical", "recommendation": "Enforce strong password policy and MFA"})
+308 |         if any("header" in t for t in finding_types):
+309 |             recs.append({"priority": "medium", "recommendation": "Configure security headers (HSTS, CSP, X-Frame-Options)"})
+    |                                                                                                                         ^^^^
+310 |
+311 |         return recs
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\attack\exploit_engine.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import asyncio
+ 9 | | import itertools
+10 | |
+11 | | import httpx
+12 | | import structlog
+13 | |
+14 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\attack\exploit_engine.py:200:21
+    |
+198 |                                   "status": resp.status_code,
+199 |                               })
+200 | /                     except Exception:
+201 | |                         pass
+    | |____________________________^
+202 |
+203 |               pairs = list(itertools.product(users[:10], passes[:10]))[:max_attempts]
+    |
+
+S107 Possible hardcoded password assigned to function default: "password_field"
+   --> backend\app\services\attack\exploit_engine.py:224:31
+    |
+222 |         url: str,
+223 |         username_field: str = "username",
+224 |         password_field: str = "password",
+    |                               ^^^^^^^^^^
+225 |         success_indicator: str = "dashboard",
+226 |         failure_indicator: str = "invalid",
+    |
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\attack\exploit_engine.py:263:21
+    |
+261 |                               break
+262 |                           await asyncio.sleep(0.3)  # Rate limiting
+263 | /                     except Exception:
+264 | |                         continue
+    | |________________________________^
+265 |
+266 |               return {
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\attack\orchestrator.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import asyncio
+ 9 | | from datetime import UTC, datetime
+10 | |
+11 | | import structlog
+12 | |
+13 | | from app.core.telemetry import get_tracer
+14 | | from app.services.attack.c2_framework import (
+15 | |     AttackReportGenerator,
+16 | |     C2Framework,
+17 | |     MITREAttackMapper,
+18 | |     WirelessAttackModule,
+19 | | )
+20 | | from app.services.attack.exploit_engine import BruteForceEngine, ExploitFramework
+21 | | from app.services.attack.payload_generator import PayloadGenerator
+22 | | from app.services.attack.phishing_engine import PhishingSimulator, SocialEngineeringToolkit
+23 | | from app.services.attack.post_exploitation import (
+24 | |     DataExfiltrationTester,
+25 | |     LateralMovementSimulator,
+26 | |     PrivilegeEscalationScanner,
+27 | | )
+   | |_^
+28 |
+29 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\attack\payload_generator.py:20:1
+   |
+18 |   """
+19 |
+20 | / from __future__ import annotations
+21 | | import base64
+22 | | from urllib.parse import quote
+23 | |
+24 | | import structlog
+25 | |
+26 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+27 |
+28 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+F841 Local variable `cfg` is assigned to but never used
+   --> backend\app\services\attack\payload_generator.py:283:13
+    |
+281 |         """Generate a comprehensive payload set."""
+282 |         with tracer.start_as_current_span("payload_generation"):
+283 |             cfg = config or {}
+    |             ^^^
+284 |             result = {
+285 |                 "xss": {
+    |
+help: Remove assignment to unused variable `cfg`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\attack\phishing_engine.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import hashlib
+ 9 | | import secrets
+10 | | from datetime import UTC, datetime
+11 | |
+12 | | import structlog
+13 | |
+14 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+S324 Probable use of insecure hash functions in `hashlib`: `md5`
+   --> backend\app\services\attack\phishing_engine.py:123:31
+    |
+122 |             for target in targets:
+123 |                 tracking_id = hashlib.md5(
+    |                               ^^^^^^^^^^^
+124 |                     f"{campaign_id}:{target.get('email', '')}".encode()
+125 |                 ).hexdigest()[:12]
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\attack\post_exploitation.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import asyncio
+ 9 | |
+10 | | import httpx
+11 | | import structlog
+12 | |
+13 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+14 |
+15 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (128 > 120)
+  --> backend\app\services\attack\post_exploitation.py:77:121
+   |
+75 |         "unquoted_service_paths": {
+76 |             "description": "Service paths without quotes allow DLL hijacking",
+77 |             "command": 'wmic service get name,displayname,pathname,startmode | findstr /i "auto" | findstr /i /v "C:\\Windows"',
+   |                                                                                                                         ^^^^^^^^
+78 |             "severity": "high",
+79 |         },
+   |
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\attack\post_exploitation.py:215:17
+    |
+213 |                       if resp.status_code in (200, 401, 403):
+214 |                           return {"target": target, "port": port, "winrm_accessible": True}
+215 | /                 except Exception:
+216 | |                     continue
+    | |____________________________^
+217 |           return {"target": target, "winrm_accessible": False}
+    |
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\attack\post_exploitation.py:234:13
+    |
+232 |                   await writer.wait_closed()
+233 |                   ssh_accessible = True
+234 | /             except Exception:
+235 | |                 pass
+    | |____________________^
+236 |
+237 |               vectors: list[dict] = []
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\defense\__init__.py:3:1
+   |
+ 1 |   """OfSec V3 ΓÇö Defense Services Package."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | | from app.services.defense.incident_response import (
+ 5 | |     AlertTriageEngine,
+ 6 | |     EvidenceCollector,
+ 7 | |     PlaybookEngine,
+ 8 | | )
+ 9 | | from app.services.defense.operations import (
+10 | |     ComplianceDriftMonitor,
+11 | |     FirewallRuleManager,
+12 | |     HealthMonitor,
+13 | |     PatchManager,
+14 | |     QuarantineManager,
+15 | |     SLATracker,
+16 | | )
+17 | | from app.services.defense.orchestrator import DefenseOrchestrator
+18 | | from app.services.defense.siem_integration import (
+19 | |     CorrelationEngine,
+20 | |     LogAggregator,
+21 | |     SecurityDashboardData,
+22 | | )
+23 | | from app.services.defense.threat_hunting import (
+24 | |     BehavioralHunter,
+25 | |     IOCSweepEngine,
+26 | |     ThreatHuntingEngine,
+27 | | )
+   | |_^
+28 |
+29 |   __all__ = [
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\defense\incident_response.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import secrets
+ 9 | | from collections import defaultdict
+10 | | from datetime import UTC, datetime
+11 | |
+12 | | import structlog
+13 | |
+14 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (131 > 120)
+  --> backend\app\services\defense\incident_response.py:46:121
+   |
+44 |                 {"order": 1, "action": "assess_scope", "description": "Determine what data was accessed/exfiltrated"},
+45 |                 {"order": 2, "action": "contain_breach", "description": "Revoke compromised credentials, block access"},
+46 |                 {"order": 3, "action": "preserve_evidence", "description": "Preserve logs, network captures, and forensic images"},
+   |                                                                                                                         ^^^^^^^^^^^
+47 |                 {"order": 4, "action": "notify_stakeholders", "description": "Notify legal, management, and affected users"},
+48 |                 {"order": 5, "action": "investigate_root_cause", "description": "Identify entry point and attack vector"},
+   |
+
+E501 Line too long (125 > 120)
+  --> backend\app\services\defense\incident_response.py:47:121
+   |
+45 |                 {"order": 2, "action": "contain_breach", "description": "Revoke compromised credentials, block access"},
+46 |                 {"order": 3, "action": "preserve_evidence", "description": "Preserve logs, network captures, and forensic images"},
+47 |                 {"order": 4, "action": "notify_stakeholders", "description": "Notify legal, management, and affected users"},
+   |                                                                                                                         ^^^^^
+48 |                 {"order": 5, "action": "investigate_root_cause", "description": "Identify entry point and attack vector"},
+49 |                 {"order": 6, "action": "remediate_vulnerabilities", "description": "Patch exploited vulnerabilities"},
+   |
+
+E501 Line too long (122 > 120)
+  --> backend\app\services\defense\incident_response.py:48:121
+   |
+46 |                 {"order": 3, "action": "preserve_evidence", "description": "Preserve logs, network captures, and forensic images"},
+47 |                 {"order": 4, "action": "notify_stakeholders", "description": "Notify legal, management, and affected users"},
+48 |                 {"order": 5, "action": "investigate_root_cause", "description": "Identify entry point and attack vector"},
+   |                                                                                                                         ^^
+49 |                 {"order": 6, "action": "remediate_vulnerabilities", "description": "Patch exploited vulnerabilities"},
+50 |                 {"order": 7, "action": "regulatory_notification", "description": "File regulatory notifications (GDPR, CCPA, etc.)"},
+   |
+
+E501 Line too long (133 > 120)
+  --> backend\app\services\defense\incident_response.py:50:121
+   |
+48 |                 {"order": 5, "action": "investigate_root_cause", "description": "Identify entry point and attack vector"},
+49 |                 {"order": 6, "action": "remediate_vulnerabilities", "description": "Patch exploited vulnerabilities"},
+50 |                 {"order": 7, "action": "regulatory_notification", "description": "File regulatory notifications (GDPR, CCPA, etc.)"},
+   |                                                                                                                         ^^^^^^^^^^^^^
+51 |                 {"order": 8, "action": "post_incident_review", "description": "Conduct post-incident review and update policies"},
+52 |             ],
+   |
+
+E501 Line too long (130 > 120)
+  --> backend\app\services\defense\incident_response.py:51:121
+   |
+49 |                 {"order": 6, "action": "remediate_vulnerabilities", "description": "Patch exploited vulnerabilities"},
+50 |                 {"order": 7, "action": "regulatory_notification", "description": "File regulatory notifications (GDPR, CCPA, etc.)"},
+51 |                 {"order": 8, "action": "post_incident_review", "description": "Conduct post-incident review and update policies"},
+   |                                                                                                                         ^^^^^^^^^^
+52 |             ],
+53 |             "estimated_time_minutes": 480,
+   |
+
+E501 Line too long (122 > 120)
+  --> backend\app\services\defense\incident_response.py:59:121
+   |
+57 |             "severity": "high",
+58 |             "steps": [
+59 |                 {"order": 1, "action": "identify_recipients", "description": "Identify all recipients of phishing email"},
+   |                                                                                                                         ^^
+60 |                 {"order": 2, "action": "block_sender", "description": "Block sender domain at email gateway"},
+61 |                 {"order": 3, "action": "remove_emails", "description": "Purge phishing emails from all mailboxes"},
+   |
+
+E501 Line too long (122 > 120)
+  --> backend\app\services\defense\incident_response.py:62:121
+   |
+60 |                 {"order": 2, "action": "block_sender", "description": "Block sender domain at email gateway"},
+61 |                 {"order": 3, "action": "remove_emails", "description": "Purge phishing emails from all mailboxes"},
+62 |                 {"order": 4, "action": "check_clicks", "description": "Identify users who clicked/submitted credentials"},
+   |                                                                                                                         ^^
+63 |                 {"order": 5, "action": "reset_credentials", "description": "Force password reset for affected accounts"},
+64 |                 {"order": 6, "action": "scan_endpoints", "description": "Scan endpoints of users who clicked for malware"},
+   |
+
+E501 Line too long (121 > 120)
+  --> backend\app\services\defense\incident_response.py:63:121
+   |
+61 |                 {"order": 3, "action": "remove_emails", "description": "Purge phishing emails from all mailboxes"},
+62 |                 {"order": 4, "action": "check_clicks", "description": "Identify users who clicked/submitted credentials"},
+63 |                 {"order": 5, "action": "reset_credentials", "description": "Force password reset for affected accounts"},
+   |                                                                                                                         ^
+64 |                 {"order": 6, "action": "scan_endpoints", "description": "Scan endpoints of users who clicked for malware"},
+65 |                 {"order": 7, "action": "user_notification", "description": "Notify users and provide awareness training"},
+   |
+
+E501 Line too long (123 > 120)
+  --> backend\app\services\defense\incident_response.py:64:121
+   |
+62 |                 {"order": 4, "action": "check_clicks", "description": "Identify users who clicked/submitted credentials"},
+63 |                 {"order": 5, "action": "reset_credentials", "description": "Force password reset for affected accounts"},
+64 |                 {"order": 6, "action": "scan_endpoints", "description": "Scan endpoints of users who clicked for malware"},
+   |                                                                                                                         ^^^
+65 |                 {"order": 7, "action": "user_notification", "description": "Notify users and provide awareness training"},
+66 |             ],
+   |
+
+E501 Line too long (122 > 120)
+  --> backend\app\services\defense\incident_response.py:65:121
+   |
+63 |                 {"order": 5, "action": "reset_credentials", "description": "Force password reset for affected accounts"},
+64 |                 {"order": 6, "action": "scan_endpoints", "description": "Scan endpoints of users who clicked for malware"},
+65 |                 {"order": 7, "action": "user_notification", "description": "Notify users and provide awareness training"},
+   |                                                                                                                         ^^
+66 |             ],
+67 |             "estimated_time_minutes": 60,
+   |
+
+E501 Line too long (136 > 120)
+  --> backend\app\services\defense\incident_response.py:73:121
+   |
+71 | ΓÇª
+72 | ΓÇª
+73 | ΓÇª"description": "Enable DDoS mitigation service (Cloudflare, AWS Shield)"},
+   |                                                            ^^^^^^^^^^^^^^^^
+74 | ΓÇªiption": "Apply aggressive rate limiting rules"},
+75 | ΓÇªption": "Block traffic from attack source regions"},
+   |
+
+E501 Line too long (126 > 120)
+  --> backend\app\services\defense\incident_response.py:78:121
+   |
+76 |                 {"order": 4, "action": "scale_infrastructure", "description": "Auto-scale backend infrastructure"},
+77 |                 {"order": 5, "action": "monitor_recovery", "description": "Monitor service recovery and latency"},
+78 |                 {"order": 6, "action": "post_attack_analysis", "description": "Analyze attack vectors for future prevention"},
+   |                                                                                                                         ^^^^^^
+79 |             ],
+80 |             "estimated_time_minutes": 30,
+   |
+
+E501 Line too long (128 > 120)
+  --> backend\app\services\defense\incident_response.py:87:121
+   |
+85 |             "steps": [
+86 |                 {"order": 1, "action": "isolate_network", "description": "Immediately disconnect affected systems"},
+87 |                 {"order": 2, "action": "assess_encryption", "description": "Determine ransomware variant and encryption scope"},
+   |                                                                                                                         ^^^^^^^^
+88 |                 {"order": 3, "action": "check_backups", "description": "Verify backup integrity and recency"},
+89 |                 {"order": 4, "action": "report_law_enforcement", "description": "Report to FBI IC3 / local cyber crime unit"},
+   |
+
+E501 Line too long (126 > 120)
+  --> backend\app\services\defense\incident_response.py:89:121
+   |
+87 |                 {"order": 2, "action": "assess_encryption", "description": "Determine ransomware variant and encryption scope"},
+88 |                 {"order": 3, "action": "check_backups", "description": "Verify backup integrity and recency"},
+89 |                 {"order": 4, "action": "report_law_enforcement", "description": "Report to FBI IC3 / local cyber crime unit"},
+   |                                                                                                                         ^^^^^^
+90 |                 {"order": 5, "action": "attempt_decryption", "description": "Check for available decryptors (NoMoreRansom)"},
+91 |                 {"order": 6, "action": "restore_systems", "description": "Restore from clean backups"},
+   |
+
+E501 Line too long (125 > 120)
+  --> backend\app\services\defense\incident_response.py:90:121
+   |
+88 |                 {"order": 3, "action": "check_backups", "description": "Verify backup integrity and recency"},
+89 |                 {"order": 4, "action": "report_law_enforcement", "description": "Report to FBI IC3 / local cyber crime unit"},
+90 |                 {"order": 5, "action": "attempt_decryption", "description": "Check for available decryptors (NoMoreRansom)"},
+   |                                                                                                                         ^^^^^
+91 |                 {"order": 6, "action": "restore_systems", "description": "Restore from clean backups"},
+92 |                 {"order": 7, "action": "harden_defenses", "description": "Patch entry vector, enhance endpoint protection"},
+   |
+
+E501 Line too long (124 > 120)
+  --> backend\app\services\defense\incident_response.py:92:121
+   |
+90 |                 {"order": 5, "action": "attempt_decryption", "description": "Check for available decryptors (NoMoreRansom)"},
+91 |                 {"order": 6, "action": "restore_systems", "description": "Restore from clean backups"},
+92 |                 {"order": 7, "action": "harden_defenses", "description": "Patch entry vector, enhance endpoint protection"},
+   |                                                                                                                         ^^^^
+93 |             ],
+94 |             "estimated_time_minutes": 240,
+   |
+
+E501 Line too long (121 > 120)
+   --> backend\app\services\defense\incident_response.py:196:121
+    |
+194 |                 **alert,
+195 |                 "priority_score": round(priority, 1),
+196 |                 "priority_level": "P1" if priority >= 10 else "P2" if priority >= 7 else "P3" if priority >= 4 else "P4",
+    |                                                                                                                         ^
+197 |                 "similar_alerts": similar_count,
+198 |                 "triaged_at": datetime.now(UTC).isoformat(),
+    |
+
+SIM110 Use `return all(alert.get(key) == value for key, value in rule.get("conditions", {}).items())` instead of `for` loop
+   --> backend\app\services\defense\incident_response.py:210:9
+    |
+209 |       def _matches_rule(self, alert: dict, rule: dict) -> bool:
+210 | /         for key, value in rule.get("conditions", {}).items():
+211 | |             if alert.get(key) != value:
+212 | |                 return False
+213 | |         return True
+    | |___________________^
+214 |
+215 |       def get_queue(self, limit: int = 50) -> list[dict]:
+    |
+help: Replace with `return all(alert.get(key) == value for key, value in rule.get("conditions", {}).items())`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\defense\operations.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import asyncio
+ 9 | | import secrets
+10 | | from collections import defaultdict
+11 | | from datetime import UTC, datetime
+12 | |
+13 | | import httpx
+14 | | import structlog
+15 | |
+16 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+17 |
+18 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (125 > 120)
+  --> backend\app\services\defense\operations.py:76:121
+   |
+74 |     def generate_nftables(self) -> list[str]:
+75 |         """Generate nftables commands."""
+76 |         commands = ["nft add table inet filter", "nft add chain inet filter input { type filter hook input priority 0 \\; }"]
+   |                                                                                                                         ^^^^^
+77 |         for rule in self._rules:
+78 |             if rule["status"] != "active":
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\defense\orchestrator.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | from datetime import UTC, datetime
+ 9 | |
+10 | | import structlog
+11 | |
+12 | | from app.core.telemetry import get_tracer
+13 | | from app.services.defense.incident_response import (
+14 | |     AlertTriageEngine,
+15 | |     EvidenceCollector,
+16 | |     PlaybookEngine,
+17 | | )
+18 | | from app.services.defense.operations import (
+19 | |     ComplianceDriftMonitor,
+20 | |     FirewallRuleManager,
+21 | |     HealthMonitor,
+22 | |     PatchManager,
+23 | |     QuarantineManager,
+24 | |     SLATracker,
+25 | | )
+26 | | from app.services.defense.siem_integration import (
+27 | |     CorrelationEngine,
+28 | |     LogAggregator,
+29 | |     SecurityDashboardData,
+30 | | )
+31 | | from app.services.defense.threat_hunting import (
+32 | |     BehavioralHunter,
+33 | |     IOCSweepEngine,
+34 | |     ThreatHuntingEngine,
+35 | | )
+   | |_^
+36 |
+37 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\defense\siem_integration.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import re
+ 9 | | from collections import defaultdict
+10 | | from datetime import UTC, datetime
+11 | |
+12 | | import structlog
+13 | |
+14 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (139 > 120)
+  --> backend\app\services\defense\siem_integration.py:26:121
+   |
+25 | ΓÇª
+26 | ΓÇªP<host>\S+)\s+(?P<process>\S+?)(?:\[(?P<pid>\d+)\])?\s*:\s*(?P<message>.*)",
+   |                                                           ^^^^^^^^^^^^^^^^^^^
+27 | ΓÇª^\]]+)\]\s+"(?P<method>\S+)\s+(?P<path>\S+)\s+\S+"\s+(?P<status>\d+)\s+(?P<bytes>\d+)',
+28 | ΓÇª
+   |
+
+E501 Line too long (150 > 120)
+  --> backend\app\services\defense\siem_integration.py:27:121
+   |
+25 | ΓÇª
+26 | ΓÇª>\S+)\s+(?P<process>\S+?)(?:\[(?P<pid>\d+)\])?\s*:\s*(?P<message>.*)",
+27 | ΓÇª\]\s+"(?P<method>\S+)\s+(?P<path>\S+)\s+\S+"\s+(?P<status>\d+)\s+(?P<bytes>\d+)',
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+28 | ΓÇª
+29 | ΓÇª
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\defense\threat_hunting.py:8:1
+   |
+ 6 |   """
+ 7 |
+ 8 | / from __future__ import annotations
+ 9 | | from collections import defaultdict
+10 | | from datetime import UTC, datetime
+11 | |
+12 | | import httpx
+13 | | import structlog
+14 | |
+15 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+16 |
+17 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (122 > 120)
+  --> backend\app\services\defense\threat_hunting.py:29:121
+   |
+27 |         "h001_apt_persistence": {
+28 |             "name": "APT Persistence Mechanisms",
+29 |             "hypothesis": "Adversaries have established persistence via scheduled tasks, registry keys, or startup items",
+   |                                                                                                                         ^^
+30 |             "data_sources": ["process_logs", "registry_changes", "scheduled_tasks"],
+31 |             "indicators": [
+   |
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\defense\threat_hunting.py:184:13
+    |
+182 |                   if resp.status_code == 200:
+183 |                       results.append({"feed": "AbuseIPDB", "data": resp.json()})
+184 | /             except Exception:
+185 | |                 pass
+    | |____________________^
+186 |
+187 |               # Check VirusTotal (would need API key)
+    |
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\defense\threat_hunting.py:195:13
+    |
+193 |                   if resp.status_code == 200:
+194 |                       results.append({"feed": "VirusTotal", "data": resp.json()})
+195 | /             except Exception:
+196 | |                 pass
+    | |____________________^
+197 |
+198 |               return {"ioc": ioc_value, "feeds_checked": 2, "results": results}
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> backend\app\services\operations\__init__.py:1:1
+  |
+1 | from __future__ import annotations
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | """OfSec V3 ΓÇö Operations services package."""
+  |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> backend\app\services\ops\__init__.py:3:1
+  |
+1 |   """OfSec V3 ΓÇö Operations Services Package."""
+2 |
+3 | / from __future__ import annotations
+4 | | from app.services.ops.dashboard import DashboardAnalytics, NotificationSystem, ReportGenerator
+5 | | from app.services.ops.orchestrator import OpsOrchestrator
+6 | | from app.services.ops.scheduler import AssetManager, AuditLogger, JobScheduler, TeamManager
+7 | | from app.services.ops.security import APIKeyManager, PlatformConfig, RateLimiter
+  | |________________________________________________________________________________^
+8 |
+9 |   __all__ = [
+  |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ops\dashboard.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import secrets
+ 9 | | from collections import defaultdict
+10 | | from datetime import UTC, datetime
+11 | |
+12 | | import structlog
+13 | |
+14 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (124 > 120)
+   --> backend\app\services\ops\dashboard.py:149:121
+    |
+147 | ΓÇª     sections = []
+148 | ΓÇª     builders = {
+149 | ΓÇª         "overview": lambda: {"title": "Overview", "content": f"Security assessment of {data.get('target', 'target')}."},
+    |                                                                                                                       ^^^^
+150 | ΓÇª         "risk_score": lambda: {"title": "Risk Score", "content": {"score": min(sum({"critical": 10, "high": 7, "medium": 4, "low": ΓÇª
+151 | ΓÇª         "critical_findings": lambda: {"title": "Critical Findings", "content": [f for f in findings if f.get("severity") == "criticΓÇª
+    |
+
+E501 Line too long (222 > 120)
+   --> backend\app\services\ops\dashboard.py:150:121
+    |
+148 | ΓÇª
+149 | ΓÇªet', 'target')}."},
+150 | ΓÇªhigh": 7, "medium": 4, "low": 1}.get(f.get("severity", "info"), 0) for f in findings), 100), "breakdown": severity}},
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+151 | ΓÇªf f.get("severity") == "critical"][:10]},
+152 | ΓÇª
+    |
+
+E501 Line too long (146 > 120)
+   --> backend\app\services\ops\dashboard.py:151:121
+    |
+149 | ΓÇªSecurity assessment of {data.get('target', 'target')}."},
+150 | ΓÇª: {"score": min(sum({"critical": 10, "high": 7, "medium": 4, "low": 1}.get(f.get("severity", "info"), 0) for f in findings), 100), "ΓÇª
+151 | ΓÇªgs", "content": [f for f in findings if f.get("severity") == "critical"][:10]},
+    |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+152 | ΓÇª: findings[:50]},
+153 | ΓÇª "content": self._gen_recommendations(findings)},
+    |
+
+E501 Line too long (121 > 120)
+   --> backend\app\services\ops\dashboard.py:159:121
+    |
+157 |             "severity_breakdown": lambda: {"title": "Severity Breakdown", "content": severity},
+158 |             "scope": lambda: {"title": "Scope", "content": f"Target: {data.get('target', '')}"},
+159 |             "attack_narrative": lambda: {"title": "Attack Narrative", "content": "Detailed attack chain documentation."},
+    |                                                                                                                         ^
+160 |             "framework": lambda: {"title": "Framework", "content": "Assessed against OWASP Top 10 / NIST CSF"},
+161 |             "controls": lambda: {"title": "Controls Assessment", "content": "Controls evaluation results."},
+    |
+
+E501 Line too long (141 > 120)
+   --> backend\app\services\ops\dashboard.py:162:121
+    |
+160 | ΓÇª: "Assessed against OWASP Top 10 / NIST CSF"},
+161 | ΓÇª"content": "Controls evaluation results."},
+162 | ΓÇª": [f for f in findings if f.get("severity") in ("critical", "high")][:10]},
+    |                                                         ^^^^^^^^^^^^^^^^^^^^^
+163 | ΓÇªan", "content": self._gen_recommendations(findings)},
+164 | ΓÇª "content": "Comparison with previous assessments."},
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend\app\services\ops\dashboard.py:176:27
+    |
+174 |         for f in findings:
+175 |             ft = f.get("type", "").lower()
+176 |             if "sql" in ft: recs.add("Use parameterized queries")
+    |                           ^
+177 |             elif "xss" in ft: recs.add("Implement CSP and output encoding")
+178 |             elif "credential" in ft: recs.add("Enforce MFA and strong passwords")
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend\app\services\ops\dashboard.py:177:29
+    |
+175 |             ft = f.get("type", "").lower()
+176 |             if "sql" in ft: recs.add("Use parameterized queries")
+177 |             elif "xss" in ft: recs.add("Implement CSP and output encoding")
+    |                             ^
+178 |             elif "credential" in ft: recs.add("Enforce MFA and strong passwords")
+179 |             elif "ssl" in ft: recs.add("Upgrade to TLS 1.3")
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend\app\services\ops\dashboard.py:178:36
+    |
+176 |             if "sql" in ft: recs.add("Use parameterized queries")
+177 |             elif "xss" in ft: recs.add("Implement CSP and output encoding")
+178 |             elif "credential" in ft: recs.add("Enforce MFA and strong passwords")
+    |                                    ^
+179 |             elif "ssl" in ft: recs.add("Upgrade to TLS 1.3")
+180 |             elif "header" in ft: recs.add("Configure security headers")
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend\app\services\ops\dashboard.py:179:29
+    |
+177 |             elif "xss" in ft: recs.add("Implement CSP and output encoding")
+178 |             elif "credential" in ft: recs.add("Enforce MFA and strong passwords")
+179 |             elif "ssl" in ft: recs.add("Upgrade to TLS 1.3")
+    |                             ^
+180 |             elif "header" in ft: recs.add("Configure security headers")
+181 |         return [{"recommendation": r} for r in list(recs)[:10]]
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend\app\services\ops\dashboard.py:180:32
+    |
+178 |             elif "credential" in ft: recs.add("Enforce MFA and strong passwords")
+179 |             elif "ssl" in ft: recs.add("Upgrade to TLS 1.3")
+180 |             elif "header" in ft: recs.add("Configure security headers")
+    |                                ^
+181 |         return [{"recommendation": r} for r in list(recs)[:10]]
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ops\orchestrator.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | from datetime import UTC, datetime
+ 9 | |
+10 | | import structlog
+11 | |
+12 | | from app.core.telemetry import get_tracer
+13 | | from app.services.ops.dashboard import DashboardAnalytics, NotificationSystem, ReportGenerator
+14 | | from app.services.ops.scheduler import AssetManager, AuditLogger, JobScheduler, TeamManager
+15 | | from app.services.ops.security import APIKeyManager, PlatformConfig, RateLimiter
+   | |________________________________________________________________________________^
+16 |
+17 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ops\scheduler.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import secrets
+ 9 | | from collections import defaultdict
+10 | | from datetime import UTC, datetime
+11 | |
+12 | | import structlog
+13 | |
+14 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\ops\security.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import hashlib
+ 9 | | import secrets
+10 | | import time
+11 | | from datetime import UTC, datetime
+12 | |
+13 | | import structlog
+14 | |
+15 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+16 |
+17 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (127 > 120)
+  --> backend\app\services\ops\security.py:53:121
+   |
+51 |             return {"allowed": True, "remaining": int(bucket["tokens"])}
+52 |         else:
+53 |             return {"allowed": False, "remaining": 0, "retry_after_seconds": round((1 - bucket["tokens"]) * 60 / self._rpm, 1)}
+   |                                                                                                                         ^^^^^^^
+54 |
+55 |     def get_stats(self) -> dict:
+   |
+
+B007 Loop control variable `k_hash` not used within loop body
+   --> backend\app\services\ops\security.py:151:13
+    |
+150 |     def revoke_key(self, key_id: str) -> dict:
+151 |         for k_hash, entry in self._keys.items():
+    |             ^^^^^^
+152 |             if entry["id"] == key_id:
+153 |                 entry["status"] = "revoked"
+    |
+help: Rename unused `k_hash` to `_k_hash`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\__init__.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | from app.services.recon.advanced_modules import (
+ 9 | |     CloudAssetDiscovery,
+10 | |     PortScanner,
+11 | |     SubdomainTakeoverChecker,
+12 | |     TechFingerprinter,
+13 | | )
+14 | | from app.services.recon.cert_transparency import CertTransparencyMonitor
+15 | | from app.services.recon.domain_blacklist import DomainBlacklistAuditor
+16 | | from app.services.recon.orchestrator import ReconOrchestrator
+17 | | from app.services.recon.osint_feed import OSINTFeedIntegrator
+18 | | from app.services.recon.passive_dns import PassiveDNSHarvester
+19 | | from app.services.recon.recon_report import ReconReportGenerator
+20 | | from app.services.recon.search_engine import SearchEngineRecon
+21 | | from app.services.recon.social_mining import SocialMediaMiner
+22 | | from app.services.recon.web_archive import WebArchiveScraper
+23 | | from app.services.recon.whois_correlation import WHOISCorrelator
+   | |________________________________________________________________^
+24 |
+25 |   __all__ = [
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\advanced_modules.py:12:1
+   |
+12 | / from __future__ import annotations
+13 | | import httpx
+14 | | import structlog
+15 | |
+16 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+17 |
+18 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (126 > 120)
+  --> backend\app\services\recon\advanced_modules.py:96:121
+   |
+94 |                         for sig, tech in signatures.items():
+95 |                             if sig == "*" or sig.lower() in header_val.lower():
+96 |                                 if header_name in ("x-frame-options", "strict-transport-security", "content-security-policy"):
+   |                                                                                                                         ^^^^^^
+97 |                                     security_headers.append(tech)
+98 |                                 else:
+   |
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\recon\advanced_modules.py:226:13
+    |
+224 |                           "public": resp.status_code == 200,
+225 |                       })
+226 | /             except Exception:
+227 | |                 pass
+    | |____________________^
+228 |
+229 |           tasks = []
+    |
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\recon\advanced_modules.py:303:9
+    |
+301 |                               "severity": "high",
+302 |                           }
+303 | /         except Exception:
+304 | |             pass
+    | |________________^
+305 |           return None
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\cert_transparency.py:20:1
+   |
+18 |   """
+19 |
+20 | / from __future__ import annotations
+21 | | from datetime import UTC, datetime
+22 | |
+23 | | import httpx
+24 | | import structlog
+25 | |
+26 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+27 |
+28 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\domain_blacklist.py:19:1
+   |
+17 |   """
+18 |
+19 | / from __future__ import annotations
+20 | | import asyncio
+21 | |
+22 | | import dns.asyncresolver
+23 | | import httpx
+24 | | import structlog
+25 | |
+26 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+27 |
+28 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+  --> backend\app\services\recon\domain_blacklist.py:88:17
+   |
+86 |                   except (dns.asyncresolver.NXDOMAIN, dns.asyncresolver.NoAnswer):
+87 |                       pass  # Not listed ΓÇö this is good
+88 | /                 except Exception:
+89 | |                     pass  # Timeout or other error
+   | |________________________^
+90 |
+91 |               tasks = [query_dnsbl(dnsbl) for dnsbl in DNSBL_SERVERS]
+   |
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\recon\domain_blacklist.py:107:13
+    |
+105 |                   answers = await self._resolver.resolve(domain, "A")
+106 |                   ips = [str(rdata) for rdata in answers]
+107 | /             except Exception:
+108 | |                 pass
+    | |____________________^
+109 |
+110 |               # Check each IP against DNSBLs
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\orchestrator.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import asyncio
+ 9 | | from datetime import UTC, datetime
+10 | |
+11 | | import structlog
+12 | |
+13 | | from app.core.telemetry import get_tracer
+14 | | from app.services.recon.advanced_modules import (
+15 | |     CloudAssetDiscovery,
+16 | |     PortScanner,
+17 | |     SubdomainTakeoverChecker,
+18 | |     TechFingerprinter,
+19 | | )
+20 | | from app.services.recon.cert_transparency import CertTransparencyMonitor
+21 | | from app.services.recon.domain_blacklist import DomainBlacklistAuditor
+22 | | from app.services.recon.osint_feed import OSINTFeedIntegrator
+23 | | from app.services.recon.passive_dns import PassiveDNSHarvester
+24 | | from app.services.recon.recon_report import ReconReportGenerator
+25 | | from app.services.recon.search_engine import SearchEngineRecon
+26 | | from app.services.recon.social_mining import SocialMediaMiner
+27 | | from app.services.recon.web_archive import WebArchiveScraper
+28 | | from app.services.recon.whois_correlation import WHOISCorrelator
+   | |________________________________________________________________^
+29 |
+30 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\osint_feed.py:20:1
+   |
+20 | / from __future__ import annotations
+21 | | import httpx
+22 | | import structlog
+23 | |
+24 | | from app.config import settings
+25 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+26 |
+27 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\passive_dns.py:20:1
+   |
+18 |   """
+19 |
+20 | / from __future__ import annotations
+21 | | import asyncio
+22 | |
+23 | | import dns.asyncresolver
+24 | | import dns.name
+25 | | import dns.reversename
+26 | | import httpx
+27 | | import structlog
+28 | |
+29 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+30 |
+31 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\recon\passive_dns.py:118:21
+    |
+116 |                               "record_type": "A",
+117 |                           })
+118 | /                     except Exception:
+119 | |                         pass
+    | |____________________________^
+120 |
+121 |               tasks = [check_subdomain(sub) for sub in words]
+    |
+
+SIM118 Use `key in dict` instead of `key in dict.keys()`
+   --> backend\app\services\recon\passive_dns.py:154:57
+    |
+152 |                     zone = dns.zone.from_xfr(dns.query.xfr(ns_host, domain, timeout=5))
+153 |                     results["vulnerable"] = True
+154 |                     results["records"] = [str(name) for name in zone.nodes.keys()]
+    |                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+155 |                     logger.warning(
+156 |                         "recon.dns.zone_transfer_vulnerable",
+    |
+help: Remove `.keys()`
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\recon\passive_dns.py:160:17
+    |
+158 |                           nameserver=ns_host,
+159 |                       )
+160 | /                 except Exception:
+161 | |                     pass
+    | |________________________^
+162 |           except Exception:
+163 |               pass
+    |
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\recon\passive_dns.py:162:9
+    |
+160 |                   except Exception:
+161 |                       pass
+162 | /         except Exception:
+163 | |             pass
+    | |________________^
+164 |           return results
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\recon_report.py:20:1
+   |
+18 |   """
+19 |
+20 | / from __future__ import annotations
+21 | | from datetime import UTC, datetime
+22 | | from typing import Any
+23 | |
+24 | | import structlog
+25 | | from jinja2 import Template
+26 | |
+27 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+28 |
+29 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (131 > 120)
+  --> backend\app\services\recon\recon_report.py:42:121
+   |
+40 |         * { margin: 0; padding: 0; box-sizing: border-box; }
+41 |         body { font-family: 'Inter', sans-serif; background: #0f0f23; color: #e0e0e0; padding: 2rem; }
+42 |         .header { background: linear-gradient(135deg, #1a1a3e, #2d1b69); padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+   |                                                                                                                         ^^^^^^^^^^^
+43 |         .header h1 { color: #7c4dff; font-size: 1.8rem; }
+44 |         .header .meta { color: #b0b0b0; margin-top: 0.5rem; }
+   |
+
+E501 Line too long (128 > 120)
+  --> backend\app\services\recon\recon_report.py:45:121
+   |
+43 |         .header h1 { color: #7c4dff; font-size: 1.8rem; }
+44 |         .header .meta { color: #b0b0b0; margin-top: 0.5rem; }
+45 |         .section { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+   |                                                                                                                         ^^^^^^^^
+46 |         .section h2 { color: #7c4dff; margin-bottom: 1rem; font-size: 1.3rem; }
+47 |         .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+   |
+
+E501 Line too long (122 > 120)
+   --> backend\app\services\recon\recon_report.py:105:121
+    |
+103 |     <div class="section">
+104 |         <h2>{{ module_name }}</h2>
+105 |         <pre style="color: #b0b0b0; white-space: pre-wrap; font-size: 0.85rem;">{{ module_data | tojson(indent=2) }}</pre>
+    |                                                                                                                         ^^
+106 |     </div>
+107 |     {% endfor %}
+    |
+
+B007 Loop control variable `module` not used within loop body
+   --> backend\app\services\recon\recon_report.py:175:13
+    |
+173 |         }
+174 |
+175 |         for module, data in scan_results.items():
+    |             ^^^^^^
+176 |             if not isinstance(data, dict):
+177 |                 continue
+    |
+help: Rename unused `module` to `_module`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\search_engine.py:20:1
+   |
+18 |   """
+19 |
+20 | / from __future__ import annotations
+21 | | import asyncio
+22 | |
+23 | | import httpx
+24 | | import structlog
+25 | |
+26 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+27 |
+28 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\social_mining.py:20:1
+   |
+18 |   """
+19 |
+20 | / from __future__ import annotations
+21 | | import asyncio
+22 | |
+23 | | import httpx
+24 | | import structlog
+25 | |
+26 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+27 |
+28 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\recon\social_mining.py:104:13
+    |
+102 |                           })
+103 |                   await asyncio.sleep(2.0)  # GitHub rate limit
+104 | /             except Exception:
+105 | |                 continue
+    | |________________________^
+106 |
+107 |           logger.info("recon.social.github_secrets", domain=domain, findings=len(findings))
+    |
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\recon\social_mining.py:130:9
+    |
+128 |                               "severity": "medium",
+129 |                           })
+130 | /         except Exception:
+131 | |             pass
+    | |________________^
+132 |
+133 |           logger.info("recon.social.paste_sites", domain=domain, found=len(results))
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\web_archive.py:20:1
+   |
+20 | / from __future__ import annotations
+21 | | import httpx
+22 | | import structlog
+23 | |
+24 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+25 |
+26 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+B905 `zip()` without an explicit `strict=` parameter
+  --> backend\app\services\recon\web_archive.py:79:35
+   |
+77 |                 snapshots = []
+78 |                 for row in rows[1:]:
+79 |                     record = dict(zip(headers, row))
+   |                                   ^^^^^^^^^^^^^^^^^
+80 |                     record["archive_url"] = (
+81 |                         f"{self.WAYBACK_URL}/{record.get('timestamp')}/{record.get('original')}"
+   |
+help: Add explicit value for parameter `strict=`
+
+B905 `zip()` without an explicit `strict=` parameter
+   --> backend\app\services\recon\web_archive.py:108:26
+    |
+106 |                 return []
+107 |             headers = rows[0]
+108 |             return [dict(zip(headers, row)) for row in rows[1:]]
+    |                          ^^^^^^^^^^^^^^^^^
+109 |         except Exception:
+110 |             return []
+    |
+help: Add explicit value for parameter `strict=`
+
+B905 `zip()` without an explicit `strict=` parameter
+   --> backend\app\services\recon\web_archive.py:138:43
+    |
+136 |                         headers = rows[0]
+137 |                         for row in rows[1:]:
+138 |                             record = dict(zip(headers, row))
+    |                                           ^^^^^^^^^^^^^^^^^
+139 |                             if record.get("statuscode") == "200":
+140 |                                 found.append({
+    |
+help: Add explicit value for parameter `strict=`
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\recon\web_archive.py:145:13
+    |
+143 |                                       "severity": "high" if pattern in [".env", ".git/config", "id_rsa"] else "medium",
+144 |                                   })
+145 | /             except Exception:
+146 | |                 continue
+    | |________________________^
+147 |
+148 |           logger.info("recon.archive.sensitive_files", domain=domain, found=len(found))
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\recon\whois_correlation.py:19:1
+   |
+17 |   """
+18 |
+19 | / from __future__ import annotations
+20 | | from datetime import UTC, datetime
+21 | |
+22 | | import httpx
+23 | | import structlog
+24 | |
+25 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+26 |
+27 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\scanner\__init__.py:6:1
+   |
+ 4 |   """
+ 5 |
+ 6 | / from __future__ import annotations
+ 7 | | from app.services.scanner.advanced_scanner import (
+ 8 | |     CloudConfigAuditor,
+ 9 | |     ContainerSecurityScanner,
+10 | |     CredentialTester,
+11 | |     SubdomainBruteforcer,
+12 | |     VulnerabilityCorrelator,
+13 | |     WAFDetector,
+14 | | )
+15 | | from app.services.scanner.api_scanner import APISecurityScanner
+16 | | from app.services.scanner.dependency_scanner import DependencyScanner
+17 | | from app.services.scanner.header_analyzer import HeaderSecurityAnalyzer
+18 | | from app.services.scanner.network_scanner import (
+19 | |     CMSScanner,
+20 | |     ComplianceAuditor,
+21 | |     NetworkDiscoveryScanner,
+22 | | )
+23 | | from app.services.scanner.orchestrator import ScannerOrchestrator
+24 | | from app.services.scanner.ssl_auditor import SSLTLSAuditor
+25 | | from app.services.scanner.web_scanner import WebApplicationScanner
+   | |__________________________________________________________________^
+26 |
+27 |   __all__ = [
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\scanner\advanced_scanner.py:6:1
+   |
+ 4 |   """
+ 5 |
+ 6 | / from __future__ import annotations
+ 7 | | import asyncio
+ 8 | | import re
+ 9 | |
+10 | | import httpx
+11 | | import structlog
+12 | |
+13 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+14 |
+15 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+  --> backend\app\services\scanner\advanced_scanner.py:87:21
+   |
+85 |                   for check in self.DOCKERFILE_CHECKS:
+86 |                       flags = check.get("flags", 0)
+87 | /                     if re.search(check["pattern"], stripped, flags):
+88 | |                         if check["severity"] != "info":
+   | |_______________________________________________________^
+89 |                               findings.append({
+90 |                                   "type": "Dockerfile Issue",
+   |
+help: Combine `if` statements using `and`
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\scanner\advanced_scanner.py:157:17
+    |
+155 |                               "evidence": "Bucket exists but access denied (properly configured)",
+156 |                           })
+157 | /                 except Exception:
+158 | |                     continue
+    | |____________________________^
+159 |
+160 |               return {"bucket": bucket_name, "findings": findings}
+    |
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\scanner\advanced_scanner.py:189:21
+    |
+187 |                                   "public": resp.status_code == 200,
+188 |                               })
+189 | /                     except Exception:
+190 | |                         continue
+    | |________________________________^
+191 |
+192 |               return {"domain": domain, "findings": findings, "count": len(findings)}
+    |
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\scanner\advanced_scanner.py:242:13
+    |
+240 |                       })
+241 |                       break  # One hit is enough
+242 | /             except Exception:
+243 | |                 continue
+    | |________________________^
+244 |
+245 |           return findings
+    |
+
+S107 Possible hardcoded password assigned to function default: "pass_field"
+   --> backend\app\services\scanner\advanced_scanner.py:247:100
+    |
+245 |         return findings
+246 |
+247 |     async def test_form_login(self, url: str, form_data_field: str = "username", pass_field: str = "password") -> list[dict]:
+    |                                                                                                    ^^^^^^^^^^
+248 |         """Test login forms for default credentials."""
+249 |         findings: list[dict] = []
+    |
+
+E501 Line too long (125 > 120)
+   --> backend\app\services\scanner\advanced_scanner.py:247:121
+    |
+245 |         return findings
+246 |
+247 |     async def test_form_login(self, url: str, form_data_field: str = "username", pass_field: str = "password") -> list[dict]:
+    |                                                                                                                         ^^^^^
+248 |         """Test login forms for default credentials."""
+249 |         findings: list[dict] = []
+    |
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\scanner\advanced_scanner.py:273:13
+    |
+271 |                       break
+272 |                   await asyncio.sleep(0.5)  # Avoid rate limiting
+273 | /             except Exception:
+274 | |                 continue
+    | |________________________^
+275 |
+276 |           return findings
+    |
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+   --> backend\app\services\scanner\advanced_scanner.py:337:21
+    |
+335 |                           url, params={"id": "<script>alert(1)</script>"},
+336 |                       )
+337 | /                     if resp_malicious.status_code in (403, 406, 429, 503):
+338 | |                         if not detected_wafs:
+    | |_____________________________________________^
+339 |                               detected_wafs.append("Unknown WAF")
+340 |                   except Exception:
+    |
+help: Combine `if` statements using `and`
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\scanner\advanced_scanner.py:340:17
+    |
+338 |                           if not detected_wafs:
+339 |                               detected_wafs.append("Unknown WAF")
+340 | /                 except Exception:
+341 | |                     pass
+    | |________________________^
+342 |
+343 |               except Exception as e:
+    |
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+   --> backend\app\services\scanner\advanced_scanner.py:384:17
+    |
+382 |                       await resolver.resolve(subdomain, "A")
+383 |                       found.append(subdomain)
+384 | /                 except Exception:
+385 | |                     pass
+    | |________________________^
+386 |
+387 |           tasks = [check(w) for w in words]
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\scanner\api_scanner.py:8:1
+   |
+ 6 |   """
+ 7 |
+ 8 | / from __future__ import annotations
+ 9 | | import asyncio
+10 | |
+11 | | import httpx
+12 | | import structlog
+13 | |
+14 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+S110 `try`-`except`-`pass` detected, consider logging the exception
+  --> backend\app\services\scanner\api_scanner.py:79:21
+   |
+77 |                                   "size": len(response.content),
+78 |                               })
+79 | /                     except Exception:
+80 | |                         pass
+   | |____________________________^
+81 |
+82 |               tasks = [probe(p) for p in self.COMMON_API_PATHS]
+   |
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\scanner\api_scanner.py:111:13
+    |
+109 |                               })
+110 |                               break
+111 | /             except Exception:
+112 | |                 continue
+    | |________________________^
+113 |
+114 |           return findings
+    |
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\scanner\api_scanner.py:135:17
+    |
+133 |                               "evidence": f"{method} returned {response.status_code}",
+134 |                           })
+135 | /                 except Exception:
+136 | |                     continue
+    | |____________________________^
+137 |
+138 |           return findings
+    |
+
+S112 `try`-`except`-`continue` detected, consider logging the exception
+   --> backend\app\services\scanner\api_scanner.py:199:13
+    |
+197 |                       })
+198 |                       break
+199 | /             except Exception:
+200 | |                 continue
+    | |________________________^
+201 |
+202 |           return result
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\scanner\dependency_scanner.py:10:1
+   |
+10 | / from __future__ import annotations
+11 | | import httpx
+12 | | import structlog
+13 | |
+14 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+SIM105 Use `contextlib.suppress(ValueError, IndexError)` instead of `try`-`except`-`pass`
+   --> backend\app\services\scanner\dependency_scanner.py:156:17
+    |
+154 |               score = sev.get("score", "")
+155 |               if score:
+156 | /                 try:
+157 | |                     cvss = float(score.split("/")[0].replace("CVSS:3.1/AV:", ""))
+158 | |                 except (ValueError, IndexError):
+159 | |                     pass
+    | |________________________^
+160 |
+161 |           # Fallback: check aliases for CVE
+    |
+help: Replace `try`-`except`-`pass` with `with contextlib.suppress(ValueError, IndexError): ...`
+
+F841 Local variable `cvss` is assigned to but never used
+   --> backend\app\services\scanner\dependency_scanner.py:157:21
+    |
+155 |             if score:
+156 |                 try:
+157 |                     cvss = float(score.split("/")[0].replace("CVSS:3.1/AV:", ""))
+    |                     ^^^^
+158 |                 except (ValueError, IndexError):
+159 |                     pass
+    |
+help: Remove assignment to unused variable `cvss`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\scanner\header_analyzer.py:11:1
+   |
+11 | / from __future__ import annotations
+12 | | import httpx
+13 | | import structlog
+14 | |
+15 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+16 |
+17 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\scanner\network_scanner.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import asyncio
+ 9 | | import re
+10 | |
+11 | | import httpx
+12 | | import structlog
+13 | |
+14 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+F841 Local variable `reader` is assigned to but never used
+   --> backend\app\services\scanner\network_scanner.py:103:9
+    |
+101 |     @staticmethod
+102 |     async def _read_banner(writer) -> str:
+103 |         reader = writer.transport.get_extra_info("socket")
+    |         ^^^^^^
+104 |         return ""  # Banner from initial connection
+    |
+help: Remove assignment to unused variable `reader`
+
+E501 Line too long (122 > 120)
+   --> backend\app\services\scanner\network_scanner.py:290:121
+    |
+288 |         ],
+289 |         "A09_Security_Logging": [
+290 |             {"check": "log_exposure", "paths": ["/logs", "/log", "/error.log", "/debug.log"], "expect": "not_accessible"},
+    |                                                                                                                         ^^
+291 |         ],
+292 |     }
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\scanner\orchestrator.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import asyncio
+ 9 | | from datetime import UTC, datetime
+10 | |
+11 | | import structlog
+12 | |
+13 | | from app.core.telemetry import get_tracer
+14 | | from app.services.scanner.advanced_scanner import (
+15 | |     CloudConfigAuditor,
+16 | |     ContainerSecurityScanner,
+17 | |     CredentialTester,
+18 | |     SubdomainBruteforcer,
+19 | |     VulnerabilityCorrelator,
+20 | |     WAFDetector,
+21 | | )
+22 | | from app.services.scanner.api_scanner import APISecurityScanner
+23 | | from app.services.scanner.dependency_scanner import DependencyScanner
+24 | | from app.services.scanner.header_analyzer import HeaderSecurityAnalyzer
+25 | | from app.services.scanner.network_scanner import (
+26 | |     CMSScanner,
+27 | |     ComplianceAuditor,
+28 | |     NetworkDiscoveryScanner,
+29 | | )
+30 | | from app.services.scanner.ssl_auditor import SSLTLSAuditor
+31 | | from app.services.scanner.web_scanner import WebApplicationScanner
+   | |__________________________________________________________________^
+32 |
+33 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\scanner\ssl_auditor.py:10:1
+   |
+ 8 |   """
+ 9 |
+10 | / from __future__ import annotations
+11 | | import asyncio
+12 | | import socket
+13 | | import ssl
+14 | | from datetime import UTC, datetime
+15 | |
+16 | | import structlog
+17 | |
+18 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+19 |
+20 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> backend\app\services\scanner\ssl_auditor.py:111:13
+    |
+109 |           def _get_cert():
+110 |               ctx = ssl.create_default_context()
+111 | /             with socket.create_connection((host, port), timeout=10) as sock:
+112 | |                 with ctx.wrap_socket(sock, server_hostname=host) as ssock:
+    | |__________________________________________________________________________^
+113 |                       cert = ssock.getpeercert()
+114 |                       cipher = ssock.cipher()
+    |
+help: Combine `with` statements
+
+SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> backend\app\services\scanner\ssl_auditor.py:211:17
+    |
+209 |                       ctx.maximum_version = ssl.TLSVersion.TLSv1_2
+210 |
+211 | /                 with socket.create_connection((host, port), timeout=5) as sock:
+212 | |                     with ctx.wrap_socket(sock, server_hostname=host) as ssock:
+    | |______________________________________________________________________________^
+213 |                           return ssock.version()
+214 |               except Exception as e:
+    |
+help: Combine `with` statements
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\services\scanner\web_scanner.py:20:1
+   |
+18 |   """
+19 |
+20 | / from __future__ import annotations
+21 | | import re
+22 | | from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+23 | |
+24 | | import httpx
+25 | | import structlog
+26 | |
+27 | | from app.core.telemetry import get_tracer
+   | |_________________________________________^
+28 |
+29 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+E501 Line too long (126 > 120)
+   --> backend\app\services\scanner\web_scanner.py:260:121
+    |
+258 |                         break
+259 |                 except Exception as e:
+260 |                     logger.debug("scanner.web.path_traversal.error", url=url, param=param_name, payload=payload, error=str(e))
+    |                                                                                                                         ^^^^^^
+261 |                     continue
+    |
+
+E501 Line too long (125 > 120)
+   --> backend\app\services\scanner\web_scanner.py:294:121
+    |
+292 |                         break
+293 |                 except Exception as e:
+294 |                     logger.debug("scanner.web.open_redirect.error", url=url, param=param_name, payload=payload, error=str(e))
+    |                                                                                                                         ^^^^^
+295 |                     continue
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> backend\app\workers\__init__.py:1:1
+  |
+1 | from __future__ import annotations
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | """OfSec V3 ΓÇö Workers package."""
+  |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\workers\ai_tasks.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | |
+10 | | from app.services.ai.orchestrator import AIOrchestrator
+11 | | from app.workers.taskiq_app import broker
+   | |_________________________________________^
+12 |
+13 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\workers\attack_tasks.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | |
+10 | | from app.services.attack.orchestrator import AttackOrchestrator
+11 | | from app.workers.taskiq_app import broker
+   | |_________________________________________^
+12 |
+13 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\workers\db_utils.py:8:1
+   |
+ 6 |   """
+ 7 |
+ 8 | / from __future__ import annotations
+ 9 | | from collections.abc import AsyncGenerator
+10 | | from contextlib import asynccontextmanager
+11 | |
+12 | | from sqlalchemy.ext.asyncio import AsyncSession
+13 | |
+14 | | from app.database import async_session_factory
+   | |______________________________________________^
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\workers\defense_tasks.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | |
+10 | | from app.services.defense.orchestrator import DefenseOrchestrator
+11 | | from app.workers.taskiq_app import broker
+   | |_________________________________________^
+12 |
+13 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\workers\intel_tasks.py:13:1
+   |
+11 |   """
+12 |
+13 | / from __future__ import annotations
+14 | | import asyncio
+15 | | from datetime import UTC, datetime
+16 | |
+17 | | import httpx
+18 | | import structlog
+19 | | from tenacity import retry, stop_after_attempt, wait_exponential
+20 | |
+21 | | from app.config import settings
+22 | | from app.repositories import IOCRepository
+23 | | from app.workers.db_utils import worker_db_session
+24 | | from app.workers.taskiq_app import broker
+   | |_________________________________________^
+25 |
+26 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\workers\recon_tasks.py:8:1
+   |
+ 6 |   """
+ 7 |
+ 8 | / from __future__ import annotations
+ 9 | | import structlog
+10 | |
+11 | | from app.repositories import ScanRepository
+12 | | from app.services.recon.orchestrator import ReconOrchestrator
+13 | | from app.workers.db_utils import worker_db_session
+14 | | from app.workers.taskiq_app import broker
+   | |_________________________________________^
+15 |
+16 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\workers\scan_tasks.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / from __future__ import annotations
+ 8 | | import structlog
+ 9 | |
+10 | | from app.repositories import ScanRepository
+11 | | from app.services.scanner.orchestrator import ScannerOrchestrator
+12 | | from app.workers.db_utils import worker_db_session
+13 | | from app.workers.taskiq_app import broker
+   | |_________________________________________^
+14 |
+15 |   logger = structlog.get_logger()
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\app\workers\taskiq_app.py:8:1
+   |
+ 6 |   """
+ 7 |
+ 8 | / from __future__ import annotations
+ 9 | | from app.config import settings
+   | |_______________________________^
+10 |
+11 |   try:
+   |
+help: Organize imports
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend\tests\conftest.py:7:1
+   |
+ 5 |   """
+ 6 |
+ 7 | / import asyncio
+ 8 | | from typing import AsyncGenerator
+ 9 | |
+10 | | import pytest
+11 | | import pytest_asyncio
+12 | | from httpx import AsyncClient, ASGITransport
+13 | |
+14 | | from app.main import app
+   | |________________________^
+   |
+help: Organize imports
+
+UP035 [*] Import from `collections.abc` instead: `AsyncGenerator`
+  --> backend\tests\conftest.py:8:1
+   |
+ 7 | import asyncio
+ 8 | from typing import AsyncGenerator
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 9 |
+10 | import pytest
+   |
+help: Import from `collections.abc`
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:15:5
+   |
+13 |     """Test health check endpoint."""
+14 |     response = await client.get("/health")
+15 |     assert response.status_code == 200
+   |     ^^^^^^
+16 |     data = response.json()
+17 |     assert data["status"] == "healthy"
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:17:5
+   |
+15 |     assert response.status_code == 200
+16 |     data = response.json()
+17 |     assert data["status"] == "healthy"
+   |     ^^^^^^
+18 |     assert data["version"] == "3.0.0"
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:18:5
+   |
+16 |     data = response.json()
+17 |     assert data["status"] == "healthy"
+18 |     assert data["version"] == "3.0.0"
+   |     ^^^^^^
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:25:5
+   |
+23 |     """Test API v1 status endpoint."""
+24 |     response = await auth_client.get("/api/v1/status")
+25 |     assert response.status_code == 200
+   |     ^^^^^^
+26 |     data = response.json()
+27 |     assert data["api_version"] == "v1"
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:27:5
+   |
+25 |     assert response.status_code == 200
+26 |     data = response.json()
+27 |     assert data["api_version"] == "v1"
+   |     ^^^^^^
+28 |     assert data["status"] == "operational"
+29 |     assert "recon" in data["modules"]
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:28:5
+   |
+26 |     data = response.json()
+27 |     assert data["api_version"] == "v1"
+28 |     assert data["status"] == "operational"
+   |     ^^^^^^
+29 |     assert "recon" in data["modules"]
+30 |     assert "scanner" in data["modules"]
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:29:5
+   |
+27 |     assert data["api_version"] == "v1"
+28 |     assert data["status"] == "operational"
+29 |     assert "recon" in data["modules"]
+   |     ^^^^^^
+30 |     assert "scanner" in data["modules"]
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:30:5
+   |
+28 |     assert data["status"] == "operational"
+29 |     assert "recon" in data["modules"]
+30 |     assert "scanner" in data["modules"]
+   |     ^^^^^^
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:37:5
+   |
+35 |     """Test that recon endpoints require authentication."""
+36 |     response = await client.get("/api/v1/recon/results")
+37 |     assert response.status_code == 401
+   |     ^^^^^^
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:44:5
+   |
+42 |     """Test listing recon results (empty initially)."""
+43 |     response = await auth_client.get("/api/v1/recon/results")
+44 |     assert response.status_code == 200
+   |     ^^^^^^
+45 |     data = response.json()
+46 |     assert "items" in data
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:46:5
+   |
+44 |     assert response.status_code == 200
+45 |     data = response.json()
+46 |     assert "items" in data
+   |     ^^^^^^
+47 |     assert data["total"] == 0
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:47:5
+   |
+45 |     data = response.json()
+46 |     assert "items" in data
+47 |     assert data["total"] == 0
+   |     ^^^^^^
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:54:5
+   |
+52 |     """Test listing scanner results (empty initially)."""
+53 |     response = await auth_client.get("/api/v1/scanner/results")
+54 |     assert response.status_code == 200
+   |     ^^^^^^
+55 |     data = response.json()
+56 |     assert "items" in data
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:56:5
+   |
+54 |     assert response.status_code == 200
+55 |     data = response.json()
+56 |     assert "items" in data
+   |     ^^^^^^
+57 |     assert data["total"] == 0
+   |
+
+S101 Use of `assert` detected
+  --> backend\tests\test_api\test_endpoints.py:57:5
+   |
+55 |     data = response.json()
+56 |     assert "items" in data
+57 |     assert data["total"] == 0
+   |     ^^^^^^
+   |
+
+Found 262 errors.
+[*] 99 fixable with the `--fix` option (30 hidden fixes can be enabled with the `--unsafe-fixes` option).

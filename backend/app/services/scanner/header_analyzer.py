@@ -9,6 +9,7 @@ Referrer-Policy, Permissions-Policy, CORS, cookie flags, server info leakage.
 
 
 from __future__ import annotations
+
 import httpx
 import structlog
 

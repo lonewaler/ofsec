@@ -5,6 +5,7 @@ JSON structured logging via structlog for observability.
 """
 
 from __future__ import annotations
+
 import logging
 import sys
 

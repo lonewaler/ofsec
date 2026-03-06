@@ -6,6 +6,7 @@ REST API for AI-powered security intelligence (Upgrades #46–65).
 
 from __future__ import annotations
 import structlog
+import fastapi
 from fastapi import APIRouter
 
 from app.api.deps import CurrentUser
@@ -26,7 +27,7 @@ router = APIRouter(prefix="/ai", tags=["AI/ML Engine"])
 # ─── Module listing ─────────────────────────
 
 @router.get("/modules")
-async def list_ai_modules(user: CurrentUser) -> dict:
+async def list_ai_modules(*, user: CurrentUser) -> dict:
     return {
         "modules": [
             {"id": "network_anomaly", "name": "#46 Network Anomaly Detector", "category": "anomaly"},
@@ -51,7 +52,7 @@ async def list_ai_modules(user: CurrentUser) -> dict:
 # ─── Scan analysis ──────────────────────────
 
 @router.post("/analyze")
-async def analyze_scan(scan_data: dict, user: CurrentUser = None) -> SuccessResponse:
+async def analyze_scan(*, scan_data: dict, user: CurrentUser) -> SuccessResponse:
     """Queue AI analysis of scan results (async)."""
     task = await analyze_scan_results.kiq(scan_data)
     return SuccessResponse(
@@ -61,7 +62,7 @@ async def analyze_scan(scan_data: dict, user: CurrentUser = None) -> SuccessResp
 
 
 @router.post("/analyze/instant")
-async def analyze_scan_instant(scan_data: dict, user: CurrentUser = None) -> dict:
+async def analyze_scan_instant(*, scan_data: dict, user: CurrentUser) -> dict:
     """Run instant AI analysis."""
     orchestrator = AIOrchestrator()
     try:
@@ -73,7 +74,7 @@ async def analyze_scan_instant(scan_data: dict, user: CurrentUser = None) -> dic
 # ─── Anomaly detection ──────────────────────
 
 @router.post("/anomaly/network")
-async def detect_network_anomaly(traffic_data: list[dict], user: CurrentUser = None) -> dict:
+async def detect_network_anomaly(*, traffic_data: list[dict], user: CurrentUser) -> dict:
     """Analyze network traffic for anomalies."""
     orchestrator = AIOrchestrator()
     try:
@@ -83,7 +84,7 @@ async def detect_network_anomaly(traffic_data: list[dict], user: CurrentUser = N
 
 
 @router.post("/anomaly/logs")
-async def detect_log_anomaly(logs: list[str], user: CurrentUser = None) -> dict:
+async def detect_log_anomaly(*, logs: list[str], user: CurrentUser) -> dict:
     """Analyze logs for anomalies."""
     orchestrator = AIOrchestrator()
     try:
@@ -93,7 +94,7 @@ async def detect_log_anomaly(logs: list[str], user: CurrentUser = None) -> dict:
 
 
 @router.post("/anomaly/behavior")
-async def detect_behavior_anomaly(user_id: str, event: dict, user: CurrentUser = None) -> dict:
+async def detect_behavior_anomaly(*, user_id: str, event: dict, user: CurrentUser) -> dict:
     """Check user behavior for anomalies."""
     orchestrator = AIOrchestrator()
     try:
@@ -105,7 +106,7 @@ async def detect_behavior_anomaly(user_id: str, event: dict, user: CurrentUser =
 # ─── NLP / Threat Intel ──────────────────────
 
 @router.post("/threat/parse")
-async def parse_threat(text: str, user: CurrentUser = None) -> SuccessResponse:
+async def parse_threat(*, text: str, user: CurrentUser) -> SuccessResponse:
     """Parse threat report for IOCs (async)."""
     task = await parse_threat_report.kiq(text)
     return SuccessResponse(
@@ -115,7 +116,7 @@ async def parse_threat(text: str, user: CurrentUser = None) -> SuccessResponse:
 
 
 @router.post("/threat/parse/instant")
-async def parse_threat_instant(text: str, user: CurrentUser = None) -> dict:
+async def parse_threat_instant(*, text: str, user: CurrentUser) -> dict:
     """Instantly parse threat report."""
     orchestrator = AIOrchestrator()
     try:
@@ -125,7 +126,7 @@ async def parse_threat_instant(text: str, user: CurrentUser = None) -> dict:
 
 
 @router.post("/cve/analyze")
-async def analyze_cve(cve_ids: list[str], user: CurrentUser = None) -> dict:
+async def analyze_cve(*, cve_ids: list[str], user: CurrentUser) -> dict:
     """Analyze CVEs from NVD."""
     orchestrator = AIOrchestrator()
     try:
@@ -135,7 +136,7 @@ async def analyze_cve(cve_ids: list[str], user: CurrentUser = None) -> dict:
 
 
 @router.post("/darkweb/monitor")
-async def monitor_dark_web(domain: str, user: CurrentUser = None) -> SuccessResponse:
+async def monitor_dark_web(*, domain: str, user: CurrentUser) -> SuccessResponse:
     """Monitor dark web for domain (async)."""
     task = await monitor_darkweb.kiq(domain)
     return SuccessResponse(
@@ -147,7 +148,7 @@ async def monitor_dark_web(domain: str, user: CurrentUser = None) -> SuccessResp
 # ─── Predictive ─────────────────────────────
 
 @router.post("/predict/attacks")
-async def predict_attacks(findings: list[dict], user: CurrentUser = None) -> dict:
+async def predict_attacks(*, findings: list[dict], user: CurrentUser) -> dict:
     """Predict likely attacks based on findings."""
     orchestrator = AIOrchestrator()
     try:
@@ -157,7 +158,7 @@ async def predict_attacks(findings: list[dict], user: CurrentUser = None) -> dic
 
 
 @router.post("/risk/score")
-async def score_risk(features: dict, user: CurrentUser = None) -> dict:
+async def score_risk(*, features: dict, user: CurrentUser) -> dict:
     """Calculate ML risk score."""
     orchestrator = AIOrchestrator()
     try:
@@ -169,12 +170,12 @@ async def score_risk(features: dict, user: CurrentUser = None) -> dict:
 # ─── Feedback ────────────────────────────────
 
 @router.post("/feedback")
-async def submit_feedback(
+async def submit_feedback(*, 
     finding_id: str,
     module: str,
     is_true_positive: bool,
     analyst_notes: str = "",
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     """Submit feedback on a finding."""
     orchestrator = AIOrchestrator()
@@ -190,7 +191,7 @@ async def submit_feedback(
 
 
 @router.get("/feedback/accuracy")
-async def get_accuracy(user: CurrentUser) -> dict:
+async def get_accuracy(*, user: CurrentUser) -> dict:
     """Get model accuracy report."""
     orchestrator = AIOrchestrator()
     try:
@@ -202,7 +203,7 @@ async def get_accuracy(user: CurrentUser) -> dict:
 # ─── LLM ─────────────────────────────────────
 
 @router.post("/llm/analyze")
-async def llm_analyze(findings: list[dict], user: CurrentUser = None) -> dict:
+async def llm_analyze(*, findings: list[dict], user: CurrentUser) -> dict:
     """LLM-powered finding analysis."""
     orchestrator = AIOrchestrator()
     try:
@@ -212,7 +213,7 @@ async def llm_analyze(findings: list[dict], user: CurrentUser = None) -> dict:
 
 
 @router.post("/llm/remediation")
-async def llm_remediation(finding: dict, user: CurrentUser = None) -> dict:
+async def llm_remediation(*, finding: dict, user: CurrentUser) -> dict:
     """Get LLM-generated remediation steps."""
     orchestrator = AIOrchestrator()
     try:
@@ -222,7 +223,7 @@ async def llm_remediation(finding: dict, user: CurrentUser = None) -> dict:
 
 
 @router.post("/llm/explain")
-async def llm_explain(vuln_type: str, user: CurrentUser = None) -> dict:
+async def llm_explain(*, vuln_type: str, user: CurrentUser) -> dict:
     """Get LLM-generated vulnerability explanation."""
     orchestrator = AIOrchestrator()
     try:
@@ -234,7 +235,7 @@ async def llm_explain(vuln_type: str, user: CurrentUser = None) -> dict:
 # ─── Reports ────────────────────────────────
 
 @router.post("/report")
-async def generate_report(scan_data: dict, user: CurrentUser = None) -> SuccessResponse:
+async def generate_report(*, scan_data: dict, user: CurrentUser) -> SuccessResponse:
     """Generate AI-powered report (async)."""
     task = await generate_ai_report.kiq(scan_data)
     return SuccessResponse(
@@ -244,7 +245,7 @@ async def generate_report(scan_data: dict, user: CurrentUser = None) -> SuccessR
 
 
 @router.post("/report/instant")
-async def generate_report_instant(scan_data: dict, user: CurrentUser = None) -> dict:
+async def generate_report_instant(*, scan_data: dict, user: CurrentUser) -> dict:
     """Generate AI report instantly."""
     orchestrator = AIOrchestrator()
     try:

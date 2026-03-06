@@ -5,6 +5,7 @@ Attack prediction, vulnerability forecasting, and ML-based risk scoring.
 """
 
 from __future__ import annotations
+
 import math
 import statistics
 from collections import defaultdict

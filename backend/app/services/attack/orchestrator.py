@@ -5,6 +5,7 @@ Central orchestrator for all attack simulation modules (#31-45).
 """
 
 from __future__ import annotations
+
 import asyncio
 from datetime import UTC, datetime
 
@@ -199,7 +200,7 @@ class AttackOrchestrator:
             elapsed = (datetime.now(UTC) - start_time).total_seconds()
 
             # Aggregate findings
-            all_findings = []
+            all_findings: list[dict] = []
             for mod_data in results.values():
                 if isinstance(mod_data, dict):
                     all_findings.extend(mod_data.get("findings", []))

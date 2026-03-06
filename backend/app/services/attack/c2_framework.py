@@ -5,6 +5,7 @@ Command & Control integration, wireless attacks, and advanced techniques.
 """
 
 from __future__ import annotations
+
 import secrets
 from datetime import UTC, datetime
 
@@ -269,7 +270,7 @@ class AttackReportGenerator:
         """Generate a structured attack simulation report."""
         findings = attack_results.get("findings", [])
 
-        severity_counts = {}
+        severity_counts: dict[str, int] = {}
         for f in findings:
             sev = f.get("severity", "info")
             severity_counts[sev] = severity_counts.get(sev, 0) + 1

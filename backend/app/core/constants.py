@@ -5,6 +5,7 @@ Application-wide constants, enums, and configuration values.
 """
 
 from __future__ import annotations
+
 from enum import Enum
 
 

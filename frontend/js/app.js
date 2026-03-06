@@ -5,7 +5,7 @@
  */
 
 const API = '';  // Same origin
-const API_KEY = 'dev-api-key';  // WebSocket auth token — matches settings.API_KEY
+let API_KEY = 'dev-api-key';  // WebSocket auth token — matches settings.API_KEY
 let scanHistory = [];
 let vulnResults = [];
 

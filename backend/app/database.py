@@ -46,7 +46,9 @@ class Base(DeclarativeBase):
     pass
 
 
-async def get_db() -> AsyncSession:
+from collections.abc import AsyncGenerator
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """Dependency injection for database sessions."""
     async with async_session_factory() as session:
         try:

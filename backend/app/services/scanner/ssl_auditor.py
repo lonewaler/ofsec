@@ -8,6 +8,7 @@ OCSP stapling, certificate chain, key size, known vulns (POODLE, BEAST, Heartble
 """
 
 from __future__ import annotations
+
 import asyncio
 import socket
 import ssl
@@ -69,7 +70,7 @@ class SSLTLSAuditor:
             findings.extend(cipher_findings)
 
             # Calculate grade
-            severity_counts = {}
+            severity_counts: dict[str, int] = {}
             for f in findings:
                 sev = f.get("severity", "info")
                 severity_counts[sev] = severity_counts.get(sev, 0) + 1

@@ -6,6 +6,7 @@ All tasks persist results to the database via ScanRepository.
 """
 
 from __future__ import annotations
+
 import structlog
 
 from app.repositories import ScanRepository
@@ -152,7 +153,7 @@ async def run_full_recon(target: str, modules: list[str] | None = None) -> dict:
             result = await orchestrator.run_full_recon(target, modules=modules)
 
             # Aggregate findings from all module results
-            all_findings = []
+            all_findings: list[dict] = []
             for module_result in result.get("results", {}).values():
                 if isinstance(module_result, dict):
                     findings = (

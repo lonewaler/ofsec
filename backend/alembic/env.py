@@ -4,7 +4,6 @@ Supports SQLite (dev) and PostgreSQL (production).
 """
 
 import asyncio
-import os
 import sys
 from logging.config import fileConfig
 from pathlib import Path
@@ -17,10 +16,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
+from app.config import settings
+
 # Import ALL models so Alembic detects every table
 from app.database import Base
 from app.models import *  # noqa: F401, F403
-from app.config import settings
 
 # ─── Alembic config ───────────────────────────
 config = context.config

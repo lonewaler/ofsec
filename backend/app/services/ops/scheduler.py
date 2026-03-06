@@ -5,6 +5,7 @@ Job scheduling, audit logging, asset inventory, and user management.
 """
 
 from __future__ import annotations
+
 import secrets
 from collections import defaultdict
 from datetime import UTC, datetime

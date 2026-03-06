@@ -10,6 +10,7 @@ import json
 import json as _json
 
 import structlog
+import fastapi
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
 from fastapi.responses import HTMLResponse, StreamingResponse
 
@@ -58,7 +59,7 @@ MODULE_TASK_MAP = {
 
 
 @router.get("/modules", tags=["Reconnaissance"])
-async def list_recon_modules(user: CurrentUser) -> dict:
+async def list_recon_modules(*, user: CurrentUser) -> dict:
     """List all available recon modules."""
     return {
         "modules": [
@@ -79,7 +80,7 @@ async def list_recon_modules(user: CurrentUser) -> dict:
 
 
 @router.post("/scan", response_model=SuccessResponse)
-async def start_recon_scan(
+async def start_recon_scan(*, 
     request: ReconScanRequest,
     db: DbSession,
     user: CurrentUser,
@@ -121,7 +122,7 @@ async def start_recon_scan(
 
 
 @router.post("/scan/instant", tags=["Reconnaissance"])
-async def instant_recon_scan(
+async def instant_recon_scan(*, 
     request: ReconScanRequest,
     user: CurrentUser,
 ) -> dict:
@@ -139,7 +140,7 @@ async def instant_recon_scan(
 
 
 @router.post("/passive", tags=["Reconnaissance"])
-async def run_passive_recon(
+async def run_passive_recon(*, 
     request: ReconScanRequest,
     db: DbSession,
     user: CurrentUser,
@@ -201,7 +202,7 @@ async def run_passive_recon(
         await orchestrator.close()
 
 
-async def _run_recon_streaming(
+async def _run_recon_streaming(*, 
     scan_id: str,
     request,
     repo,
@@ -301,7 +302,7 @@ async def _run_recon_streaming(
 
 
 @router.get("/stream/{scan_id}", tags=["Reconnaissance"])
-async def stream_scan_results(
+async def stream_scan_results(*, 
     scan_id: str,
     user: CurrentUser,
 ) -> StreamingResponse:
@@ -328,7 +329,7 @@ async def stream_scan_results(
 
 
 @router.websocket("/ws/{scan_id}")
-async def websocket_scan_stream(websocket: WebSocket, scan_id: str) -> None:
+async def websocket_scan_stream(*, websocket: WebSocket, scan_id: str) -> None:
     """
     Bidirectional WebSocket for scan streaming + control.
 
@@ -397,7 +398,7 @@ async def websocket_scan_stream(websocket: WebSocket, scan_id: str) -> None:
 
 
 @router.post("/report", tags=["Reconnaissance"], response_model=None)
-async def generate_recon_report(
+async def generate_recon_report(*, 
     request: ReconScanRequest,
     user: CurrentUser,
     fmt: str = "json",
@@ -416,7 +417,7 @@ async def generate_recon_report(
 
 
 @router.get("/results", tags=["Reconnaissance"])
-async def list_recon_results(
+async def list_recon_results(*, 
     db: DbSession,
     user: CurrentUser,
     target: str | None = None,
@@ -447,7 +448,7 @@ async def list_recon_results(
 
 
 @router.get("/results/{scan_id}", tags=["Reconnaissance"])
-async def get_recon_result(
+async def get_recon_result(*, 
     scan_id: int,
     db: DbSession,
     user: CurrentUser,

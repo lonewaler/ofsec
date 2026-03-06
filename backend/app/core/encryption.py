@@ -5,6 +5,7 @@ AES/Fernet data encryption for secrets and scan results.
 """
 
 from __future__ import annotations
+
 from cryptography.fernet import Fernet
 
 from app.config import settings

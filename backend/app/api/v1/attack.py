@@ -6,6 +6,7 @@ REST API for attack simulation operations (Upgrades #31–45).
 
 from __future__ import annotations
 import structlog
+import fastapi
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import CurrentUser
@@ -42,7 +43,7 @@ MODULE_TASK_MAP = {
 
 
 @router.get("/modules")
-async def list_attack_modules(user: CurrentUser) -> dict:
+async def list_attack_modules(*, user: CurrentUser) -> dict:
     """List all available attack modules."""
     return {
         "modules": [
@@ -63,10 +64,10 @@ async def list_attack_modules(user: CurrentUser) -> dict:
 
 
 @router.post("/simulate")
-async def start_attack_simulation(
+async def start_attack_simulation(*, 
     target: str,
     modules: list[str] | None = None,
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> SuccessResponse:
     """Start an attack simulation (async via Taskiq)."""
     logger.info("api.attack.simulate.start", target=target, modules=modules)
@@ -93,10 +94,10 @@ async def start_attack_simulation(
 
 
 @router.post("/simulate/instant")
-async def instant_attack_simulation(
+async def instant_attack_simulation(*, 
     target: str,
     modules: list[str] | None = None,
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     """Run attack modules instantly (blocking)."""
     orchestrator = AttackOrchestrator()
@@ -109,11 +110,11 @@ async def instant_attack_simulation(
 
 
 @router.post("/payloads/generate")
-async def generate_payloads(
+async def generate_payloads(*, 
     payload_type: str = "xss",
     category: str = "basic",
     encoding: str | None = None,
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     """Generate specific payloads."""
     from app.services.attack.payload_generator import PayloadGenerator
@@ -136,11 +137,11 @@ async def generate_payloads(
 
 
 @router.post("/phishing/campaign")
-async def create_phishing_campaign(
+async def create_phishing_campaign(*, 
     template: str = "password_reset",
     phishing_url: str = "https://example.com/verify",
     targets: list[dict] | None = None,
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     """Create a phishing campaign."""
     from app.services.attack.phishing_engine import PhishingSimulator
@@ -153,7 +154,7 @@ async def create_phishing_campaign(
 
 
 @router.get("/phishing/templates")
-async def list_phishing_templates(user: CurrentUser) -> dict:
+async def list_phishing_templates(*, user: CurrentUser) -> dict:
     """List available phishing templates."""
     from app.services.attack.phishing_engine import PhishingSimulator
     sim = PhishingSimulator()
@@ -161,9 +162,9 @@ async def list_phishing_templates(user: CurrentUser) -> dict:
 
 
 @router.post("/exploit/search")
-async def search_exploits(
+async def search_exploits(*, 
     query: str,
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     """Search exploit database."""
     from app.services.attack.exploit_engine import ExploitFramework
@@ -172,7 +173,7 @@ async def search_exploits(
 
 
 @router.get("/mitre/kill-chain")
-async def get_mitre_kill_chain(user: CurrentUser) -> dict:
+async def get_mitre_kill_chain(*, user: CurrentUser) -> dict:
     """Get MITRE ATT&CK kill chain."""
     from app.services.attack.c2_framework import MITREAttackMapper
     mapper = MITREAttackMapper()
@@ -180,7 +181,7 @@ async def get_mitre_kill_chain(user: CurrentUser) -> dict:
 
 
 @router.post("/mitre/map")
-async def map_to_mitre(finding_type: str, user: CurrentUser = None) -> dict:
+async def map_to_mitre(*, finding_type: str, user: CurrentUser) -> dict:
     """Map a finding to MITRE ATT&CK."""
     from app.services.attack.c2_framework import MITREAttackMapper
     mapper = MITREAttackMapper()

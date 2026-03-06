@@ -18,6 +18,7 @@ Sub-enhancements:
 """
 
 from __future__ import annotations
+
 import re
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
@@ -354,7 +355,7 @@ class WebApplicationScanner:
                         logger.error(f"scanner.web.{check_name}.error", url=url, error=str(e))
 
             # Severity summary
-            severity_counts = {}
+            severity_counts: dict[str, int] = {}
             for f in all_findings:
                 sev = f.get("severity", "info")
                 severity_counts[sev] = severity_counts.get(sev, 0) + 1

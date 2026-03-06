@@ -8,6 +8,7 @@ from __future__ import annotations
 import secrets as _sec
 
 import structlog
+import fastapi
 from fastapi import APIRouter, HTTPException
 
 from app.api.deps import CurrentUser
@@ -24,51 +25,51 @@ from app.core.notifier import send_test_alert
 # ─── Platform Status ────────────────────────
 
 @router.get("/status")
-async def platform_status(user: CurrentUser) -> dict:
+async def platform_status(*, user: CurrentUser) -> dict:
     return OpsOrchestrator().get_platform_status()
 
 
 # ─── Dashboard ──────────────────────────────
 
 @router.get("/dashboard")
-async def dashboard_overview(user: CurrentUser) -> dict:
+async def dashboard_overview(*, user: CurrentUser) -> dict:
     return OpsOrchestrator().dashboard.get_overview()
 
 
 @router.get("/dashboard/trend/{metric}")
-async def dashboard_trend(metric: str, limit: int = 50, user: CurrentUser = None) -> dict:
+async def dashboard_trend(*, metric: str, limit: int = 50, user: CurrentUser) -> dict:
     return OpsOrchestrator().dashboard.get_trend(metric, limit)
 
 
 # ─── Reports ─────────────────────────────────
 
 @router.get("/reports/types")
-async def list_report_types(user: CurrentUser) -> dict:
+async def list_report_types(*, user: CurrentUser) -> dict:
     return {"types": OpsOrchestrator().reports.list_types()}
 
 
 @router.post("/reports/generate")
-async def generate_report(report_type: str, scan_data: dict, user: CurrentUser = None) -> dict:
+async def generate_report(*, report_type: str, scan_data: dict, user: CurrentUser) -> dict:
     return OpsOrchestrator().reports.generate(report_type, scan_data)
 
 
 # ─── Notifications ──────────────────────────
 
 @router.post("/notifications/send")
-async def send_notification(
+async def send_notification(*, 
     title: str, message: str, severity: str = "info",
-    channels: list[str] | None = None, user: CurrentUser = None,
+    channels: list[str] | None = None, user: CurrentUser,
 ) -> dict:
     return OpsOrchestrator().notifications.send(title, message, severity, channels)
 
 
 @router.get("/notifications")
-async def notification_history(limit: int = 50, user: CurrentUser = None) -> dict:
+async def notification_history(*, limit: int = 50, user: CurrentUser) -> dict:
     return {"notifications": OpsOrchestrator().notifications.get_history(limit)}
 
 
 @router.get("/notifications/failed")
-async def list_failed_notifications(user: CurrentUser = None) -> dict:
+async def list_failed_notifications(*, user: CurrentUser) -> dict:
     import json
     from pathlib import Path
     
@@ -87,7 +88,7 @@ async def list_failed_notifications(user: CurrentUser = None) -> dict:
 
 
 @router.post("/notifications/retry")
-async def retry_failed_notifications(user: CurrentUser = None) -> dict:
+async def retry_failed_notifications(*, user: CurrentUser) -> dict:
     import httpx
     import json
     from pathlib import Path
@@ -130,9 +131,9 @@ async def retry_failed_notifications(user: CurrentUser = None) -> dict:
 # ─── Scheduler ──────────────────────────────
 
 @router.post("/jobs")
-async def create_job(
+async def create_job(*, 
     name: str, job_type: str, schedule: str,
-    target: str = "", config: dict | None = None, user: CurrentUser = None,
+    target: str = "", config: dict | None = None, user: CurrentUser,
 ) -> dict:
     orchestrator = OpsOrchestrator()
     result = orchestrator.scheduler.create_job(name, job_type, schedule, target, config)
@@ -141,114 +142,114 @@ async def create_job(
 
 
 @router.get("/jobs")
-async def list_jobs(status: str | None = None, user: CurrentUser = None) -> dict:
+async def list_jobs(*, status: str | None = None, user: CurrentUser) -> dict:
     return {"jobs": OpsOrchestrator().scheduler.list_jobs(status)}
 
 
 @router.delete("/jobs/{job_id}")
-async def delete_job(job_id: str, user: CurrentUser = None) -> dict:
+async def delete_job(*, job_id: str, user: CurrentUser) -> dict:
     return OpsOrchestrator().scheduler.delete_job(job_id)
 
 
 # ─── Audit Log ──────────────────────────────
 
 @router.get("/audit")
-async def search_audit(
+async def search_audit(*, 
     username: str | None = None, action: str | None = None,
-    limit: int = 100, user: CurrentUser = None,
+    limit: int = 100, user: CurrentUser,
 ) -> dict:
     return {"entries": OpsOrchestrator().audit.search(username, action, limit=limit)}
 
 
 @router.get("/audit/user/{username}")
-async def user_activity(username: str, user: CurrentUser = None) -> dict:
+async def user_activity(*, username: str, user: CurrentUser) -> dict:
     return OpsOrchestrator().audit.get_user_activity(username)
 
 
 # ─── Assets ─────────────────────────────────
 
 @router.post("/assets")
-async def add_asset(
+async def add_asset(*, 
     name: str, asset_type: str, address: str,
     criticality: str = "medium", tags: list[str] | None = None,
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     return OpsOrchestrator().assets.add_asset(name, asset_type, address, tags, criticality)
 
 
 @router.get("/assets")
-async def list_assets(
+async def list_assets(*, 
     asset_type: str | None = None, criticality: str | None = None,
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     return {"assets": OpsOrchestrator().assets.list_assets(asset_type, criticality)}
 
 
 @router.get("/assets/risk")
-async def asset_risk_summary(user: CurrentUser) -> dict:
+async def asset_risk_summary(*, user: CurrentUser) -> dict:
     return OpsOrchestrator().assets.get_risk_summary()
 
 
 # ─── Teams ──────────────────────────────────
 
 @router.get("/team/roles")
-async def list_roles(user: CurrentUser) -> dict:
+async def list_roles(*, user: CurrentUser) -> dict:
     return {"roles": OpsOrchestrator().teams.list_roles()}
 
 
 @router.post("/team/members")
-async def add_team_member(
-    username: str, role: str, email: str = "", user: CurrentUser = None,
+async def add_team_member(*, 
+    username: str, role: str, email: str = "", user: CurrentUser,
 ) -> dict:
     return OpsOrchestrator().teams.add_member(username, role, email)
 
 
 @router.get("/team/members")
-async def list_members(user: CurrentUser) -> dict:
+async def list_members(*, user: CurrentUser) -> dict:
     return {"members": OpsOrchestrator().teams.list_members()}
 
 
 # ─── API Keys ───────────────────────────────
 
 @router.post("/apikeys")
-async def create_api_key(
+async def create_api_key(*, 
     name: str, role: str = "analyst", scopes: list[str] | None = None,
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     return OpsOrchestrator().api_keys.create_key(name, role, scopes)
 
 
 @router.get("/apikeys")
-async def list_api_keys(user: CurrentUser) -> dict:
+async def list_api_keys(*, user: CurrentUser) -> dict:
     return {"keys": OpsOrchestrator().api_keys.list_keys()}
 
 
 @router.delete("/apikeys/{key_id}")
-async def revoke_api_key(key_id: str, user: CurrentUser = None) -> dict:
+async def revoke_api_key(*, key_id: str, user: CurrentUser) -> dict:
     return OpsOrchestrator().api_keys.revoke_key(key_id)
 
 
 # ─── Config ─────────────────────────────────
 
 @router.get("/config")
-async def get_config(user: CurrentUser) -> dict:
+async def get_config(*, user: CurrentUser) -> dict:
     return OpsOrchestrator().config.get_all()
 
 
 @router.put("/config")
-async def update_config(key: str, value: str, user: CurrentUser = None) -> dict:
+async def update_config(*, key: str, value: str, user: CurrentUser) -> dict:
     return OpsOrchestrator().config.set(key, value)
 
 
 # ─── Scan Queue ─────────────────────────────────────────────────────
 
 @router.post("/queue/submit")
-async def submit_scan_queue(
+async def submit_scan_queue(*, 
     targets: list[str],
     scan_type: str = "recon",
     modules: list[str] | None = None,
     priority: str = "normal",
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     """
     Submit a batch of targets to the scan queue.
@@ -308,7 +309,7 @@ async def submit_scan_queue(
 
 
 @router.get("/queue/status")
-async def get_queue_status(user: CurrentUser = None) -> dict:
+async def get_queue_status(*, user: CurrentUser) -> dict:
     """Get current scan queue -- all jobs of type scan_queue."""
     orchestrator = OpsOrchestrator()
     all_jobs = orchestrator.scheduler.list_jobs()
@@ -327,7 +328,7 @@ async def get_queue_status(user: CurrentUser = None) -> dict:
 
 
 @router.post("/queue/{job_id}/cancel")
-async def cancel_queued_job(job_id: str, user: CurrentUser = None) -> dict:
+async def cancel_queued_job(*, job_id: str, user: CurrentUser) -> dict:
     """Cancel a queued scan job."""
     orchestrator = OpsOrchestrator()
     result = orchestrator.scheduler.delete_job(job_id)
@@ -339,14 +340,14 @@ async def cancel_queued_job(job_id: str, user: CurrentUser = None) -> dict:
 # ─── Scheduled Scans (APScheduler-backed) ────────────────────────────
 
 @router.post("/schedules")
-async def create_schedule(
+async def create_schedule(*, 
     target: str,
     scan_type: str = "recon",
     schedule_type: str = "cron",
     schedule_value: str = "0 2 * * *",
     modules: list[str] | None = None,
     name: str = "",
-    user: CurrentUser = None,
+    user: CurrentUser,
 ) -> dict:
     """
     Create a recurring scan schedule.
@@ -374,13 +375,13 @@ async def create_schedule(
 
 
 @router.get("/schedules")
-async def list_schedules(user: CurrentUser = None) -> dict:
+async def list_schedules(*, user: CurrentUser) -> dict:
     jobs = list_scheduled_jobs()
     return {"schedules": jobs, "total": len(jobs)}
 
 
 @router.delete("/schedules/{job_id}")
-async def delete_schedule(job_id: str, user: CurrentUser = None) -> dict:
+async def delete_schedule(*, job_id: str, user: CurrentUser) -> dict:
     if not remove_scan_job(job_id):
         raise HTTPException(status_code=404, detail=f"Schedule {job_id} not found")
     return {"deleted": job_id}
@@ -389,7 +390,7 @@ async def delete_schedule(job_id: str, user: CurrentUser = None) -> dict:
 # ─── Notification Test & Config ─────────────────────────────────────
 
 @router.post("/notifications/test")
-async def test_notification(user: CurrentUser) -> dict:
+async def test_notification(*, user: CurrentUser) -> dict:
     """Send a test alert to all configured channels."""
     result = await send_test_alert()
     if not result["channels"]:
@@ -402,7 +403,7 @@ async def test_notification(user: CurrentUser) -> dict:
 
 
 @router.get("/notifications/config")
-async def notification_config(user: CurrentUser) -> dict:
+async def notification_config(*, user: CurrentUser) -> dict:
     """Return current notification channel configuration (no secrets)."""
     return {
         "email": {

@@ -10,6 +10,7 @@ OfSec V3 — #11-15 Additional Recon Modules
 
 
 from __future__ import annotations
+
 import httpx
 import structlog
 

@@ -5,6 +5,7 @@ Validates required config and connectivity before accepting traffic.
 Fails fast with clear error messages.
 """
 from __future__ import annotations
+
 import os
 import sys
 

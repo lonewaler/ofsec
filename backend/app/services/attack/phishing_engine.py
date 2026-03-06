@@ -5,6 +5,7 @@ Phishing campaign simulation and social engineering assessment tools.
 """
 
 from __future__ import annotations
+
 import hashlib
 import secrets
 from datetime import UTC, datetime

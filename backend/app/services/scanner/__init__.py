@@ -4,6 +4,7 @@ OfSec V3 — Scanner Services Package
 """
 
 from __future__ import annotations
+
 from app.services.scanner.advanced_scanner import (
     CloudConfigAuditor,
     ContainerSecurityScanner,

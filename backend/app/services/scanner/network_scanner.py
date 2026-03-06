@@ -5,6 +5,7 @@ Combined module for network-level scanning capabilities.
 """
 
 from __future__ import annotations
+
 import asyncio
 import re
 
@@ -272,7 +273,8 @@ class CMSScanner:
 class ComplianceAuditor:
     """Audit configurations against security benchmarks (CIS, OWASP)."""
 
-    OWASP_CHECKS = {
+    from typing import Any
+    OWASP_CHECKS: dict[str, list[dict[str, Any]]] = {
         "A01_Broken_Access_Control": [
             {"check": "directory_listing", "path": "/", "expect": "no_index_of"},
             {"check": "admin_exposure", "path": "/admin", "expect": "auth_required"},

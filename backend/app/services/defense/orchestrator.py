@@ -5,6 +5,7 @@ Central orchestrator for all defense and operations modules (#66-82).
 """
 
 from __future__ import annotations
+
 from datetime import UTC, datetime
 
 import structlog

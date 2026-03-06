@@ -5,6 +5,7 @@ Taskiq async tasks wired to vulnerability scanner modules.
 """
 
 from __future__ import annotations
+
 import structlog
 
 from app.repositories import ScanRepository
@@ -172,7 +173,7 @@ async def run_full_vulnerability_scan(target: str, modules: list[str] | None = N
             if findings:
                 await repo.add_vulnerabilities(scan.id, findings)
 
-            severity_summary = {}
+            severity_summary: dict[str, int] = {}
             for f in findings:
                 sev = (f.get("severity") or "INFO").upper()
                 severity_summary[sev] = severity_summary.get(sev, 0) + 1

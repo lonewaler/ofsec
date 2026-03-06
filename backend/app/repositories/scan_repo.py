@@ -39,11 +39,11 @@ class ScanRepository:
         scan = await self.db.get(Scan, scan_id)
         if not scan:
             return None
-        scan.status = "failed" if error else "completed"
-        scan.finished_at = datetime.now(UTC)
-        scan.result_summary = result_summary
+        scan.status = "failed" if error else "completed"  # type: ignore[assignment]
+        scan.finished_at = datetime.now(UTC)  # type: ignore[assignment]
+        scan.result_summary = result_summary  # type: ignore[assignment]
         if error:
-            scan.error_message = error
+            scan.error_message = error  # type: ignore[assignment]
         return scan
 
     async def add_vulnerabilities(
@@ -99,7 +99,7 @@ class ScanRepository:
 
         q = q.order_by(Scan.started_at.desc()).limit(limit).offset(offset)
         result = await self.db.execute(q)
-        return result.scalars().all(), total
+        return list(result.scalars().all()), total
 
     async def list_vulnerabilities(
         self,
@@ -123,4 +123,4 @@ class ScanRepository:
 
         q = q.order_by(Vulnerability.discovered_at.desc()).limit(limit).offset(offset)
         result = await self.db.execute(q)
-        return result.scalars().all(), total
+        return list(result.scalars().all()), total

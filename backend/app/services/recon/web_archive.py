@@ -18,6 +18,7 @@ Sub-enhancements:
 
 
 from __future__ import annotations
+
 import httpx
 import structlog
 
@@ -158,7 +159,7 @@ class WebArchiveScraper:
             sensitive_files = await self.find_sensitive_files(domain)
 
             # Build timeline from snapshot timestamps
-            timeline = {}
+            timeline: dict[str, int] = {}
             for snap in snapshots:
                 ts = snap.get("timestamp", "")
                 if len(ts) >= 4:

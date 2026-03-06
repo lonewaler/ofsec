@@ -6,6 +6,7 @@ Login, register, profile, change-password, list-users.
 
 from __future__ import annotations
 import structlog
+import fastapi
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import CurrentUser, DbSession
@@ -29,7 +30,7 @@ def _user_dict(u) -> dict:
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(request: LoginRequest, db: DbSession) -> TokenResponse:
+async def login(*, request: LoginRequest, db: DbSession) -> TokenResponse:
     """Email + password → JWT."""
     repo = UserRepository(db)
     user = await repo.authenticate(request.email, request.password)
@@ -47,12 +48,12 @@ async def login(request: LoginRequest, db: DbSession) -> TokenResponse:
 
 
 @router.post("/register", response_model=UserResponse)
-async def register(
+async def register(*, 
     email: str,
     password: str,
     display_name: str = "",
-    db: DbSession = None,
-    current_user: CurrentUser = None,
+    db: DbSession,
+    current_user: CurrentUser,
 ) -> dict:
     """Create a new user — admin only."""
     if current_user.get("role") != "admin":
@@ -71,7 +72,7 @@ async def register(
 
 
 @router.get("/me", response_model=UserResponse)
-async def me(db: DbSession, user: CurrentUser) -> dict:
+async def me(*, db: DbSession, user: CurrentUser) -> dict:
     """Authenticated user's profile from DB."""
     repo = UserRepository(db)
     try:
@@ -91,7 +92,7 @@ async def me(db: DbSession, user: CurrentUser) -> dict:
 
 
 @router.post("/change-password")
-async def change_password(
+async def change_password(*, 
     old_password: str,
     new_password: str,
     db: DbSession,
@@ -112,7 +113,7 @@ async def change_password(
 
 
 @router.get("/users")
-async def list_users(db: DbSession, user: CurrentUser) -> dict:
+async def list_users(*, db: DbSession, user: CurrentUser) -> dict:
     """List all users — admin only."""
     if user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")

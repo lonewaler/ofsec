@@ -30,7 +30,7 @@ class IOCRepository:
         existing = result.scalar_one_or_none()
 
         if existing:
-            existing.last_seen = datetime.now(UTC)
+            existing.last_seen = datetime.now(UTC)  # type: ignore[assignment]
             existing.confidence = max(existing.confidence, confidence)
             return existing
 
@@ -64,4 +64,4 @@ class IOCRepository:
 
         q = q.order_by(ThreatIOC.last_seen.desc()).limit(limit).offset(offset)
         result = await self.db.execute(q)
-        return result.scalars().all(), total
+        return list(result.scalars().all()), total

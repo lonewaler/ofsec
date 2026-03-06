@@ -8,6 +8,7 @@ for real-time anomaly identification without heavy ML dependencies.
 """
 
 from __future__ import annotations
+
 import statistics
 from collections import defaultdict, deque
 from datetime import UTC, datetime
@@ -254,7 +255,7 @@ class LogAnomalyDetector:
     def analyze_batch(self, log_lines: list[str], source: str = "app") -> dict:
         """Analyze a batch of log lines."""
         with tracer.start_as_current_span("log_anomaly_analysis"):
-            all_findings = []
+            all_findings: list[dict] = []
             severity_counts: dict[str, int] = {}
 
             for line in log_lines:

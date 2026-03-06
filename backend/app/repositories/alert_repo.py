@@ -54,15 +54,15 @@ class AlertRepository:
 
         q = q.order_by(Alert.created_at.desc()).limit(limit).offset(offset)
         result = await self.db.execute(q)
-        return result.scalars().all(), total
+        return list(result.scalars().all()), total
 
     async def update_alert_status(self, alert_id: int, status: str) -> Alert | None:
         alert = await self.db.get(Alert, alert_id)
         if not alert:
             return None
-        alert.status = status
+        alert.status = status  # type: ignore[assignment]
         if status == "resolved":
-            alert.resolved_at = datetime.now(UTC)
+            alert.resolved_at = datetime.now(UTC)  # type: ignore[assignment]
         return alert
 
     async def count_open(self) -> int:

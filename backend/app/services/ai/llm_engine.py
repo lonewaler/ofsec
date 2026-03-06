@@ -6,6 +6,7 @@ AI-powered report generation.
 """
 
 from __future__ import annotations
+
 import hashlib
 import json
 from datetime import UTC, datetime
@@ -165,6 +166,8 @@ Keep the explanation technical but clear."""
         except Exception as e:
             logger.error("ai.llm.error", provider=self._provider, error=str(e))
             return f"[LLM Error: {str(e)}]"
+            
+        return ""
 
     async def close(self):
         if self._client and not self._client.is_closed:
@@ -293,7 +296,7 @@ class AIReportGenerator:
             findings = scan_data.get("findings", [])
             modules = scan_data.get("modules_run", [])
 
-            severity_counts = {}
+            severity_counts: dict[str, int] = {}
             for f in findings:
                 sev = f.get("severity", "info")
                 severity_counts[sev] = severity_counts.get(sev, 0) + 1

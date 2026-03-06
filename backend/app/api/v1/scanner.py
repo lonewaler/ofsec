@@ -6,6 +6,7 @@ REST API for vulnerability scanning operations (Upgrades #16–30).
 
 from __future__ import annotations
 import structlog
+import fastapi
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import CurrentUser, DbSession
@@ -49,7 +50,7 @@ MODULE_TASK_MAP = {
 
 
 @router.get("/modules")
-async def list_scanner_modules(user: CurrentUser) -> dict:
+async def list_scanner_modules(*, user: CurrentUser) -> dict:
     """List all available scanner modules."""
     return {
         "modules": [
@@ -71,11 +72,11 @@ async def list_scanner_modules(user: CurrentUser) -> dict:
 
 
 @router.post("/scan")
-async def start_vulnerability_scan(
+async def start_vulnerability_scan(*, 
     target: str,
     modules: list[str] | None = None,
-    db: DbSession = None,
-    user: CurrentUser = None,
+    db: DbSession,
+    user: CurrentUser,
 ) -> SuccessResponse:
     """Start a vulnerability scan (async via Taskiq)."""
     logger.info("api.scanner.scan.start", target=target, modules=modules)
@@ -102,11 +103,11 @@ async def start_vulnerability_scan(
 
 
 @router.post("/scan/instant")
-async def instant_vulnerability_scan(
+async def instant_vulnerability_scan(*, 
     target: str,
     modules: list[str] | None = None,
-    db: DbSession = None,
-    user: CurrentUser = None,
+    db: DbSession,
+    user: CurrentUser,
 ) -> dict:
     """Run scanner modules instantly and persist results."""
     repo = ScanRepository(db)
@@ -123,7 +124,7 @@ async def instant_vulnerability_scan(
         if findings:
             await repo.add_vulnerabilities(scan.id, findings)
 
-        severity_summary = {}
+        severity_summary: dict[str, int] = {}
         for f in findings:
             sev = (f.get("severity") or "info").upper()
             severity_summary[sev] = severity_summary.get(sev, 0) + 1
@@ -144,7 +145,7 @@ async def instant_vulnerability_scan(
 
 
 @router.post("/scan/headers")
-async def quick_header_scan(url: str, user: CurrentUser = None) -> dict:
+async def quick_header_scan(*, url: str, user: CurrentUser) -> dict:
     """Quick header security analysis."""
     orchestrator = ScannerOrchestrator()
     try:
@@ -154,7 +155,7 @@ async def quick_header_scan(url: str, user: CurrentUser = None) -> dict:
 
 
 @router.post("/scan/ssl")
-async def quick_ssl_scan(host: str, port: int = 443, user: CurrentUser = None) -> dict:
+async def quick_ssl_scan(*, host: str, port: int = 443, user: CurrentUser) -> dict:
     """Quick SSL/TLS audit."""
     orchestrator = ScannerOrchestrator()
     try:
@@ -164,7 +165,7 @@ async def quick_ssl_scan(host: str, port: int = 443, user: CurrentUser = None) -
 
 
 @router.get("/results")
-async def list_scan_results(
+async def list_scan_results(*, 
     db: DbSession,
     user: CurrentUser,
     limit: int = 20,
@@ -191,13 +192,13 @@ async def list_scan_results(
 
 
 @router.get("/results/{scan_id}")
-async def get_scan_result(scan_id: int, db: DbSession = None, user: CurrentUser = None) -> dict:
+async def get_scan_result(*, scan_id: int, db: DbSession, user: CurrentUser) -> dict:
     """Get a specific scan result."""
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Scan not found")
 
 
 @router.get("/vulnerabilities")
-async def list_vulnerabilities(
+async def list_vulnerabilities(*, 
     db: DbSession,
     user: CurrentUser,
     severity: str | None = None,

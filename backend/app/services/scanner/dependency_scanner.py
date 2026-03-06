@@ -8,6 +8,7 @@ Supports: Python (pip), JavaScript (npm), Ruby (gem), Go, Rust (cargo).
 
 
 from __future__ import annotations
+
 import httpx
 import structlog
 
@@ -88,7 +89,7 @@ class DependencyScanner:
                         v["version"] = version
                         all_vulns.append(v)
 
-            severity_counts = {}
+            severity_counts: dict[str, int] = {}
             for v in all_vulns:
                 sev = v.get("severity", "unknown")
                 severity_counts[sev] = severity_counts.get(sev, 0) + 1

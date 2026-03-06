@@ -6,6 +6,7 @@ and behavioral hunting.
 """
 
 from __future__ import annotations
+
 from collections import defaultdict
 from datetime import UTC, datetime
 

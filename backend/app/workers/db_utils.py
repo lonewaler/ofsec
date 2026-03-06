@@ -6,6 +6,7 @@ outside the FastAPI request/response lifecycle.
 """
 
 from __future__ import annotations
+
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
