@@ -4,6 +4,7 @@ OfSec V3 — Recon API Endpoints (Full Implementation)
 REST API for reconnaissance operations (Upgrades #1–15).
 """
 
+from __future__ import annotations
 import asyncio
 import json
 import json as _json
@@ -143,7 +144,7 @@ async def run_passive_recon(
     db: DbSession,
     user: CurrentUser,
     stream: bool = False,
-):
+) -> dict:
     """
     Run passive recon.
     - stream=false (default): blocks until complete, returns full JSON
@@ -327,7 +328,7 @@ async def stream_scan_results(
 
 
 @router.websocket("/ws/{scan_id}")
-async def websocket_scan_stream(websocket: WebSocket, scan_id: str):
+async def websocket_scan_stream(websocket: WebSocket, scan_id: str) -> None:
     """
     Bidirectional WebSocket for scan streaming + control.
 

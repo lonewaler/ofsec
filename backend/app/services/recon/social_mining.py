@@ -17,6 +17,7 @@ Sub-enhancements:
 10. Social engineering surface mapping
 """
 
+from __future__ import annotations
 import asyncio
 
 import httpx

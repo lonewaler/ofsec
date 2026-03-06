@@ -4,6 +4,7 @@ OfSec V3 — Security Module
 JWT authentication, password hashing, API key validation, and RBAC.
 """
 
+from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 import jwt

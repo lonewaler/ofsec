@@ -5,6 +5,7 @@ Taskiq async tasks wired to recon service modules.
 All tasks persist results to the database via ScanRepository.
 """
 
+from __future__ import annotations
 import structlog
 
 from app.repositories import ScanRepository

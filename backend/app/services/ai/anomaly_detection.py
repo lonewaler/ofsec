@@ -7,6 +7,7 @@ Uses statistical methods (Z-score, IQR, Isolation Forest concepts)
 for real-time anomaly identification without heavy ML dependencies.
 """
 
+from __future__ import annotations
 import statistics
 from collections import defaultdict, deque
 from datetime import UTC, datetime

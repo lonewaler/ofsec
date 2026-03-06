@@ -3,6 +3,7 @@ OfSec V3 — Attack Services Package
 =====================================
 """
 
+from __future__ import annotations
 from app.services.attack.c2_framework import (
     AttackReportGenerator,
     C2Framework,

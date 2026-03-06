@@ -17,6 +17,7 @@ Sub-enhancements:
 10. Rate-limited query management
 """
 
+from __future__ import annotations
 import asyncio
 
 import httpx

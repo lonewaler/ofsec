@@ -4,6 +4,7 @@ OfSec V3 — API Dependencies
 Shared dependencies for FastAPI route injection.
 """
 
+from __future__ import annotations
 from typing import Annotated
 
 from fastapi import Depends

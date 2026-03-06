@@ -25,8 +25,16 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       loadPersistedData();
       loadModuleGrid();
       loadAIModules();
+      loadAIModules();
       loadAPIKeyStatus();
       loadPlatformInfo();
+      loadDLQ();
+
+      // Global polling
+      setInterval(() => {
+        loadDLQ();
+        // and other global polls if any
+      }, 30000); // Check DLQ every 30 seconds
     }
   } catch (err) {
     toast('Authentication failed: ' + err.message, 'error');
@@ -1698,5 +1706,98 @@ async function sendTestAlert() {
     }
   } catch (e) {
     toast('Test failed: ' + e.message, 'error');
+  }
+}
+
+// ─── Dead-Letter Queue ────────────────────────────────────────────────
+async function loadDLQ() {
+  const el = document.getElementById('dlq-display');
+  const btnRetry = document.getElementById('btn-retry-dlq');
+
+  // Try to find or create nav badge
+  let navBadge = document.getElementById('settings-dlq-badge');
+  if (!navBadge) {
+    const settingsNavItem = document.querySelector('.nav-item[data-page="settings"]');
+    if (settingsNavItem) {
+      navBadge = document.createElement('span');
+      navBadge.id = 'settings-dlq-badge';
+      navBadge.className = 'nav-badge';
+      navBadge.style.backgroundColor = 'var(--accent-red)';
+      navBadge.style.display = 'none';
+      settingsNavItem.appendChild(navBadge);
+    }
+  }
+
+  try {
+    const data = await api('/api/v1/ops/notifications/failed');
+
+    // Update nav badge
+    if (navBadge) {
+      if (data.count > 0) {
+        navBadge.textContent = data.count > 99 ? '99+' : data.count;
+        navBadge.style.display = 'inline-flex';
+      } else {
+        navBadge.style.display = 'none';
+      }
+    }
+
+    if (!el) return;
+
+    if (!data.failed || data.failed.length === 0) {
+      el.innerHTML = '<span style="color:var(--text-dim)">DLQ is empty. All webhooks are sending successfully.</span>';
+      if (btnRetry) btnRetry.style.display = 'none';
+      return;
+    }
+
+    if (btnRetry) btnRetry.style.display = 'inline-block';
+
+    const count = data.count;
+    let html = `<div style="margin-bottom:12px;color:var(--accent-orange);font-weight:600">
+                  ⚠️ ${count} webhook${count !== 1 ? 's' : ''} in queue
+                </div>`;
+
+    html += `<div style="max-height:200px;overflow-y:auto;border:1px solid rgba(55,65,81,0.5);border-radius:4px">
+              <table style="width:100%;font-size:11px;border-collapse:collapse">
+                <thead style="background:rgba(0,0,0,0.2)">
+                  <tr>
+                    <th style="padding:6px;text-align:left">ID</th>
+                    <th style="padding:6px;text-align:left">Target</th>
+                  </tr>
+                </thead>
+                <tbody>`;
+
+    data.failed.forEach(item => {
+      html += `<tr style="border-bottom:1px solid rgba(55,65,81,0.3)">
+                <td style="padding:6px;font-family:monospace;color:var(--text-muted)">${item.id}</td>
+                <td style="padding:6px;color:var(--text-secondary);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.target_url}</td>
+               </tr>`;
+    });
+
+    html += `</tbody></table></div>`;
+    el.innerHTML = html;
+
+  } catch (e) {
+    if (el) el.innerHTML = `<span style="color:var(--accent-red)">Could not load DLQ: ${e.message}</span>`;
+  }
+}
+
+async function retryDLQ() {
+  const btnRetry = document.getElementById('btn-retry-dlq');
+  if (btnRetry) {
+    btnRetry.disabled = true;
+    btnRetry.textContent = '⏳ Retrying...';
+  }
+
+  try {
+    const data = await api('/api/v1/ops/notifications/retry', { method: 'POST' });
+    toast(data.message, data.still_failing === 0 ? 'success' : 'warning');
+    await loadDLQ();
+  } catch (e) {
+    toast('Retry failed: ' + e.message, 'error');
+  } finally {
+    if (btnRetry) {
+      btnRetry.disabled = false;
+      btnRetry.textContent = '▶ Retry All';
+    }
   }
 }

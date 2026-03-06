@@ -4,6 +4,7 @@ OfSec V3 — Attack Simulator API Endpoints
 REST API for attack simulation operations (Upgrades #31–45).
 """
 
+from __future__ import annotations
 import structlog
 from fastapi import APIRouter, HTTPException, status
 

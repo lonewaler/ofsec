@@ -4,6 +4,7 @@ OfSec V3 — Defense Task Workers
 Taskiq async tasks for defense and operations modules.
 """
 
+from __future__ import annotations
 import structlog
 
 from app.services.defense.orchestrator import DefenseOrchestrator

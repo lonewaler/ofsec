@@ -4,6 +4,7 @@ OfSec V3 — AI/ML Engine API Endpoints
 REST API for AI-powered security intelligence (Upgrades #46–65).
 """
 
+from __future__ import annotations
 import structlog
 from fastapi import APIRouter
 
@@ -192,7 +193,10 @@ async def submit_feedback(
 async def get_accuracy(user: CurrentUser) -> dict:
     """Get model accuracy report."""
     orchestrator = AIOrchestrator()
-    return orchestrator.feedback.get_accuracy_report()
+    try:
+        return orchestrator.feedback.get_accuracy_report()
+    finally:
+        await orchestrator.close()
 
 
 # ─── LLM ─────────────────────────────────────

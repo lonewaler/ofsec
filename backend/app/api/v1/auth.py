@@ -4,6 +4,7 @@ OfSec V3 — Auth API (DB-backed)
 Login, register, profile, change-password, list-users.
 """
 
+from __future__ import annotations
 import structlog
 from fastapi import APIRouter, HTTPException, status
 

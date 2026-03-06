@@ -4,6 +4,7 @@ OfSec V3 — #96-100 Security Hardening & Platform Config
 Platform security, API rate limiting, and configuration management.
 """
 
+from __future__ import annotations
 import hashlib
 import secrets
 import time

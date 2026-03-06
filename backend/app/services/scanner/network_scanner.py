@@ -4,6 +4,7 @@ OfSec V3 — #22 Network Service Discovery + #25 CMS Scanner + #26 Compliance Au
 Combined module for network-level scanning capabilities.
 """
 
+from __future__ import annotations
 import asyncio
 import re
 
@@ -59,7 +60,8 @@ class NetworkDiscoveryScanner:
                                 asyncio.ensure_future(self._read_banner(writer)), timeout=2.0,
                             )
                             banner = data
-                        except Exception:
+                        except Exception as e:
+                            logger.debug("scanner.network.banner.error", host=host, port=port, error=str(e))
                             pass
                         finally:
                             writer.close()
@@ -73,7 +75,8 @@ class NetworkDiscoveryScanner:
                             "banner": banner[:200] if banner else "",
                             "version": self._extract_version(banner),
                         })
-                    except (TimeoutError, ConnectionRefusedError, OSError):
+                    except (TimeoutError, ConnectionRefusedError, OSError) as e:
+                        logger.debug("scanner.network.probe.failed", host=host, port=port, error=str(e))
                         pass
 
             tasks = [probe_port(p) for p in target_ports]
@@ -169,7 +172,8 @@ class CMSScanner:
             response = await client.get(url)
             content = response.text.lower()
             headers = dict(response.headers)
-        except Exception:
+        except Exception as e:
+            logger.debug("scanner.cms.detect.error", url=url, error=str(e))
             return None
 
         for cms_name, fingerprints in self.CMS_FINGERPRINTS.items():
@@ -188,7 +192,8 @@ class CMSScanner:
                     resp = await client.head(f"{url.rstrip('/')}{path}")
                     if resp.status_code < 404:
                         return {"cms": cms_name, "confidence": "medium", "url": url}
-                except Exception:
+                except Exception as e:
+                    logger.debug("scanner.cms.detect.path.error", url=url, path=path, error=str(e))
                     continue
 
         return None
@@ -212,7 +217,8 @@ class CMSScanner:
                         "path": vuln_path,
                         "evidence": f"Accessible ({resp.status_code}), size: {len(resp.content)} bytes",
                     })
-            except Exception:
+            except Exception as e:
+                logger.debug("scanner.cms.vulns.error", url=full_url, error=str(e))
                 continue
 
         # WordPress-specific: user enumeration
@@ -228,7 +234,8 @@ class CMSScanner:
                             "url": f"{url}/wp-json/wp/v2/users",
                             "evidence": f"Exposed {len(users)} user(s): {[u.get('slug') for u in users[:5]]}",
                         })
-            except Exception:
+            except Exception as e:
+                logger.debug("scanner.cms.wp_enum.error", url=url, error=str(e))
                 pass
 
         return findings
@@ -350,7 +357,8 @@ class ComplianceAuditor:
                         "url": base_url,
                         "remediation": "Disable directory listing in web server config",
                     }
-            except Exception:
+            except Exception as e:
+                logger.debug("scanner.compliance.dirlist.error", url=base_url, error=str(e))
                 pass
 
         elif check_type == "https_redirect":
@@ -364,7 +372,8 @@ class ComplianceAuditor:
                         "url": http_url,
                         "remediation": "Configure HTTP to HTTPS redirect",
                     }
-            except Exception:
+            except Exception as e:
+                logger.debug("scanner.compliance.httpsredir.error", url=http_url, error=str(e))
                 pass
 
         elif check_type in ("debug_mode", "log_exposure", "admin_exposure"):
@@ -379,7 +388,8 @@ class ComplianceAuditor:
                             "url": f"{base_url}{path}",
                             "remediation": f"Restrict access to {path}",
                         }
-                except Exception:
+                except Exception as e:
+                    logger.debug("scanner.compliance.admin_exposure.error", url=base_url, path=path, error=str(e))
                     continue
 
         elif check_type == "error_handling":
@@ -392,7 +402,8 @@ class ComplianceAuditor:
                         "url": f"{base_url}{check['path']}",
                         "remediation": "Implement custom error pages, disable debug mode",
                     }
-            except Exception:
+            except Exception as e:
+                logger.debug("scanner.compliance.error_handling.error", url=base_url, path=check['path'], error=str(e))
                 pass
 
         return None

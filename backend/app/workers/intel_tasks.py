@@ -10,11 +10,13 @@ Results are persisted to threat_iocs via IOCRepository.
 High-confidence IOCs trigger alerts via the notification dispatcher.
 """
 
+from __future__ import annotations
 import asyncio
 from datetime import UTC, datetime
 
 import httpx
 import structlog
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 from app.config import settings
 from app.repositories import IOCRepository
@@ -31,6 +33,7 @@ ALERT_CONFIDENCE = 0.85
 
 # ─── Source: AlienVault OTX ──────────────────────────────────────────
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def _fetch_otx_pulses(client: httpx.AsyncClient) -> list[dict]:
     """
     Fetch the most recent OTX pulses from the subscribed feed.
@@ -97,6 +100,7 @@ def _normalise_otx_type(otx_type: str) -> str | None:
 
 # ─── Source: AbuseIPDB ───────────────────────────────────────────────
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def _fetch_abuseipdb(client: httpx.AsyncClient) -> list[dict]:
     """Fetch top 100 most-reported IPs from AbuseIPDB blacklist."""
     if not settings.ABUSEIPDB_API_KEY:
@@ -138,6 +142,7 @@ async def _fetch_abuseipdb(client: httpx.AsyncClient) -> list[dict]:
 
 # ─── Source: VirusTotal ──────────────────────────────────────────────
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def _fetch_virustotal(client: httpx.AsyncClient) -> list[dict]:
     """
     Query VT for recently-detected malicious files/URLs.

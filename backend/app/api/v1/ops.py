@@ -4,6 +4,7 @@ OfSec V3 — Dashboard & Operations API Endpoints
 REST API for dashboard, reports, scheduling, and administration.
 """
 
+from __future__ import annotations
 import secrets as _sec
 
 import structlog
@@ -64,6 +65,66 @@ async def send_notification(
 @router.get("/notifications")
 async def notification_history(limit: int = 50, user: CurrentUser = None) -> dict:
     return {"notifications": OpsOrchestrator().notifications.get_history(limit)}
+
+
+@router.get("/notifications/failed")
+async def list_failed_notifications(user: CurrentUser = None) -> dict:
+    import json
+    from pathlib import Path
+    
+    dlq_dir = Path("/tmp/ofsec_dlq")
+    failed = []
+    if dlq_dir.exists():
+        for file in dlq_dir.glob("dlq_*.json"):
+            try:
+                with open(file, "r") as f:
+                    data = json.load(f)
+                    data["id"] = file.name
+                    failed.append(data)
+            except Exception:
+                pass
+    return {"failed": failed, "count": len(failed)}
+
+
+@router.post("/notifications/retry")
+async def retry_failed_notifications(user: CurrentUser = None) -> dict:
+    import httpx
+    import json
+    from pathlib import Path
+    import asyncio
+    
+    dlq_dir = Path("/tmp/ofsec_dlq")
+    if not dlq_dir.exists():
+        return {"retried": 0, "failed": 0, "message": "No DLQ directory found"}
+        
+    retried_count = 0
+    failed_count = 0
+    files = list(dlq_dir.glob("dlq_*.json"))
+    
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        for file in files:
+            try:
+                with open(file, "r") as f:
+                    data = json.load(f)
+                
+                url = data.get("target_url")
+                payload = data.get("payload")
+                
+                resp = await client.post(url, json=payload, headers={"Content-Type": "application/json"})
+                resp.raise_for_status()
+                
+                # If successful, delete the file
+                file.unlink()
+                retried_count += 1
+            except Exception as e:
+                logger.error("ops.dlq.retry_failed", file=file.name, error=str(e))
+                failed_count += 1
+                
+    return {
+        "retried": retried_count,
+        "still_failing": failed_count,
+        "message": f"Successfully retried {retried_count} notifications"
+    }
 
 
 # ─── Scheduler ──────────────────────────────

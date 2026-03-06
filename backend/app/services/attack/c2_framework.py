@@ -4,6 +4,7 @@ OfSec V3 — #40 C2 Framework + #41-45 Advanced Attack Modules
 Command & Control integration, wireless attacks, and advanced techniques.
 """
 
+from __future__ import annotations
 import secrets
 from datetime import UTC, datetime
 

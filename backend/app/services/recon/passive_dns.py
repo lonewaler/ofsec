@@ -17,6 +17,7 @@ Sub-enhancements:
 10. Reverse DNS lookups
 """
 
+from __future__ import annotations
 import asyncio
 
 import dns.asyncresolver

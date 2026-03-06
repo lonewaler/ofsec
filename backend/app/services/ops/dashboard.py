@@ -4,6 +4,7 @@ OfSec V3 — #83-88 Dashboard & Reporting Engine
 Dashboard analytics, report generation, scheduling, and notification systems.
 """
 
+from __future__ import annotations
 import secrets
 from collections import defaultdict
 from datetime import UTC, datetime

@@ -4,6 +4,7 @@ OfSec V3 — #69-71 SIEM Integration
 Log aggregation, correlation rules, and security event management.
 """
 
+from __future__ import annotations
 import re
 from collections import defaultdict
 from datetime import UTC, datetime

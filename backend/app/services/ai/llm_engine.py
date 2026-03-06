@@ -5,6 +5,7 @@ Advanced AI capabilities using LLM APIs, vector embeddings, and
 AI-powered report generation.
 """
 
+from __future__ import annotations
 import hashlib
 import json
 from datetime import UTC, datetime

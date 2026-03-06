@@ -4,6 +4,7 @@ OfSec V3 — Vulnerability Scanner Orchestrator
 Central orchestrator coordinating all scanner modules (#16-30).
 """
 
+from __future__ import annotations
 import asyncio
 from datetime import UTC, datetime
 

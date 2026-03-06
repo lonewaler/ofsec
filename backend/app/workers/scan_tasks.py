@@ -4,6 +4,7 @@ OfSec V3 — Scanner Task Workers (Full Implementation)
 Taskiq async tasks wired to vulnerability scanner modules.
 """
 
+from __future__ import annotations
 import structlog
 
 from app.repositories import ScanRepository

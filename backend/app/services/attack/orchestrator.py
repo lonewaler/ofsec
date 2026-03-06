@@ -4,6 +4,7 @@ OfSec V3 — Attack Simulator Orchestrator
 Central orchestrator for all attack simulation modules (#31-45).
 """
 
+from __future__ import annotations
 import asyncio
 from datetime import UTC, datetime
 
@@ -226,9 +227,10 @@ class AttackOrchestrator:
             }
 
     async def close(self):
-        for instance in self._instances.values():
+        for name, instance in self._instances.items():
             if hasattr(instance, "close"):
                 try:
                     await instance.close()
-                except TypeError:
+                except Exception as e:
+                    logger.debug("attack.orchestrator.close.error", module=name, error=str(e))
                     pass

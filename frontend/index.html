@@ -812,6 +812,28 @@
                 ALERT_WEBHOOK_ENABLED=true<br>
                 ALERT_WEBHOOK_URL=https://hooks.slack.com/...
               </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dead-Letter Queue -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="card-title">📮 Dead-Letter Queue (DLQ)</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Failed webhook payloads waiting to be retried</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button class="btn btn-secondary" style="font-size:12px" onclick="loadDLQ()">↻ Refresh</button>
+                <button class="btn btn-primary" style="font-size:12px" onclick="retryDLQ()" id="btn-retry-dlq" style="display:none">
+                  ▶ Retry All
+                </button>
+              </div>
+            </div>
+            <div style="padding:16px">
+              <div id="dlq-display" style="font-size:13px;color:var(--text-muted)">
+                Loading DLQ status...
+              </div>
             </div>
           </div>
 

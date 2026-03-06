@@ -3,6 +3,7 @@ OfSec V3 — #20 Container Security + #21 Cloud Config + #23 Credential + #27-30
 ==========================================================================================
 """
 
+from __future__ import annotations
 import asyncio
 import re
 

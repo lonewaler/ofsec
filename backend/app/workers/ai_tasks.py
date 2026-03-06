@@ -4,6 +4,7 @@ OfSec V3 — AI/ML Task Workers
 Taskiq async tasks for AI/ML modules.
 """
 
+from __future__ import annotations
 import structlog
 
 from app.services.ai.orchestrator import AIOrchestrator

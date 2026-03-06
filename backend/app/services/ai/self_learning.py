@@ -4,6 +4,7 @@ OfSec V3 — #55-57 Self-Learning + #58-60 ML Pipeline
 Adaptive scanning, feedback loops, model management, and feature engineering.
 """
 
+from __future__ import annotations
 import hashlib
 import json
 from collections import defaultdict

@@ -4,6 +4,7 @@ OfSec V3 — #75-77 Automated Remediation + #78-82 Continuous Monitoring
 Automated security remediation and 24/7 monitoring capabilities.
 """
 
+from __future__ import annotations
 import asyncio
 import secrets
 from collections import defaultdict

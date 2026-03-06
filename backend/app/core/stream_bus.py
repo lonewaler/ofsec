@@ -12,6 +12,7 @@ Lifecycle:
   5. SSE endpoint sees the sentinel None and closes the stream
 """
 
+from __future__ import annotations
 import asyncio
 from collections.abc import AsyncGenerator
 

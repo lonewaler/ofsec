@@ -5,6 +5,7 @@ Scans REST/GraphQL APIs for security issues: auth bypass, IDOR,
 rate limiting, information disclosure, mass assignment.
 """
 
+from __future__ import annotations
 import asyncio
 
 import httpx

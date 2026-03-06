@@ -1,5 +1,6 @@
 """OfSec V3 — AI/ML Services Package."""
 
+from __future__ import annotations
 from app.services.ai.anomaly_detection import (
     BehavioralAnomalyDetector,
     LogAnomalyDetector,

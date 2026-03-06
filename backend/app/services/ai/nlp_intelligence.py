@@ -5,6 +5,7 @@ Natural Language Processing for threat report analysis, CVE parsing,
 and dark web monitoring.
 """
 
+from __future__ import annotations
 import re
 from collections import Counter
 from datetime import UTC, datetime

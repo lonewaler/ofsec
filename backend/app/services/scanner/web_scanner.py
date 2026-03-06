@@ -17,6 +17,7 @@ Sub-enhancements:
 10. Payload generation
 """
 
+from __future__ import annotations
 import re
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
@@ -138,7 +139,8 @@ class WebApplicationScanner:
                             "evidence": "Payload reflected in response body",
                         })
                         break  # One finding per param is enough
-                except Exception:
+                except Exception as e:
+                    logger.debug("scanner.web.xss.error", url=url, param=param_name, error=str(e))
                     continue
 
         return findings
@@ -169,7 +171,8 @@ class WebApplicationScanner:
                                 "evidence": f"SQL error pattern detected: {pattern}",
                             })
                             break
-                except Exception:
+                except Exception as e:
+                    logger.debug("scanner.web.sqli.error", url=url, param=param_name, payload=payload, error=str(e))
                     continue
 
             # Boolean-based detection
@@ -190,7 +193,8 @@ class WebApplicationScanner:
                         "parameter": param_name,
                         "evidence": f"Response size diff: {abs(len(true_resp.text) - len(false_resp.text))} bytes",
                     })
-            except Exception:
+            except Exception as e:
+                logger.debug("scanner.web.sqli_blind.error", url=url, param=param_name, error=str(e))
                 pass
 
         return findings
@@ -221,7 +225,8 @@ class WebApplicationScanner:
                             "evidence": "OS command output detected in response",
                         })
                         break
-                except Exception:
+                except Exception as e:
+                    logger.debug("scanner.web.cmdi.error", url=url, param=param_name, payload=payload, error=str(e))
                     continue
 
         return findings
@@ -251,7 +256,8 @@ class WebApplicationScanner:
                             "evidence": "System file content detected in response",
                         })
                         break
-                except Exception:
+                except Exception as e:
+                    logger.debug("scanner.web.path_traversal.error", url=url, param=param_name, payload=payload, error=str(e))
                     continue
 
         return findings
@@ -284,7 +290,8 @@ class WebApplicationScanner:
                             "evidence": f"Redirect to: {location}",
                         })
                         break
-                except Exception:
+                except Exception as e:
+                    logger.debug("scanner.web.open_redirect.error", url=url, param=param_name, payload=payload, error=str(e))
                     continue
 
         return findings
@@ -312,7 +319,8 @@ class WebApplicationScanner:
                     "url": url,
                     "evidence": f"Found {form_count} form(s) without CSRF tokens",
                 })
-        except Exception:
+        except Exception as e:
+            logger.debug("scanner.web.csrf.error", url=url, error=str(e))
             pass
 
         return findings

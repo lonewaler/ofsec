@@ -7,6 +7,7 @@ Supports: Python (pip), JavaScript (npm), Ruby (gem), Go, Rust (cargo).
 """
 
 
+from __future__ import annotations
 import httpx
 import structlog
 

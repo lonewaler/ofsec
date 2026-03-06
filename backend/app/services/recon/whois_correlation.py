@@ -16,6 +16,7 @@ Sub-enhancements:
 10. Bulk WHOIS queries
 """
 
+from __future__ import annotations
 from datetime import UTC, datetime
 
 import httpx

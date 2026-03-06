@@ -4,6 +4,7 @@ OfSec V3 — Attack Simulator Task Workers
 Taskiq async tasks for attack simulation modules.
 """
 
+from __future__ import annotations
 import structlog
 
 from app.services.attack.orchestrator import AttackOrchestrator

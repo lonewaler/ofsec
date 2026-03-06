@@ -4,6 +4,7 @@ OfSec V3 — #66-68 Incident Response Engine
 Automated incident response playbooks, alert triage, and evidence collection.
 """
 
+from __future__ import annotations
 import secrets
 from collections import defaultdict
 from datetime import UTC, datetime

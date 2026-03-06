@@ -4,6 +4,7 @@ OfSec V3 — Vulnerability Scanner API Endpoints (Full Implementation)
 REST API for vulnerability scanning operations (Upgrades #16–30).
 """
 
+from __future__ import annotations
 import structlog
 from fastapi import APIRouter, HTTPException, status
 

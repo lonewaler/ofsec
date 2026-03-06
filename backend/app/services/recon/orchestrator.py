@@ -4,6 +4,7 @@ OfSec V3 — Recon Orchestrator
 Central orchestrator that coordinates all recon modules and aggregates results.
 """
 
+from __future__ import annotations
 import asyncio
 from datetime import UTC, datetime
 

@@ -20,9 +20,11 @@ Usage:
 from __future__ import annotations
 
 import asyncio
+import json
 from datetime import UTC, datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -41,6 +43,26 @@ _SEVERITY_COLORS = {
     "low":      "#00BFFF",
     "info":     "#808080",
 }
+
+# ─── Dead Letter Queue Settings ──────────────────────────────────────
+DLQ_DIR = Path("/tmp/ofsec_dlq")
+DLQ_DIR.mkdir(parents=True, exist_ok=True)
+
+async def _write_dlq(payload: dict, url: str) -> None:
+    """Save a failed webhook struct to the DLQ file."""
+    try:
+        dlq_item = {
+            "timestamp": datetime.now(UTC).isoformat(),
+            "target_url": url,
+            "payload": payload,
+        }
+        filename = f"dlq_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S_%f')}.json"
+        with open(DLQ_DIR / filename, "w") as f:
+            json.dump(dlq_item, f)
+        logger.warning("notifier.dlq.saved", file=filename)
+    except Exception as e:
+        logger.error("notifier.dlq.error", error=str(e))
+
 
 
 # ─── Email ────────────────────────────────────────────────────────────
@@ -174,6 +196,7 @@ async def _send_webhook(
         logger.info("notifier.webhook.sent", url=url[:60], status=resp.status_code)
     except Exception as e:
         logger.error("notifier.webhook.failed", url=url[:60], error=str(e))
+        await _write_dlq(payload, url)
 
 
 # ─── Public API ───────────────────────────────────────────────────────

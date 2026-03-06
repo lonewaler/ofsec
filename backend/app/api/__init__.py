@@ -4,6 +4,7 @@ OfSec V3 — API v1 Router
 Versioned API router aggregating all endpoint modules.
 """
 
+from __future__ import annotations
 from fastapi import APIRouter
 
 router = APIRouter()

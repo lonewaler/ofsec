@@ -4,6 +4,7 @@ OfSec V3 — Defense & Operations API Endpoints
 REST API for defense, incident response, SIEM, and operations (#66–82).
 """
 
+from __future__ import annotations
 import structlog
 from fastapi import APIRouter
 

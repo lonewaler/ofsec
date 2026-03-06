@@ -7,6 +7,7 @@ Checks: certificate validity, protocol versions, cipher suites,
 OCSP stapling, certificate chain, key size, known vulns (POODLE, BEAST, Heartbleed).
 """
 
+from __future__ import annotations
 import asyncio
 import socket
 import ssl
@@ -210,14 +211,16 @@ class SSLTLSAuditor:
                 with socket.create_connection((host, port), timeout=5) as sock:
                     with ctx.wrap_socket(sock, server_hostname=host) as ssock:
                         return ssock.version()
-            except Exception:
+            except Exception as e:
+                logger.debug("scanner.ssl.protocol_test.error", host=host, port=port, proto=proto_name, error=str(e))
                 return None
 
         for proto_name in protocols_to_test:
             try:
                 version = await loop.run_in_executor(None, _test_protocol, proto_name)
                 results[proto_name] = {"supported": version is not None, "version": version}
-            except Exception:
+            except Exception as e:
+                logger.debug("scanner.ssl.protocol_check.error", host=host, port=port, proto=proto_name, error=str(e))
                 results[proto_name] = {"supported": False}
 
         return results
@@ -251,7 +254,8 @@ class SSLTLSAuditor:
         try:
             ciphers = await loop.run_in_executor(None, _get_ciphers)
             return {"supported": ciphers, "count": len(ciphers)}
-        except Exception:
+        except Exception as e:
+            logger.debug("scanner.ssl.cipher.error", host=host, port=port, error=str(e))
             return {"supported": [], "count": 0}
 
     def _analyze_ciphers(self, cipher_info: dict) -> list[dict]:

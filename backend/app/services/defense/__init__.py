@@ -1,5 +1,6 @@
 """OfSec V3 — Defense Services Package."""
 
+from __future__ import annotations
 from app.services.defense.incident_response import (
     AlertTriageEngine,
     EvidenceCollector,
