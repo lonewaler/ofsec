@@ -38,9 +38,8 @@ dependencies = [
 
     # ─── Security ─────────────────────────────────
     "pyjwt>=2.10.0",
-    "passlib[bcrypt]>=1.7.4",
+    "bcrypt>=4.2.0",
     "cryptography>=44.0.0",
-    "python-jose[cryptography]>=3.3.0",
 
     # ─── Vector DB ────────────────────────────────
     "qdrant-client>=1.12.0",
@@ -74,6 +73,10 @@ dependencies = [
     "sslyze>=6.0.0",
     "bandit>=1.8.0",
     "safety>=3.2.0",
+
+    # ─── Retry / Email ────────────────────────────
+    "tenacity>=9.0.0",
+    "aiosmtplib>=3.0.0",
 ]
 
 [project.optional-dependencies]

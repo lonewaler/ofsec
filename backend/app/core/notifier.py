@@ -45,7 +45,8 @@ _SEVERITY_COLORS = {
 }
 
 # ─── Dead Letter Queue Settings ──────────────────────────────────────
-DLQ_DIR = Path("/tmp/ofsec_dlq")
+import tempfile as _tempfile
+DLQ_DIR = Path(_tempfile.gettempdir()) / "ofsec_dlq"
 DLQ_DIR.mkdir(parents=True, exist_ok=True)
 
 async def _write_dlq(payload: dict, url: str) -> None:

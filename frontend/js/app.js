@@ -11,7 +11,7 @@ let vulnResults = [];
 
 // ─── Global Error Handlers ──────────────────
 // Catches ALL unhandled JS errors and reports them to the backend
-window.onerror = function(message, source, lineno, colno, error) {
+window.onerror = function (message, source, lineno, colno, error) {
   console.error('[OfSec] Unhandled error:', message, source, lineno);
   reportErrorToBackend({
     message: String(message),
@@ -26,7 +26,7 @@ window.onerror = function(message, source, lineno, colno, error) {
   return false; // Don't suppress the error in console
 };
 
-window.addEventListener('unhandledrejection', function(event) {
+window.addEventListener('unhandledrejection', function (event) {
   console.error('[OfSec] Unhandled promise rejection:', event.reason);
   reportErrorToBackend({
     message: 'Unhandled promise rejection: ' + String(event.reason?.message || event.reason),
@@ -52,8 +52,8 @@ function reportErrorToBackend(errorData) {
         url: errorData.url || window.location.href,
         user_agent: navigator.userAgent
       })
-    }).catch(() => {}); // Silently fail if logging endpoint is down
-  } catch(e) { /* ignore */ }
+    }).catch(() => { }); // Silently fail if logging endpoint is down
+  } catch (e) { /* ignore */ }
 }
 
 // ─── Authentication ─────────────────────────
@@ -209,7 +209,7 @@ function navigate(page) {
 }
 
 // Handle browser back/forward and direct URL hash navigation
-window.addEventListener('hashchange', function() {
+window.addEventListener('hashchange', function () {
   const page = location.hash.replace('#', '') || 'dashboard';
   const validPages = ['dashboard', 'scan', 'results', 'threats', 'ai', 'defense', 'reports', 'settings'];
   if (validPages.includes(page)) {
@@ -217,8 +217,21 @@ window.addEventListener('hashchange', function() {
   }
 });
 
+// Global click delegation for navigation links
+document.addEventListener('click', function (e) {
+  // Find closest element with data-page attribute
+  const navItem = e.target.closest('[data-page]');
+  if (navItem) {
+    const page = navItem.getAttribute('data-page');
+    if (page) {
+      e.preventDefault();
+      navigate(page);
+    }
+  }
+});
+
 window.addEventListener('beforeunload', stopAlertPolling);
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCVEPanel(); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && typeof closeCVEPanel === 'function') closeCVEPanel(); });
 
 // ─── Dashboard ──────────────────────────────
 async function loadDashboard() {
@@ -898,17 +911,27 @@ const AI_MODULES = [
   { name: 'Adaptive Learning', desc: 'Self-improving detection', icon: '🔄', status: 'active' },
 ];
 
-function loadAIModules() {
+async function loadAIModules() {
   const list = document.getElementById('ai-modules-list');
-  list.innerHTML = AI_MODULES.map(m => `
-    < div class="card" style = "display:flex;align-items:center;gap:12px;padding:14px" >
-      <span style="font-size:24px">${m.icon}</span>
+  let modules = AI_MODULES; // default fallback
+
+  // Try to load live module status from backend
+  try {
+    const data = await api('/api/v1/ai/modules');
+    if (data?.modules && Array.isArray(data.modules) && data.modules.length > 0) {
+      modules = data.modules;
+    }
+  } catch (_) { /* use hardcoded fallback */ }
+
+  list.innerHTML = modules.map(m => `
+    <div class="card" style="display:flex;align-items:center;gap:12px;padding:14px">
+      <span style="font-size:24px">${m.icon || '🔧'}</span>
       <div style="flex:1">
         <div style="font-weight:600;font-size:13px">${m.name}</div>
-        <div style="font-size:11px;color:var(--text-muted)">${m.desc}</div>
+        <div style="font-size:11px;color:var(--text-muted)">${m.desc || m.description || ''}</div>
       </div>
-      <span class="status-dot active"></span>
-    </div >
+      <span class="status-dot ${(m.status || 'active') === 'active' ? 'active' : 'pending'}"></span>
+    </div>
     `).join('');
 }
 
@@ -1647,13 +1670,12 @@ async function createSchedule() {
   try {
     await api('/api/v1/ops/schedules', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      body: {
         target,
         scan_type: 'recon',
         schedule_type: 'cron',
         schedule_value: cron,
-      }),
+      },
     });
     toast('Schedule created', 'success');
     document.getElementById('sched-target').value = '';
@@ -1703,8 +1725,7 @@ async function changePassword() {
   try {
     await api('/api/v1/auth/change-password', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ old_password: oldPw, new_password: newPw }),
+      body: { old_password: oldPw, new_password: newPw },
     });
     toast('Password changed', 'success');
     document.getElementById('pw-old').value = '';

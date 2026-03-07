@@ -41,7 +41,14 @@ def _sync_db_url() -> str:
 def get_scheduler() -> AsyncIOScheduler:
     global _scheduler
     if _scheduler is None:
-        jobstore = SQLAlchemyJobStore(url=_sync_db_url())
+        sync_url = _sync_db_url()
+        if "sqlite" in sync_url:
+            jobstore = SQLAlchemyJobStore(
+                url=sync_url,
+                engine_options={"connect_args": {"check_same_thread": False}},
+            )
+        else:
+            jobstore = SQLAlchemyJobStore(url=sync_url)
         _scheduler = AsyncIOScheduler(
             jobstores={"default": jobstore},
             executors={"default": AsyncIOExecutor()},

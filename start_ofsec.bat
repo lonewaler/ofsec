@@ -89,59 +89,41 @@ if exist ".env" (
     echo  [WARN] No .env file found — using defaults
 )
 
-:: ─── Install frontend dependencies ──────────
-echo.
-echo  [SETUP] Checking frontend dependencies...
-cd /d "%~dp0frontend"
-if not exist "node_modules" (
-    echo  [SETUP] Installing npm packages...
-    cmd /c npm install --silent 2>nul
-)
-echo  [OK] Frontend dependencies ready.
-
 :: ─── Display startup info ───────────────────
 echo.
 echo  ┌─────────────────────────────────────────┐
-echo  │  Starting OfSec V3 (Vite + FastAPI)     │
+echo  │  Starting OfSec V3 (Unified Server)     │
 echo  │                                           │
-echo  │  Frontend: http://localhost:3000           │
-echo  │  Backend:  http://localhost:8000           │
-echo  │  API Docs: http://localhost:8000/docs      │
-echo  │  Health:   http://localhost:8000/health     │
-echo  │  Logs:     backend\logs\ofsec.log          │
+echo  │  App ^& API: http://localhost:8000        │
+echo  │  API Docs:  http://localhost:8000/docs    │
+echo  │  Health:    http://localhost:8000/health  │
+echo  │  Logs:      backend\logs\ofsec.log        │
 echo  └─────────────────────────────────────────┘
 echo.
 
 :: ─── Start the backend server ───────────────
-echo  [STARTING] Launching uvicorn on port 8000...
+echo  [STARTING] Launching unified FastAPI server on port 8000...
 cd /d "%~dp0backend"
-start "OfSec Backend" cmd /k "cd /d "%~dp0backend" && call venv\Scripts\activate.bat && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+start "OfSec Unified Server" cmd /k "cd /d "%~dp0backend" && call venv\Scripts\activate.bat && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
-:: ─── Start the Vite dev server ──────────────
-echo  [STARTING] Launching Vite dev server on port 3000...
-cd /d "%~dp0frontend"
-start "OfSec Frontend" cmd /k "cd /d "%~dp0frontend" && cmd /c npx vite --host"
-
-:: ─── Wait for servers to start ──────────────
-echo  Waiting for servers to initialize (6 seconds)...
+:: ─── Wait for server to start ───────────────
+echo  Waiting for server to initialize (6 seconds)...
 timeout /t 6 /nobreak > nul
 
-:: ─── Open browser (Vite dev server) ─────────
+:: ─── Open browser ───────────────────────────
 echo  [OK] Opening browser...
-start http://localhost:3000/
+start http://localhost:8000/
 
 echo.
 echo  ============================================
-echo   OfSec V3 is running!
+echo   OfSec V3 is running on a Single Localhost!
 echo.
-echo   * Frontend: http://localhost:3000  (Vite HMR)
-echo   * Backend:  http://localhost:8000
+echo   * URL:      http://localhost:8000
 echo   * API:      http://localhost:8000/docs
-echo   * Logs:     backend\logs\ofsec.log
-echo   * Errors:   backend\logs\ofsec_errors.log
+echo   * Logs:     backend\logs\server.log
 echo.
 echo   Press any key to close this launcher.
-echo   (Do NOT close the server terminal windows!)
+echo   (Do NOT close the server terminal window!)
 echo  ============================================
 echo.
 pause

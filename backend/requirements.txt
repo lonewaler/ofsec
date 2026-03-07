@@ -1,0 +1,74 @@
+# OfSec V3 — Backend Dependencies
+# Generated from pyproject.toml
+
+# ─── Core Framework ───────────────────────────
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+gunicorn>=22.0.0
+pydantic>=2.10.0
+pydantic-settings>=2.6.0
+python-multipart>=0.0.12
+
+# ─── Database ─────────────────────────────────
+sqlalchemy[asyncio]>=2.0.36
+asyncpg>=0.30.0
+aiosqlite>=0.20.0
+alembic>=1.14.0
+
+# ─── Task Queue ───────────────────────────────
+taskiq>=0.11.0
+taskiq-redis>=1.0.0
+taskiq-fastapi>=0.3.0
+
+# ─── Cache ────────────────────────────────────
+redis>=5.2.0
+
+# ─── HTTP Clients ─────────────────────────────
+httpx>=0.28.0
+aiohttp>=3.11.0
+
+# ─── Serialization ────────────────────────────
+orjson>=3.10.0
+msgspec>=0.19.0
+
+# ─── Security ─────────────────────────────────
+pyjwt>=2.10.0
+bcrypt>=4.2.0
+cryptography>=44.0.0
+
+# ─── Vector DB ────────────────────────────────
+qdrant-client>=1.12.0
+faiss-cpu>=1.9.0
+
+# ─── Observability ────────────────────────────
+opentelemetry-api>=1.29.0
+opentelemetry-sdk>=1.29.0
+opentelemetry-instrumentation-fastapi>=0.50b0
+prometheus-client>=0.21.0
+structlog>=24.4.0
+
+# ─── Scheduler ────────────────────────────────
+APScheduler>=3.10.0
+
+# ─── Reporting ────────────────────────────────
+jinja2>=3.1.4
+weasyprint>=63.0
+
+# ─── Networking / Recon ───────────────────────
+scapy>=2.6.0
+python-nmap>=0.7.1
+dnspython>=2.7.0
+python-whois>=0.9.4
+beautifulsoup4>=4.12.3
+selenium>=4.27.0
+shodan>=1.31.0
+
+# ─── Vulnerability Tools ──────────────────────
+python-owasp-zap-v2.4>=0.0.22
+sslyze>=6.0.0
+bandit>=1.8.0
+safety>=3.2.0
+
+# ─── Retry / Email ────────────────────────────
+tenacity>=9.0.0
+aiosmtplib>=3.0.0

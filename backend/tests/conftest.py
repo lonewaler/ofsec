@@ -4,22 +4,12 @@ OfSec V3 — Test Configuration
 Pytest fixtures and test setup.
 """
 
-import asyncio
 from collections.abc import AsyncGenerator
 
-import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 from app.main import app
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    """Create an event loop for the test session."""
-    loop = asyncio.new_event_loop()
-    yield loop
-    loop.close()
 
 
 @pytest_asyncio.fixture

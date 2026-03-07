@@ -47,6 +47,18 @@ async def close(scan_id: str) -> None:
     if q:
         await q.put(_SENTINEL)
     logger.debug("stream_bus.closed", scan_id=scan_id)
+    # Schedule delayed cleanup for orphaned streams (no subscriber connected)
+    try:
+        loop = asyncio.get_running_loop()
+        loop.call_later(300, _delayed_cleanup, scan_id)
+    except RuntimeError:
+        pass  # No running loop (e.g. during shutdown)
+
+
+def _delayed_cleanup(scan_id: str) -> None:
+    """Remove stale queue and control entries after TTL."""
+    _queues.pop(scan_id, None)
+    _control.pop(scan_id, None)
 
 
 async def subscribe(scan_id: str) -> AsyncGenerator[dict, None]:

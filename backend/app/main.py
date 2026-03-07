@@ -189,12 +189,27 @@ def create_app() -> FastAPI:
                 return FileResponse(str(file_path))
             return FileResponse(str(dist_dir / "index.html"))
 
-    # Dev fallback: serve raw frontend (Vite dev server should be used instead)
+    # Dev fallback: serve raw frontend as static files (no Vite needed)
     elif frontend_dir.exists():
-        app.mount("/static", StaticFiles(directory=str(frontend_dir)), name="static")
+        # Mount each frontend subdirectory at its expected URL path
+        # so that index.html's references like /css/style.css and /js/app.js resolve correctly.
+        for subdir in ("css", "js", "images", "fonts", "static"):
+            sub_path = frontend_dir / subdir
+            if sub_path.is_dir():
+                app.mount(f"/{subdir}", StaticFiles(directory=str(sub_path)), name=f"frontend-{subdir}")
 
         @app.get("/", include_in_schema=False)
         async def serve_frontend_dev():
+            return FileResponse(str(frontend_dir / "index.html"))
+
+        # SPA catch-all for dev mode too
+        @app.get("/{full_path:path}", include_in_schema=False)
+        async def serve_spa_dev(full_path: str):
+            if full_path.startswith(("api/", "docs", "redoc", "openapi", "metrics", "health")):
+                return JSONResponse({"detail": "Not Found"}, status_code=404)
+            file_path = frontend_dir / full_path
+            if file_path.is_file():
+                return FileResponse(str(file_path))
             return FileResponse(str(frontend_dir / "index.html"))
 
     return app
