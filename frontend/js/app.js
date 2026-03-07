@@ -9,6 +9,53 @@ let API_KEY = 'dev-api-key';  // WebSocket auth token — matches settings.API_K
 let scanHistory = [];
 let vulnResults = [];
 
+// ─── Global Error Handlers ──────────────────
+// Catches ALL unhandled JS errors and reports them to the backend
+window.onerror = function(message, source, lineno, colno, error) {
+  console.error('[OfSec] Unhandled error:', message, source, lineno);
+  reportErrorToBackend({
+    message: String(message),
+    source: `${source}:${lineno}:${colno}`,
+    stack: error?.stack || '',
+    url: window.location.href
+  });
+  // Show user-friendly toast
+  if (typeof toast === 'function') {
+    toast('An unexpected error occurred. Check logs for details.', 'error');
+  }
+  return false; // Don't suppress the error in console
+};
+
+window.addEventListener('unhandledrejection', function(event) {
+  console.error('[OfSec] Unhandled promise rejection:', event.reason);
+  reportErrorToBackend({
+    message: 'Unhandled promise rejection: ' + String(event.reason?.message || event.reason),
+    source: 'promise',
+    stack: event.reason?.stack || '',
+    url: window.location.href
+  });
+  if (typeof toast === 'function') {
+    toast('A background operation failed: ' + (event.reason?.message || 'Unknown error'), 'error');
+  }
+});
+
+function reportErrorToBackend(errorData) {
+  // Fire-and-forget — don't let this reporting itself cause errors
+  try {
+    fetch(API + '/api/v1/log/error', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+      body: JSON.stringify({
+        message: errorData.message,
+        source: errorData.source || 'frontend',
+        stack: errorData.stack || '',
+        url: errorData.url || window.location.href,
+        user_agent: navigator.userAgent
+      })
+    }).catch(() => {}); // Silently fail if logging endpoint is down
+  } catch(e) { /* ignore */ }
+}
+
 // ─── Authentication ─────────────────────────
 document.getElementById('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -21,10 +68,15 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       document.getElementById('login-page').style.display = 'none';
       document.getElementById('app-layout').style.display = 'flex';
       toast('Welcome to OfSec V3', 'success');
+
+      // Navigate to hash page or default to dashboard
+      const hashPage = location.hash.replace('#', '');
+      const validPages = ['dashboard', 'scan', 'results', 'threats', 'ai', 'defense', 'reports', 'settings'];
+      navigate(validPages.includes(hashPage) ? hashPage : 'dashboard');
+
       loadDashboard();
       loadPersistedData();
       loadModuleGrid();
-      loadAIModules();
       loadAIModules();
       loadAPIKeyStatus();
       loadPlatformInfo();
@@ -43,15 +95,24 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 
 // ─── API Helper ─────────────────────────────
 async function api(path, opts = {}) {
-  const res = await fetch(API + path, {
-    ...opts,
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': API_KEY,
-      ...(opts.headers || {})
-    },
-    body: opts.body ? JSON.stringify(opts.body) : undefined
-  });
+  let res;
+  try {
+    res = await fetch(API + path, {
+      ...opts,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': API_KEY,
+        ...(opts.headers || {})
+      },
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    });
+  } catch (networkErr) {
+    // Network error (server down, CORS, etc.)
+    const errMsg = 'Cannot connect to server. Is the backend running?';
+    toast(errMsg, 'error');
+    reportErrorToBackend({ message: errMsg, source: 'api:' + path });
+    throw new Error(errMsg);
+  }
 
   // Handle rate limiting with a visible countdown
   if (res.status === 429) {
@@ -62,7 +123,18 @@ async function api(path, opts = {}) {
 
   if (!res.ok) {
     const e = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(e.detail || res.statusText);
+    const errMsg = e.error || e.detail || e.message || res.statusText;
+    // Show user-friendly error for common status codes
+    if (res.status === 401 || res.status === 403) {
+      toast('Authentication failed — check your API key', 'error');
+    } else if (res.status === 404) {
+      toast('Resource not found: ' + path, 'error');
+    } else if (res.status >= 500) {
+      toast('Server error: ' + errMsg, 'error');
+    } else {
+      toast('Request failed: ' + errMsg, 'error');
+    }
+    throw new Error(errMsg);
   }
   return res.json();
 }
@@ -89,7 +161,7 @@ function showRateLimitToast(seconds) {
   tick();
 }
 
-// ─── Navigation ─────────────────────────────
+// ─── Navigation (with URL hash routing) ─────
 function navigate(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -109,6 +181,11 @@ function navigate(page) {
     reports: 'Reports', settings: 'Settings'
   };
   document.getElementById('page-title').textContent = titles[page] || page;
+
+  // Update URL hash (without triggering hashchange listener)
+  if (location.hash !== '#' + page) {
+    history.replaceState(null, '', '#' + page);
+  }
 
   // Start/stop alert polling based on active page
   if (page === 'defense') {
@@ -130,6 +207,15 @@ function navigate(page) {
     loadNotifConfig();
   }
 }
+
+// Handle browser back/forward and direct URL hash navigation
+window.addEventListener('hashchange', function() {
+  const page = location.hash.replace('#', '') || 'dashboard';
+  const validPages = ['dashboard', 'scan', 'results', 'threats', 'ai', 'defense', 'reports', 'settings'];
+  if (validPages.includes(page)) {
+    navigate(page);
+  }
+});
 
 window.addEventListener('beforeunload', stopAlertPolling);
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCVEPanel(); });

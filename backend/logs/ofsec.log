@@ -1,0 +1,893 @@
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing <function connect.<locals>.connector at 0x000001BE79D37ED0>"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation <function connect.<locals>.connector at 0x000001BE79D37ED0> completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001BE798D7B50>, 'regexp', 2, <function SQLiteDialect_pysqlite.on_connect.<locals>.regexp at 0x000001BE76955D20>, deterministic=True)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001BE798D7B50>, 'regexp', 2, <function SQLiteDialect_pysqlite.on_connect.<locals>.regexp at 0x000001BE76955D20>, deterministic=True) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001BE798D7B50>, 'floor', 1, <built-in function floor>, deterministic=True)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001BE798D7B50>, 'floor', 1, <built-in function floor>, deterministic=True) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FA40>, 'PRAGMA read_uncommitted', [])"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FA40>, 'PRAGMA read_uncommitted', []) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FA40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FA40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FA40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FA40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("domains")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("domains")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("domains")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("ip_addresses")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("ip_addresses")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("ip_addresses")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("certificates")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("certificates")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("certificates")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("scans")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("scans")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("scans")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("vulnerabilities")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("vulnerabilities")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("vulnerabilities")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("attack_simulations")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("attack_simulations")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("attack_simulations")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("alerts")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("alerts")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("alerts")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("incidents")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("incidents")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("incidents")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("users")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("users")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("users")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("audit_log")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("audit_log")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("audit_log")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("threat_iocs")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("threat_iocs")', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D4FF40>, 'PRAGMA main.table_info("threat_iocs")', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D4FF40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT 1"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00019s] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D91A40>, 'SELECT 1', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79D91A40>, 'SELECT 1', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D91A40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79D91A40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D91A40>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79D91A40>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("apscheduler_jobs")"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('cid', 'name', 'type', 'notnull', 'dflt_value', 'pk')"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (0, 'id', 'VARCHAR(191)', 1, None, 1)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1, 'next_run_time', 'FLOAT', 0, None, 0)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (2, 'job_state', 'BLOB', 1, None, 0)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"apscheduler.scheduler","msg":"Scheduler started"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"INSERT INTO apscheduler_jobs (id, next_run_time, job_state) VALUES (?, ?, ?)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00025s] ('__threat_intel_sweep__', 1772852400.0, <memory at 0x000001BE79864DC0>)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"ROLLBACK"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"UPDATE apscheduler_jobs SET next_run_time=?, job_state=? WHERE apscheduler_jobs.id = ?"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00023s] (1772852400.0, <memory at 0x000001BE79865300>, '__threat_intel_sweep__')"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"apscheduler.scheduler","msg":"Added job "_dispatch_threat_sweep" to job store "default""}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.id = ?"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00031s] ('__threat_intel_sweep__',)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('job_state',)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (b'\x80\x05\x95\t\x04\x00\x00\x00\x00\x00\x00}\x94(\x8c\x07version\x94K\x01\x8c\x02id\x94\x8c\x16__threat_intel_sweep__\x94\x8c\x04func\x94\x8c)app.cor ... (1621 characters truncated) ... \x8c\rmax_instances\x94K\x01\x8c\rnext_run_time\x94h\r\x8c\x08datetime\x94\x93\x94C\n\x07\xea\x03\x07\x03\x00\x00\x00\x00\x00\x94h\x15\x86\x94R\x94u.',)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT count(users.id) AS count_1 
+FROM users"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00038s] ()"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Looking for jobs to run"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.id, apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time <= ? ORDER BY apscheduler_jobs.next_run_time"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00045s] (1772823492.408143,)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('id', 'job_state')"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.next_run_time 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time IS NOT NULL ORDER BY apscheduler_jobs.next_run_time
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00020s] (1, 0)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('next_run_time',)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1772852400.0,)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Next wakeup is due at 2026-03-07 03:00:00+00:00 (in 28907.587378 seconds)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Looking for jobs to run"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.id, apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time <= ? ORDER BY apscheduler_jobs.next_run_time"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 0.004195s ago] (1772823492.412936,)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('id', 'job_state')"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.next_run_time 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time IS NOT NULL ORDER BY apscheduler_jobs.next_run_time
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 0.003116s ago] (1, 0)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('next_run_time',)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1772852400.0,)"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Next wakeup is due at 2026-03-07 03:00:00+00:00 (in 28907.584484 seconds)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79E2DEC0>, 'SELECT count(users.id) AS count_1 \nFROM users', ())"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79E2DEC0>, 'SELECT count(users.id) AS count_1 \nFROM users', ()) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79E2DEC0>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79E2DEC0>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79E2DEC0>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79E2DEC0>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:28:12","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"uvicorn.error","msg":"Application startup complete."}
+{"time":"2026-03-07T00:28:12","level":"INFO","logger":"uvicorn.error","msg":"Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)"}
+{"time":"2026-03-07T00:28:32","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:55143 - "GET /health HTTP/1.1" 200"}
+{"time":"2026-03-07T00:28:32","level":"WARNING","logger":"uvicorn.error","msg":"Invalid HTTP request received."}
+{"time":"2026-03-07T00:29:07","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:53931 - "GET / HTTP/1.1" 200"}
+{"time":"2026-03-07T00:29:07","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:53931 - "GET /static/css/style.css HTTP/1.1" 200"}
+{"time":"2026-03-07T00:29:07","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:62935 - "GET /static/js/app.js HTTP/1.1" 200"}
+{"time":"2026-03-07T00:29:17","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:57807 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T00:29:18","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:57807 - "GET /health HTTP/1.1" 200"}
+{"time":"2026-03-07T00:29:18","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:65408 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T00:29:18","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:57807 - "GET /api/v1/recon/results?limit=50 HTTP/1.1" 401"}
+{"time":"2026-03-07T00:45:25","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:62259 - "GET / HTTP/1.1" 200"}
+{"time":"2026-03-07T00:45:25","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:62259 - "GET /static/js/app.js HTTP/1.1" 304"}
+{"time":"2026-03-07T00:51:56","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:56199 - "GET /index.html HTTP/1.1" 404"}
+{"time":"2026-03-07T00:51:56","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:58200 - "GET /index.html HTTP/1.1" 404"}
+{"time":"2026-03-07T00:51:57","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:56788 - "GET /favicon.ico HTTP/1.1" 404"}
+{"time":"2026-03-07T00:51:57","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:56788 - "GET /favicon.ico HTTP/1.1" 404"}
+{"time":"2026-03-07T00:52:15","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:57897 - "GET /health HTTP/1.1" 200"}
+{"time":"2026-03-07T00:52:15","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:57897 - "GET /favicon.ico HTTP/1.1" 404"}
+{"time":"2026-03-07T00:54:47","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:64313 - "GET / HTTP/1.1" 200"}
+{"time":"2026-03-07T00:54:47","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:64313 - "GET /static/css/style.css HTTP/1.1" 200"}
+{"time":"2026-03-07T00:54:47","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:61470 - "GET /static/js/app.js HTTP/1.1" 200"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:61470 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:61470 - "GET /health HTTP/1.1" 200"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:64313 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT count(*) AS count_1 
+FROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by 
+FROM scans 
+WHERE scans.scan_type = ?) AS anon_1"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00224s] ('recon',)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F3A940>, 'SELECT count(*) AS count_1 \nFROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by \nFROM scans \nWHERE scans.scan_type = ?) AS anon_1', ('recon',))"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F3A940>, 'SELECT count(*) AS count_1 \nFROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by \nFROM scans \nWHERE scans.scan_type = ?) AS anon_1', ('recon',)) completed"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F3A940>)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F3A940>) completed"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F3A940>)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F3A940>) completed"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by 
+FROM scans 
+WHERE scans.scan_type = ? ORDER BY scans.started_at DESC
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00042s] ('recon', 50, 0)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79E2E340>, 'SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by \nFROM scans \nWHERE scans.scan_type = ? ORDER BY scans.started_at DESC\n LIMIT ? OFFSET ?', ('recon', 50, 0))"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79E2E340>, 'SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by \nFROM scans \nWHERE scans.scan_type = ? ORDER BY scans.started_at DESC\n LIMIT ? OFFSET ?', ('recon', 50, 0)) completed"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79E2E340>)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79E2E340>) completed"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79E2E340>)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79E2E340>) completed"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:61470 - "GET /api/v1/recon/results?limit=50 HTTP/1.1" 200"}
+{"time":"2026-03-07T00:54:52","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T00:54:52","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T01:03:55","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:55793 - "GET /static/js/app.js HTTP/1.1" 304"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:55793 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT count(*) AS count_1 
+FROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by 
+FROM scans 
+WHERE scans.scan_type = ?) AS anon_1"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 546.5s ago] ('recon',)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:55793 - "GET /health HTTP/1.1" 200"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:61623 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F38540>, 'SELECT count(*) AS count_1 \nFROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by \nFROM scans \nWHERE scans.scan_type = ?) AS anon_1', ('recon',))"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F38540>, 'SELECT count(*) AS count_1 \nFROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by \nFROM scans \nWHERE scans.scan_type = ?) AS anon_1', ('recon',)) completed"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F38540>)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F38540>) completed"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F38540>)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F38540>) completed"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by 
+FROM scans 
+WHERE scans.scan_type = ? ORDER BY scans.started_at DESC
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00023s] ('recon', 50, 0)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F05CC0>, 'SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by \nFROM scans \nWHERE scans.scan_type = ? ORDER BY scans.started_at DESC\n LIMIT ? OFFSET ?', ('recon', 50, 0))"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F05CC0>, 'SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by \nFROM scans \nWHERE scans.scan_type = ? ORDER BY scans.started_at DESC\n LIMIT ? OFFSET ?', ('recon', 50, 0)) completed"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F05CC0>)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F05CC0>) completed"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F05CC0>)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F05CC0>) completed"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:53608 - "GET /api/v1/recon/results?limit=50 HTTP/1.1" 200"}
+{"time":"2026-03-07T01:03:59","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T01:03:59","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:64971 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:64971 - "GET /health HTTP/1.1" 200"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:52136 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT count(*) AS count_1 
+FROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by 
+FROM scans 
+WHERE scans.scan_type = ?) AS anon_1"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 771.9s ago] ('recon',)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F38D40>, 'SELECT count(*) AS count_1 \nFROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by \nFROM scans \nWHERE scans.scan_type = ?) AS anon_1', ('recon',))"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F38D40>, 'SELECT count(*) AS count_1 \nFROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by \nFROM scans \nWHERE scans.scan_type = ?) AS anon_1', ('recon',)) completed"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F38D40>)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F38D40>) completed"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F38D40>)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F38D40>) completed"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by 
+FROM scans 
+WHERE scans.scan_type = ? ORDER BY scans.started_at DESC
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 225.4s ago] ('recon', 50, 0)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F38D40>, 'SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by \nFROM scans \nWHERE scans.scan_type = ? ORDER BY scans.started_at DESC\n LIMIT ? OFFSET ?', ('recon', 50, 0))"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F38D40>, 'SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by \nFROM scans \nWHERE scans.scan_type = ? ORDER BY scans.started_at DESC\n LIMIT ? OFFSET ?', ('recon', 50, 0)) completed"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F38D40>)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F38D40>) completed"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F38D40>)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F38D40>) completed"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:64971 - "GET /api/v1/recon/results?limit=50 HTTP/1.1" 200"}
+{"time":"2026-03-07T01:07:44","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T01:07:44","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing <function connect.<locals>.connector at 0x000001CFF3E2FED0>"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation <function connect.<locals>.connector at 0x000001CFF3E2FED0> completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001CFF39BF880>, 'regexp', 2, <function SQLiteDialect_pysqlite.on_connect.<locals>.regexp at 0x000001CFF0A0E770>, deterministic=True)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001CFF39BF880>, 'regexp', 2, <function SQLiteDialect_pysqlite.on_connect.<locals>.regexp at 0x000001CFF0A0E770>, deterministic=True) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001CFF39BF880>, 'floor', 1, <built-in function floor>, deterministic=True)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001CFF39BF880>, 'floor', 1, <built-in function floor>, deterministic=True) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B440>, 'PRAGMA read_uncommitted', [])"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B440>, 'PRAGMA read_uncommitted', []) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B440>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B440>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B440>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B440>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("domains")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("domains")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("domains")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("ip_addresses")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("ip_addresses")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("ip_addresses")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("certificates")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("certificates")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("certificates")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("scans")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("scans")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("scans")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("vulnerabilities")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("vulnerabilities")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("vulnerabilities")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("attack_simulations")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("attack_simulations")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("attack_simulations")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("alerts")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("alerts")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("alerts")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("incidents")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("incidents")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("incidents")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("users")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("users")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("users")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("audit_log")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("audit_log")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("audit_log")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("threat_iocs")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("threat_iocs")', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E3B940>, 'PRAGMA main.table_info("threat_iocs")', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E3B940>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT 1"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00054s] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E75640>, 'SELECT 1', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3E75640>, 'SELECT 1', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E75640>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3E75640>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E75640>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3E75640>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("apscheduler_jobs")"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('cid', 'name', 'type', 'notnull', 'dflt_value', 'pk')"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (0, 'id', 'VARCHAR(191)', 1, None, 1)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1, 'next_run_time', 'FLOAT', 0, None, 0)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (2, 'job_state', 'BLOB', 1, None, 0)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"apscheduler.scheduler","msg":"Scheduler started"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"INSERT INTO apscheduler_jobs (id, next_run_time, job_state) VALUES (?, ?, ?)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00099s] ('__threat_intel_sweep__', 1772852400.0, <memory at 0x000001CFF3940F40>)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"ROLLBACK"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"UPDATE apscheduler_jobs SET next_run_time=?, job_state=? WHERE apscheduler_jobs.id = ?"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00069s] (1772852400.0, <memory at 0x000001CFF3940DC0>, '__threat_intel_sweep__')"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"apscheduler.scheduler","msg":"Added job "_dispatch_threat_sweep" to job store "default""}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.id = ?"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00051s] ('__threat_intel_sweep__',)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('job_state',)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (b'\x80\x05\x95\t\x04\x00\x00\x00\x00\x00\x00}\x94(\x8c\x07version\x94K\x01\x8c\x02id\x94\x8c\x16__threat_intel_sweep__\x94\x8c\x04func\x94\x8c)app.cor ... (1621 characters truncated) ... \x8c\rmax_instances\x94K\x01\x8c\rnext_run_time\x94h\r\x8c\x08datetime\x94\x93\x94C\n\x07\xea\x03\x07\x03\x00\x00\x00\x00\x00\x94h\x15\x86\x94R\x94u.',)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT count(users.id) AS count_1 
+FROM users"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00048s] ()"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Looking for jobs to run"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.id, apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time <= ? ORDER BY apscheduler_jobs.next_run_time"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00041s] (1772829870.430475,)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('id', 'job_state')"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.next_run_time 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time IS NOT NULL ORDER BY apscheduler_jobs.next_run_time
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00034s] (1, 0)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('next_run_time',)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1772852400.0,)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Next wakeup is due at 2026-03-07 03:00:00+00:00 (in 22529.563494 seconds)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Looking for jobs to run"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.id, apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time <= ? ORDER BY apscheduler_jobs.next_run_time"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 0.005957s ago] (1772829870.436927,)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('id', 'job_state')"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.next_run_time 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time IS NOT NULL ORDER BY apscheduler_jobs.next_run_time
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 0.005231s ago] (1, 0)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('next_run_time',)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1772852400.0,)"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Next wakeup is due at 2026-03-07 03:00:00+00:00 (in 22529.558667 seconds)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3F14A40>, 'SELECT count(users.id) AS count_1 \nFROM users', ())"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001CFF3F14A40>, 'SELECT count(users.id) AS count_1 \nFROM users', ()) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3F14A40>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001CFF3F14A40>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3F14A40>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001CFF3F14A40>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001CFF39BF880>)"}
+{"time":"2026-03-07T02:14:30","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001CFF39BF880>) completed"}
+{"time":"2026-03-07T02:14:30","level":"INFO","logger":"uvicorn.error","msg":"Application startup complete."}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:52475 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:51976 - "GET /health HTTP/1.1" 200"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:63762 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:63763 - "GET /health HTTP/1.1" 200"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:61376 - "GET /api/v1/status HTTP/1.1" 200"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT count(*) AS count_1 
+FROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by 
+FROM scans 
+WHERE scans.scan_type = ?) AS anon_1"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 4785s ago] ('recon',)"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F60E40>, 'SELECT count(*) AS count_1 \nFROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by \nFROM scans \nWHERE scans.scan_type = ?) AS anon_1', ('recon',))"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F60E40>, 'SELECT count(*) AS count_1 \nFROM (SELECT scans.id AS id, scans.scan_type AS scan_type, scans.target AS target, scans.status AS status, scans.config AS config, scans.result_summary AS result_summary, scans.started_at AS started_at, scans.finished_at AS finished_at, scans.error_message AS error_message, scans.created_by AS created_by \nFROM scans \nWHERE scans.scan_type = ?) AS anon_1', ('recon',)) completed"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F60E40>)"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F60E40>) completed"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F60E40>)"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by 
+FROM scans 
+WHERE scans.scan_type = ? ORDER BY scans.started_at DESC
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 4238s ago] ('recon', 50, 0)"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F60E40>) completed"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F60E40>, 'SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by \nFROM scans \nWHERE scans.scan_type = ? ORDER BY scans.started_at DESC\n LIMIT ? OFFSET ?', ('recon', 50, 0))"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001BE79F60E40>, 'SELECT scans.id, scans.scan_type, scans.target, scans.status, scans.config, scans.result_summary, scans.started_at, scans.finished_at, scans.error_message, scans.created_by \nFROM scans \nWHERE scans.scan_type = ? ORDER BY scans.started_at DESC\n LIMIT ? OFFSET ?', ('recon', 50, 0)) completed"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F60E40>)"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001BE79F60E40>) completed"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F60E40>)"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001BE79F60E40>) completed"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:58371 - "GET /api/v1/recon/results?limit=50 HTTP/1.1" 200"}
+{"time":"2026-03-07T02:14:37","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>)"}
+{"time":"2026-03-07T02:14:37","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001BE798D7B50>) completed"}
+{"time":"2026-03-07T08:30:00","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Looking for jobs to run"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.id, apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time <= ? ORDER BY apscheduler_jobs.next_run_time"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 2.891e+04s ago] (1772852400.068062,)"}
+{"time":"2026-03-07T08:30:00","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('id', 'job_state')"}
+{"time":"2026-03-07T08:30:00","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row ('__threat_intel_sweep__', b'\x80\x05\x95\t\x04\x00\x00\x00\x00\x00\x00}\x94(\x8c\x07version\x94K\x01\x8c\x02id\x94\x8c\x16__threat_intel_sweep__\x94\x8c\x04func\x94\x8c)app.cor ... (1621 characters truncated) ... \x8c\rmax_instances\x94K\x01\x8c\rnext_run_time\x94h\r\x8c\x08datetime\x94\x93\x94C\n\x07\xea\x03\x07\x03\x00\x00\x00\x00\x00\x94h\x15\x86\x94R\x94u.')"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"UPDATE apscheduler_jobs SET next_run_time=?, job_state=? WHERE apscheduler_jobs.id = ?"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 2.891e+04s ago] (1772938800.0, <memory at 0x000001BE79867E80>, '__threat_intel_sweep__')"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.next_run_time 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time IS NOT NULL ORDER BY apscheduler_jobs.next_run_time
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 2.891e+04s ago] (1, 0)"}
+{"time":"2026-03-07T08:30:00","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('next_run_time',)"}
+{"time":"2026-03-07T08:30:00","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1772938800.0,)"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:30:00","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Next wakeup is due at 2026-03-08 03:00:00+00:00 (in 86399.780158 seconds)"}
+{"time":"2026-03-07T08:30:00","level":"INFO","logger":"apscheduler.executors.default","msg":"Running job "_dispatch_threat_sweep (trigger: cron[month='*', day='*', day_of_week='*', hour='3', minute='0'], next run at: 2026-03-08 03:00:00 UTC)" (scheduled at 2026-03-07 03:00:00+00:00)"}
+{"time":"2026-03-07T08:30:00","level":"DEBUG","logger":"taskiq","msg":"Kicking app.workers.intel_tasks:run_threat_intel_sweep with args=() and kwargs={}."}
+{"time":"2026-03-07T08:30:04","level":"INFO","logger":"apscheduler.executors.default","msg":"Job "_dispatch_threat_sweep (trigger: cron[month='*', day='*', day_of_week='*', hour='3', minute='0'], next run at: 2026-03-08 03:00:00 UTC)" executed successfully"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing <function connect.<locals>.connector at 0x000001B17EC37ED0>"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation <function connect.<locals>.connector at 0x000001B17EC37ED0> completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001B17E7CF880>, 'regexp', 2, <function SQLiteDialect_pysqlite.on_connect.<locals>.regexp at 0x000001B17B816770>, deterministic=True)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001B17E7CF880>, 'regexp', 2, <function SQLiteDialect_pysqlite.on_connect.<locals>.regexp at 0x000001B17B816770>, deterministic=True) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001B17E7CF880>, 'floor', 1, <built-in function floor>, deterministic=True)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method create_function of sqlite3.Connection object at 0x000001B17E7CF880>, 'floor', 1, <built-in function floor>, deterministic=True) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B440>, 'PRAGMA read_uncommitted', [])"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B440>, 'PRAGMA read_uncommitted', []) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B440>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B440>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B440>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B440>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("domains")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("domains")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("domains")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("ip_addresses")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("ip_addresses")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("ip_addresses")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("certificates")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("certificates")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("certificates")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("scans")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("scans")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("scans")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("vulnerabilities")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("vulnerabilities")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("vulnerabilities")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("attack_simulations")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("attack_simulations")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("attack_simulations")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("alerts")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("alerts")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("alerts")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("incidents")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("incidents")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("incidents")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("users")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("users")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("users")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("audit_log")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("audit_log")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("audit_log")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("threat_iocs")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("threat_iocs")', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC4B940>, 'PRAGMA main.table_info("threat_iocs")', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC4B940>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT 1"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00033s] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC856C0>, 'SELECT 1', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17EC856C0>, 'SELECT 1', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC856C0>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17EC856C0>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC856C0>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17EC856C0>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"PRAGMA main.table_info("apscheduler_jobs")"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[raw sql] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('cid', 'name', 'type', 'notnull', 'dflt_value', 'pk')"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (0, 'id', 'VARCHAR(191)', 1, None, 1)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1, 'next_run_time', 'FLOAT', 0, None, 0)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (2, 'job_state', 'BLOB', 1, None, 0)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"apscheduler.scheduler","msg":"Scheduler started"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"INSERT INTO apscheduler_jobs (id, next_run_time, job_state) VALUES (?, ?, ?)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00038s] ('__threat_intel_sweep__', 1772938800.0, <memory at 0x000001B17E750F40>)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"ROLLBACK"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"UPDATE apscheduler_jobs SET next_run_time=?, job_state=? WHERE apscheduler_jobs.id = ?"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00034s] (1772938800.0, <memory at 0x000001B17E751000>, '__threat_intel_sweep__')"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"apscheduler.scheduler","msg":"Added job "_dispatch_threat_sweep" to job store "default""}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.id = ?"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00032s] ('__threat_intel_sweep__',)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('job_state',)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (b'\x80\x05\x95\t\x04\x00\x00\x00\x00\x00\x00}\x94(\x8c\x07version\x94K\x01\x8c\x02id\x94\x8c\x16__threat_intel_sweep__\x94\x8c\x04func\x94\x8c)app.cor ... (1621 characters truncated) ... \x8c\rmax_instances\x94K\x01\x8c\rnext_run_time\x94h\r\x8c\x08datetime\x94\x93\x94C\n\x07\xea\x03\x08\x03\x00\x00\x00\x00\x00\x94h\x15\x86\x94R\x94u.',)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT count(users.id) AS count_1 
+FROM users"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00046s] ()"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Looking for jobs to run"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method cursor of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.id, apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time <= ? ORDER BY apscheduler_jobs.next_run_time"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00049s] (1772852806.899379,)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('id', 'job_state')"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.next_run_time 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time IS NOT NULL ORDER BY apscheduler_jobs.next_run_time
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[generated in 0.00035s] (1, 0)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('next_run_time',)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1772938800.0,)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Next wakeup is due at 2026-03-08 03:00:00+00:00 (in 85993.095499 seconds)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Looking for jobs to run"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.id, apscheduler_jobs.job_state 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time <= ? ORDER BY apscheduler_jobs.next_run_time"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 0.00517s ago] (1772852806.904857,)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('id', 'job_state')"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"BEGIN (implicit)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"SELECT apscheduler_jobs.next_run_time 
+FROM apscheduler_jobs 
+WHERE apscheduler_jobs.next_run_time IS NOT NULL ORDER BY apscheduler_jobs.next_run_time
+ LIMIT ? OFFSET ?"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"[cached since 0.00472s ago] (1, 0)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Col ('next_run_time',)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"sqlalchemy.engine.Engine","msg":"Row (1772938800.0,)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"apscheduler.scheduler","msg":"Next wakeup is due at 2026-03-08 03:00:00+00:00 (in 85993.090461 seconds)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17ED24B40>, 'SELECT count(users.id) AS count_1 \nFROM users', ())"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method execute of sqlite3.Cursor object at 0x000001B17ED24B40>, 'SELECT count(users.id) AS count_1 \nFROM users', ()) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17ED24B40>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method fetchall of sqlite3.Cursor object at 0x000001B17ED24B40>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17ED24B40>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method close of sqlite3.Cursor object at 0x000001B17ED24B40>) completed"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"sqlalchemy.engine.Engine","msg":"COMMIT"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method commit of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"executing functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001B17E7CF880>)"}
+{"time":"2026-03-07T08:36:46","level":"INFO","logger":"uvicorn.error","msg":"Application startup complete."}
+{"time":"2026-03-07T08:36:46","level":"DEBUG","logger":"aiosqlite","msg":"operation functools.partial(<built-in method rollback of sqlite3.Connection object at 0x000001B17E7CF880>) completed"}
+{"time":"2026-03-07T08:37:48","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:65207 - "GET / HTTP/1.1" 200"}
+{"time":"2026-03-07T08:37:48","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:65207 - "GET /js/main.js HTTP/1.1" 404"}
+{"time":"2026-03-07T08:37:52","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:65207 - "GET / HTTP/1.1" 200"}
+{"time":"2026-03-07T08:37:52","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:65207 - "GET /js/main.js HTTP/1.1" 404"}
+{"time":"2026-03-07T08:37:54","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:65207 - "GET / HTTP/1.1" 200"}
+{"time":"2026-03-07T08:37:54","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:65207 - "GET /js/main.js HTTP/1.1" 404"}
+{"time":"2026-03-07T08:37:56","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:65207 - "GET /js/main.js HTTP/1.1" 404"}
+{"time":"2026-03-07T08:38:04","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:60282 - "GET /js/main.js HTTP/1.1" 404"}
+{"time":"2026-03-07T08:38:35","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:61489 - "GET /docs HTTP/1.1" 200"}
+{"time":"2026-03-07T08:38:35","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:61489 - "GET /openapi.json HTTP/1.1" 200"}
+{"time":"2026-03-07T08:39:57","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:57739 - "GET /api/v1/recon/modules HTTP/1.1" 401"}
+{"time":"2026-03-07T08:40:28","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:60830 - "POST /api/v1/recon/scan HTTP/1.1" 401"}
+{"time":"2026-03-07T08:40:34","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:58393 - "POST /api/v1/recon/scan HTTP/1.1" 401"}
+{"time":"2026-03-07T08:41:45","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:54414 - "GET /health HTTP/1.1" 200"}
+{"time":"2026-03-07T08:41:55","level":"INFO","logger":"uvicorn.access","msg":"127.0.0.1:51877 - "GET /api HTTP/1.1" 404"}

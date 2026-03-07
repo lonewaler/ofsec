@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OfSec V3 — Cybersecurity Operations Platform</title>
   <meta name="description" content="OfSec Vector Triangulum V3 — Advanced Cybersecurity Operations Platform">
-  <link rel="stylesheet" href="/static/css/style.css">
+  <!-- CSS loaded via JS/Vite entry point -->
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
 </head>
@@ -54,35 +54,35 @@
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-section-title">Main</div>
-          <div class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+          <div class="nav-item active" data-page="dashboard">
             <span class="nav-icon">📊</span> Dashboard
           </div>
-          <div class="nav-item" data-page="scan" onclick="navigate('scan')">
+          <div class="nav-item" data-page="scan">
             <span class="nav-icon">🔍</span> Scan
           </div>
-          <div class="nav-item" data-page="results" onclick="navigate('results')">
+          <div class="nav-item" data-page="results">
             <span class="nav-icon">📋</span> Results
             <span class="nav-badge" id="results-badge" style="display:none">0</span>
           </div>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Intelligence</div>
-          <div class="nav-item" data-page="threats" onclick="navigate('threats')">
+          <div class="nav-item" data-page="threats">
             <span class="nav-icon">🎯</span> Threats & IOC
           </div>
-          <div class="nav-item" data-page="ai" onclick="navigate('ai')">
+          <div class="nav-item" data-page="ai">
             <span class="nav-icon">🤖</span> AI Engine
           </div>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Operations</div>
-          <div class="nav-item" data-page="defense" onclick="navigate('defense')">
+          <div class="nav-item" data-page="defense">
             <span class="nav-icon">🛡️</span> Defense
           </div>
-          <div class="nav-item" data-page="reports" onclick="navigate('reports')">
+          <div class="nav-item" data-page="reports">
             <span class="nav-icon">📄</span> Reports
           </div>
-          <div class="nav-item" data-page="settings" onclick="navigate('settings')">
+          <div class="nav-item" data-page="settings">
             <span class="nav-icon">⚙️</span> Settings
           </div>
         </div>
@@ -98,10 +98,10 @@
         </div>
         <div class="header-right">
           <input type="text" class="header-search" placeholder="Search targets, vulns, IOCs..." id="global-search">
-          <button class="header-btn" title="Alerts" onclick="navigate('defense')">🔔<span class="badge"
+          <button class="header-btn" title="Alerts" data-page="defense">🔔<span class="badge"
               id="alert-count">3</span></button>
-          <button class="header-btn" title="API Docs" onclick="window.open('/docs','_blank')">📖</button>
-          <div class="user-avatar" title="Admin" onclick="navigate('settings')">A</div>
+          <a class="header-btn" title="API Docs" href="/docs" target="_blank">📖</a>
+          <div class="user-avatar" title="Admin" data-page="settings">A</div>
         </div>
       </header>
 
@@ -160,7 +160,7 @@
                   <div class="card-title">Recent Scan Activity</div>
                   <div class="card-subtitle">Last 7 days</div>
                 </div>
-                <button class="btn btn-sm btn-outline" onclick="navigate('scan')">New Scan</button>
+                <button class="btn btn-sm btn-outline" data-page="scan">New Scan</button>
               </div>
               <div class="table-container">
                 <table class="data-table" id="recent-scans-table">
@@ -261,7 +261,7 @@
                 <span>📡 OSINT Sources: Shodan · VirusTotal · AbuseIPDB · Censys</span>
               </div>
             </div>
-            <button class="btn btn-primary btn-lg" id="launch-scan-btn" onclick="launchScan()">⚡ Launch Scan</button>
+            <button class="btn btn-primary btn-lg" id="launch-scan-btn">⚡ Launch Scan</button>
           </div>
 
           <!-- ─── Multi-Target Queue Panel ─── -->
@@ -271,7 +271,7 @@
                 <div class="card-title">📋 Scan Queue</div>
                 <div style="font-size:11px;color:var(--text-muted)">Submit multiple targets for batch scanning</div>
               </div>
-              <button class="btn" style="font-size:12px" onclick="loadQueueStatus()">↻ Refresh</button>
+              <button class="btn" style="font-size:12px" id="btn-refresh-queue">↻ Refresh</button>
             </div>
 
             <!-- Target input -->
@@ -293,7 +293,7 @@
                 <option value="high">High Priority</option>
                 <option value="low">Low Priority</option>
               </select>
-              <button class="btn btn-primary" onclick="submitScanQueue()" style="white-space:nowrap">
+              <button class="btn btn-primary" id="btn-submit-queue" style="white-space:nowrap">
                 ▶ Queue Scans
               </button>
             </div>
@@ -345,7 +345,7 @@
               <h2>📋 Scan Results</h2>
               <p>All vulnerability findings</p>
             </div>
-            <button class="btn btn-outline btn-sm" onclick="refreshResults()">🔄 Refresh</button>
+            <button class="btn btn-outline btn-sm" id="btn-refresh-results">🔄 Refresh</button>
           </div>
           <div class="card">
             <div class="table-container">
@@ -416,7 +416,7 @@
             <div style="display:flex;gap:12px">
               <input type="text" id="ip-check-input" class="form-input" placeholder="Enter IP address (e.g., 8.8.8.8)"
                 style="flex:1">
-              <button class="btn btn-primary" onclick="checkIP()">Check</button>
+              <button class="btn btn-primary" id="btn-check-ip">Check</button>
             </div>
             <div id="ip-check-result" style="margin-top:12px"></div>
           </div>
@@ -427,7 +427,7 @@
             <div style="display:flex;gap:12px">
               <input type="text" id="domain-lookup-input" class="form-input"
                 placeholder="Enter domain (e.g., example.com)" style="flex:1">
-              <button class="btn btn-primary" onclick="lookupDomain()">Lookup</button>
+              <button class="btn btn-primary" id="btn-lookup-domain">Lookup</button>
             </div>
             <div id="domain-lookup-result" style="margin-top:12px"></div>
           </div>
@@ -437,8 +437,8 @@
             </div>
             <div style="display:flex;gap:8px;margin-bottom:12px">
               <input id="ioc-track-input" class="form-input" type="text" placeholder="IP, domain, or file hash..."
-                style="flex:1" onkeydown="if(event.key==='Enter') trackIOC()">
-              <button class="btn btn-primary" onclick="trackIOC()">Track IOC</button>
+                style="flex:1">
+              <button class="btn btn-primary" id="btn-track-ioc">Track IOC</button>
             </div>
             <div id="ioc-track-result" style="min-height:24px;font-size:12px"></div>
             <div style="margin-top:12px;overflow-x:auto">
@@ -503,7 +503,7 @@
               <input type="text" id="ai-prompt" class="form-input"
                 placeholder="Ask the AI to analyze a vulnerability, generate a report, or explain a CVE..."
                 style="flex:1">
-              <button class="btn btn-primary" onclick="askAI()">Analyze</button>
+              <button class="btn btn-primary" id="btn-ask-ai">Analyze</button>
             </div>
             <div class="terminal" id="ai-output" style="margin-top:12px;min-height:120px">
               <span class="line-dim">// AI engine ready. Ask a question or paste scan data for analysis.</span>
@@ -559,7 +559,7 @@
               </div>
               <div style="display:flex;align-items:center;gap:8px">
                 <span id="poll-indicator" style="font-size:11px;color:var(--accent-green)">● Live</span>
-                <button class="btn" style="font-size:12px" onclick="loadDefenseAlerts()">↻ Refresh</button>
+                <button class="btn" style="font-size:12px" id="btn-refresh-alerts">↻ Refresh</button>
               </div>
             </div>
             <div class="table-container">
@@ -624,45 +624,45 @@
             </div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-            <div class="card" style="cursor:pointer" onclick="generateReport('executive')">
+            <div class="card" style="cursor:pointer" data-report-type="executive">
               <div style="font-size:32px;margin-bottom:12px">📊</div>
               <div class="card-title">Executive Summary</div>
               <div class="card-subtitle" style="margin-top:4px">High-level overview for leadership</div>
             </div>
-            <div class="card" style="cursor:pointer" onclick="generateReport('technical')">
+            <div class="card" style="cursor:pointer" data-report-type="technical">
               <div style="font-size:32px;margin-bottom:12px">🔧</div>
               <div class="card-title">Technical Report</div>
               <div class="card-subtitle" style="margin-top:4px">Detailed findings for engineers</div>
             </div>
-            <div class="card" style="cursor:pointer" onclick="generateReport('compliance')">
+            <div class="card" style="cursor:pointer" data-report-type="compliance">
               <div style="font-size:32px;margin-bottom:12px">✅</div>
               <div class="card-title">Compliance Report</div>
               <div class="card-subtitle" style="margin-top:4px">PCI DSS / NIST / ISO 27001</div>
             </div>
-            <div class="card" style="cursor:pointer" onclick="generateReport('vulnerability')">
+            <div class="card" style="cursor:pointer" data-report-type="vulnerability">
               <div style="font-size:32px;margin-bottom:12px">⚠️</div>
               <div class="card-title">Vulnerability Report</div>
               <div class="card-subtitle" style="margin-top:4px">All findings by severity</div>
             </div>
-            <div class="card" style="cursor:pointer" onclick="generateReport('pentest')">
+            <div class="card" style="cursor:pointer" data-report-type="pentest">
               <div style="font-size:32px;margin-bottom:12px">🗡️</div>
               <div class="card-title">Pentest Report</div>
               <div class="card-subtitle" style="margin-top:4px">Full penetration test results</div>
             </div>
-            <div class="card" style="cursor:pointer" onclick="window.open('/docs','_blank')">
+            <a class="card" style="cursor:pointer;text-decoration:none;color:inherit;display:block" href="/docs"
+              target="_blank">
               <div style="font-size:32px;margin-bottom:12px">📖</div>
               <div class="card-title">API Documentation</div>
               <div class="card-subtitle" style="margin-top:4px">Interactive Swagger UI</div>
-            </div>
+            </a>
           </div>
           <div id="report-output" class="card" style="display:none;margin-top:16px">
             <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
               <div class="card-title" id="report-title">Report</div>
               <div style="display:flex;gap:8px">
-                <button class="btn" style="font-size:12px" onclick="exportReportJSON()">⬇ Download JSON</button>
-                <button class="btn" style="font-size:12px" onclick="exportReportHTML()">⬇ Download HTML</button>
-                <button class="btn btn-secondary" style="font-size:12px"
-                  onclick="exportReportViaAPI(document.getElementById('report-output').dataset.reportType)">⚙ API
+                <button class="btn" style="font-size:12px" id="btn-export-json">⬇ Download JSON</button>
+                <button class="btn" style="font-size:12px" id="btn-export-html">⬇ Download HTML</button>
+                <button class="btn btn-secondary" style="font-size:12px" data-export-api="true">⚙ API
                   Export</button>
               </div>
             </div>
@@ -683,7 +683,7 @@
           <div class="card" style="margin-bottom:16px">
             <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
               <div class="card-title">🔑 API Key Status</div>
-              <button class="btn btn-secondary" style="font-size:12px" onclick="loadAPIKeyStatus()">↻ Re-test
+              <button class="btn btn-secondary" style="font-size:12px" id="btn-retest-keys">↻ Re-test
                 All</button>
             </div>
             <div id="api-key-status">
@@ -701,13 +701,13 @@
           <div class="card" style="margin-bottom:16px">
             <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
               <div class="card-title">⏰ Scheduled Scans</div>
-              <button class="btn btn-secondary" style="font-size:12px" onclick="loadSchedules()">↻ Refresh</button>
+              <button class="btn btn-secondary" style="font-size:12px" id="btn-refresh-schedules">↻ Refresh</button>
             </div>
             <div style="padding:16px">
               <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:12px">
                 <input id="sched-target" type="text" class="input" placeholder="Target (e.g. example.com)">
                 <input id="sched-cron" type="text" class="input" placeholder="Cron (e.g. 0 2 * * *)">
-                <button class="btn" onclick="createSchedule()">＋ Add</button>
+                <button class="btn" id="btn-create-schedule">＋ Add</button>
               </div>
               <div id="schedule-list" style="font-size:13px;max-height:200px;overflow-y:auto">
                 <span style="color:var(--text-dim)">No schedules loaded</span>
@@ -727,7 +727,7 @@
                 <div style="display:grid;gap:8px;margin-top:8px;max-width:360px">
                   <input id="pw-old" type="password" class="input" placeholder="Current password">
                   <input id="pw-new" type="password" class="input" placeholder="New password (min 8 chars)">
-                  <button class="btn" style="justify-self:start" onclick="changePassword()">Update Password</button>
+                  <button class="btn" style="justify-self:start" id="btn-change-password">Update Password</button>
                 </div>
               </details>
             </div>
@@ -767,7 +767,7 @@
                   Loading sweep schedule...
                 </div>
               </div>
-              <button id="btn-intel-sweep" class="btn btn-primary" style="font-size:12px" onclick="runIntelSweep()">
+              <button id="btn-intel-sweep" class="btn btn-primary" style="font-size:12px">
                 🔄 Run Sweep Now
               </button>
             </div>
@@ -783,7 +783,7 @@
           <div class="card" style="margin-bottom:16px">
             <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
               <div class="card-title">🔔 Alert Channels</div>
-              <button class="btn btn-secondary" style="font-size:12px" onclick="loadNotifConfig()">↻ Refresh</button>
+              <button class="btn btn-secondary" style="font-size:12px" id="btn-refresh-notif">↻ Refresh</button>
             </div>
             <div style="padding:16px">
               <div id="notif-config-display" style="margin-bottom:14px">
@@ -792,7 +792,7 @@
 
               <div style="border-top:1px solid var(--border-color);padding-top:14px;
                           display:flex;gap:10px;align-items:center">
-                <button class="btn btn-primary" style="font-size:12px" onclick="sendTestAlert()">
+                <button class="btn btn-primary" style="font-size:12px" id="btn-test-alert">
                   📤 Send Test Alert
                 </button>
                 <span style="font-size:11px;color:var(--text-muted)">
@@ -812,44 +812,44 @@
                 ALERT_WEBHOOK_ENABLED=true<br>
                 ALERT_WEBHOOK_URL=https://hooks.slack.com/...
               </div>
-              </div>
             </div>
           </div>
-
-          <!-- Dead-Letter Queue -->
-          <div class="card" style="margin-bottom:16px">
-            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div class="card-title">📮 Dead-Letter Queue (DLQ)</div>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Failed webhook payloads waiting to be retried</div>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px">
-                <button class="btn btn-secondary" style="font-size:12px" onclick="loadDLQ()">↻ Refresh</button>
-                <button class="btn btn-primary" style="font-size:12px" onclick="retryDLQ()" id="btn-retry-dlq" style="display:none">
-                  ▶ Retry All
-                </button>
-              </div>
-            </div>
-            <div style="padding:16px">
-              <div id="dlq-display" style="font-size:13px;color:var(--text-muted)">
-                Loading DLQ status...
-              </div>
-            </div>
-          </div>
-
         </div>
-      </div>
 
-    </div><!-- /main-content -->
+        <!-- Dead-Letter Queue -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="card-title">📮 Dead-Letter Queue (DLQ)</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Failed webhook payloads waiting to be
+                retried</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="btn btn-secondary" style="font-size:12px" id="btn-refresh-dlq">↻ Refresh</button>
+              <button class="btn btn-primary" style="font-size:12px" id="btn-retry-dlq" style="display:none">
+                ▶ Retry All
+              </button>
+            </div>
+          </div>
+          <div style="padding:16px">
+            <div id="dlq-display" style="font-size:13px;color:var(--text-muted)">
+              Loading DLQ status...
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
   </div><!-- /app-layout -->
 
   <div class="toast-container" id="toast-container"></div>
 
   <!-- CVE Panel backdrop -->
-  <div id="cve-backdrop" onclick="closeCVEPanel()"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:999"></div>
+  <div id="cve-backdrop" class="cve-backdrop"></div>
 
-  <script src="/static/js/app.js"></script>
+  <script type="module" src="/js/main.js"></script>
 </body>
 
 </html>
