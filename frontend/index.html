@@ -6,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OfSec V3 — Cybersecurity Operations Platform</title>
   <meta name="description" content="OfSec Vector Triangulum V3 — Advanced Cybersecurity Operations Platform">
-  <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="stylesheet" href="/static/css/design-system.css">
-  <link rel="stylesheet" href="/static/css/components.css">
-  <link rel="stylesheet" href="/static/css/layout.css">
-  <link rel="stylesheet" href="/static/css/animations.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/animations.css">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
 </head>
@@ -104,7 +104,7 @@
           <input type="text" class="header-search" placeholder="Search targets, vulns, IOCs..." id="global-search">
           <button class="header-btn" title="Alerts" data-page="defense">🔔<span class="badge"
               id="alert-count">3</span></button>
-          <a class="header-btn" title="API Docs" href="/docs" target="_blank">📖</a>
+          <a class="header-btn" title="API Docs" href="/api/docs" target="_blank">📖</a>
           <div class="user-avatar" title="Admin" data-page="settings">A</div>
         </div>
       </header>
@@ -653,7 +653,7 @@
               <div class="card-title">Pentest Report</div>
               <div class="card-subtitle" style="margin-top:4px">Full penetration test results</div>
             </div>
-            <a class="card" style="cursor:pointer;text-decoration:none;color:inherit;display:block" href="/docs"
+            <a class="card" style="cursor:pointer;text-decoration:none;color:inherit;display:block" href="/api/docs"
               target="_blank">
               <div style="font-size:32px;margin-bottom:12px">📖</div>
               <div class="card-title">API Documentation</div>
@@ -853,7 +853,7 @@
   <!-- CVE Panel backdrop -->
   <div id="cve-backdrop" class="cve-backdrop"></div>
 
-  <script src="/static/js/app.js"></script>
+  <script type="module" src="/js/app.js"></script>
 </body>
 
 </html>

@@ -8,6 +8,7 @@ SQLite note: APScheduler uses a synchronous SQLAlchemy connection
 for the job store (not async). The sync URL is derived automatically
 from the async DATABASE_URL by stripping the +asyncpg / +aiosqlite driver.
 """
+
 from __future__ import annotations
 
 import re
@@ -53,8 +54,8 @@ def get_scheduler() -> AsyncIOScheduler:
             jobstores={"default": jobstore},
             executors={"default": AsyncIOExecutor()},
             job_defaults={
-                "coalesce": True,          # merge missed runs into one
-                "max_instances": 1,        # no overlapping runs of same job
+                "coalesce": True,  # merge missed runs into one
+                "max_instances": 1,  # no overlapping runs of same job
                 "misfire_grace_time": 120,  # allow 2-min late start
             },
             timezone="UTC",
@@ -106,6 +107,7 @@ async def _dispatch_threat_sweep() -> None:
     This is registered automatically by Feature 2 on startup.
     """
     from app.workers.intel_tasks import run_threat_intel_sweep
+
     logger.info("scheduler.threat_sweep.firing")
     try:
         await run_threat_intel_sweep.kiq()
@@ -127,21 +129,20 @@ def add_scan_job(
     if schedule_type == "cron":
         parts = schedule_value.strip().split()
         if len(parts) != 5:
-            raise ValueError(
-                f"Expected 5-field cron expression, got: '{schedule_value}'"
-            )
+            raise ValueError(f"Expected 5-field cron expression, got: '{schedule_value}'")
         trigger = CronTrigger(
-            minute=parts[0], hour=parts[1],
-            day=parts[2], month=parts[3], day_of_week=parts[4],
+            minute=parts[0],
+            hour=parts[1],
+            day=parts[2],
+            month=parts[3],
+            day_of_week=parts[4],
             timezone="UTC",
         )
     else:
         try:
             seconds = int(schedule_value)
         except ValueError:
-            raise ValueError(
-                f"Interval schedule_value must be integer seconds, got: '{schedule_value}'"
-            )
+            raise ValueError(f"Interval schedule_value must be integer seconds, got: '{schedule_value}'")  # noqa: B904
         trigger = IntervalTrigger(seconds=seconds)
 
     sched.add_job(
@@ -179,8 +180,11 @@ def register_threat_sweep(cron: str = "0 3 * * *") -> None:
     sched = get_scheduler()
     parts = cron.strip().split()
     trigger = CronTrigger(
-        minute=parts[0], hour=parts[1],
-        day=parts[2], month=parts[3], day_of_week=parts[4],
+        minute=parts[0],
+        hour=parts[1],
+        day=parts[2],
+        month=parts[3],
+        day_of_week=parts[4],
         timezone="UTC",
     )
     sched.add_job(
@@ -216,5 +220,5 @@ def list_scheduled_jobs() -> list[dict]:
             "persistent": True,
         }
         for j in get_scheduler().get_jobs()
-        if not j.id.startswith("__")   # hide internal jobs from list
+        if not j.id.startswith("__")  # hide internal jobs from list
     ]

@@ -22,6 +22,7 @@ tracer = get_tracer("ai.llm")
 
 # ─── #61-62 LLM Integration ─────────────────
 
+
 class LLMIntegration:
     """
     LLM-powered security analysis using Google Gemini / OpenAI / local models.
@@ -43,9 +44,9 @@ class LLMIntegration:
         },
     }
 
-    SECURITY_SYSTEM_PROMPT = """You are an expert cybersecurity analyst. Analyze the provided security 
-findings and give actionable, technical advice. Be specific about remediation steps, 
-reference CWE/CVE IDs when applicable, and prioritize findings by risk. 
+    SECURITY_SYSTEM_PROMPT = """You are an expert cybersecurity analyst. Analyze the provided security
+findings and give actionable, technical advice. Be specific about remediation steps,
+reference CWE/CVE IDs when applicable, and prioritize findings by risk.
 Keep responses concise and professional."""
 
     def __init__(self, provider: str = "gemini", api_key: str = ""):
@@ -87,10 +88,10 @@ Findings:
         """Generate specific remediation steps for a finding."""
         prompt = f"""Provide detailed remediation steps for this security finding:
 
-Type: {finding.get('type', 'Unknown')}
-Severity: {finding.get('severity', 'unknown')}
-Evidence: {finding.get('evidence', 'N/A')}
-URL: {finding.get('url', 'N/A')}
+Type: {finding.get("type", "Unknown")}
+Severity: {finding.get("severity", "unknown")}
+Evidence: {finding.get("evidence", "N/A")}
+URL: {finding.get("url", "N/A")}
 
 Provide:
 1. Step-by-step fix instructions
@@ -166,7 +167,7 @@ Keep the explanation technical but clear."""
         except Exception as e:
             logger.error("ai.llm.error", provider=self._provider, error=str(e))
             return f"[LLM Error: {str(e)}]"
-            
+
         return ""
 
     async def close(self):
@@ -175,6 +176,7 @@ Keep the explanation technical but clear."""
 
 
 # ─── #63 Embedding Search ───────────────────
+
 
 class EmbeddingSearch:
     """
@@ -204,7 +206,7 @@ class EmbeddingSearch:
             resp = await client.get(f"/collections/{self._collection}")
             if resp.status_code == 200:
                 return {"status": "exists"}
-        except Exception:
+        except Exception:  # noqa: S110
             pass
 
         try:
@@ -221,17 +223,19 @@ class EmbeddingSearch:
     async def index_finding(self, finding: dict, embedding: list[float]) -> dict:
         """Index a security finding with its embedding."""
         client = await self._get_client()
-        point_id = hashlib.md5(json.dumps(finding, default=str).encode()).hexdigest()
+        point_id = hashlib.md5(json.dumps(finding, default=str).encode()).hexdigest()  # noqa: S324
 
         try:
-            resp = await client.put(
+            await client.put(
                 f"/collections/{self._collection}/points",
                 json={
-                    "points": [{
-                        "id": point_id,
-                        "vector": embedding,
-                        "payload": finding,
-                    }],
+                    "points": [
+                        {
+                            "id": point_id,
+                            "vector": embedding,
+                            "payload": finding,
+                        }
+                    ],
                 },
             )
             return {"status": "indexed", "id": point_id}
@@ -272,7 +276,7 @@ class EmbeddingSearch:
         # Pad or truncate to dim
         embedding = (raw * (dim // len(raw) + 1))[:dim]
         # L2 normalize
-        norm = sum(x ** 2 for x in embedding) ** 0.5
+        norm = sum(x**2 for x in embedding) ** 0.5
         if norm > 0:
             embedding = [x / norm for x in embedding]
         return embedding
@@ -283,6 +287,7 @@ class EmbeddingSearch:
 
 
 # ─── #64-65 AI Report Generator ─────────────
+
 
 class AIReportGenerator:
     """AI-powered comprehensive security report generation."""
@@ -301,14 +306,12 @@ class AIReportGenerator:
                 sev = f.get("severity", "info")
                 severity_counts[sev] = severity_counts.get(sev, 0) + 1
 
-            critical = severity_counts.get("critical", 0)
-            high = severity_counts.get("high", 0)
+            severity_counts.get("critical", 0)
+            severity_counts.get("high", 0)
 
             # Risk score
             weights = {"critical": 10, "high": 7, "medium": 4, "low": 1}
-            risk_score = sum(
-                weights.get(f.get("severity", "info"), 0) for f in findings
-            )
+            risk_score = sum(weights.get(f.get("severity", "info"), 0) for f in findings)
             risk_score = min(risk_score, 100)
 
             # AI analysis if LLM available
@@ -326,7 +329,13 @@ class AIReportGenerator:
                 "target": scan_data.get("target", ""),
                 "executive_summary": {
                     "risk_score": risk_score,
-                    "risk_level": "Critical" if risk_score >= 80 else "High" if risk_score >= 60 else "Medium" if risk_score >= 30 else "Low",
+                    "risk_level": "Critical"
+                    if risk_score >= 80
+                    else "High"
+                    if risk_score >= 60
+                    else "Medium"
+                    if risk_score >= 30
+                    else "Low",
                     "total_findings": len(findings),
                     "severity_breakdown": severity_counts,
                     "modules_tested": modules,
@@ -346,15 +355,27 @@ class AIReportGenerator:
         types_seen = set()
 
         priority_map = {
-            "credential": ("critical", "Implement strong authentication: enforce complex passwords, enable MFA, remove default accounts"),
+            "credential": (
+                "critical",
+                "Implement strong authentication: enforce complex passwords, enable MFA, remove default accounts",
+            ),
             "sql": ("critical", "Use parameterized queries/ORMs, validate inputs, implement WAF rules for SQLi"),
             "xss": ("high", "Implement CSP headers, use output encoding, sanitize user inputs"),
-            "rce": ("critical", "Patch vulnerable components immediately, restrict command execution, sandbox processes"),
+            "rce": (
+                "critical",
+                "Patch vulnerable components immediately, restrict command execution, sandbox processes",
+            ),
             "ssl": ("high", "Upgrade to TLS 1.3, disable weak ciphers, enable HSTS with preload"),
-            "header": ("medium", "Configure security headers: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy"),
+            "header": (
+                "medium",
+                "Configure security headers: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy",
+            ),
             "port": ("medium", "Close unnecessary ports, implement network segmentation, use firewalls"),
             "outdated": ("high", "Establish automated dependency update pipeline, subscribe to security advisories"),
-            "cloud": ("high", "Enable cloud security posture management, review IAM policies, enable bucket encryption"),
+            "cloud": (
+                "high",
+                "Enable cloud security posture management, review IAM policies, enable bucket encryption",
+            ),
         }
 
         for finding in findings:

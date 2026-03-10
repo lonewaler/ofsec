@@ -5,18 +5,18 @@ REST API for reconnaissance operations (Upgrades #1–15).
 """
 
 from __future__ import annotations
+
 import asyncio
 import json
 import json as _json
 
 import structlog
-import fastapi
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
 from fastapi.responses import HTMLResponse, StreamingResponse
 
 from app.api.deps import CurrentUser, DbSession
 from app.config import settings
-from app.core import stream_bus
+from app.core import redis_bus
 from app.repositories import ScanRepository
 from app.schemas import (
     ReconScanRequest,
@@ -80,7 +80,8 @@ async def list_recon_modules(*, user: CurrentUser) -> dict:
 
 
 @router.post("/scan", response_model=SuccessResponse)
-async def start_recon_scan(*, 
+async def start_recon_scan(
+    *,
     request: ReconScanRequest,
     db: DbSession,
     user: CurrentUser,
@@ -122,7 +123,8 @@ async def start_recon_scan(*,
 
 
 @router.post("/scan/instant", tags=["Reconnaissance"])
-async def instant_recon_scan(*, 
+async def instant_recon_scan(
+    *,
     request: ReconScanRequest,
     user: CurrentUser,
 ) -> dict:
@@ -140,7 +142,8 @@ async def instant_recon_scan(*,
 
 
 @router.post("/passive", tags=["Reconnaissance"])
-async def run_passive_recon(*, 
+async def run_passive_recon(
+    *,
     request: ReconScanRequest,
     db: DbSession,
     user: CurrentUser,
@@ -162,11 +165,8 @@ async def run_passive_recon(*,
 
     if stream:
         # Non-blocking: create the bus, kick off the scan in background, return scan_id
-        stream_bus.create(scan_id)
-        stream_bus.init_control(scan_id)
-        asyncio.create_task(
-            _run_recon_streaming(scan_id, request, repo)
-        )
+        await redis_bus.set_control_signal(scan_id, "start")
+        asyncio.create_task(_run_recon_streaming(scan_id, request, repo))
         return {
             "scan_id": scan.id,
             "status": "started",
@@ -188,10 +188,13 @@ async def run_passive_recon(*,
         if findings:
             await repo.add_vulnerabilities(scan.id, findings)
 
-        await repo.complete_scan(scan.id, result_summary={
-            "modules_run": request.modules,
-            "findings_count": len(findings),
-        })
+        await repo.complete_scan(
+            scan.id,
+            result_summary={
+                "modules_run": request.modules,
+                "findings_count": len(findings),
+            },
+        )
         results["scan_id"] = scan.id
         return results
 
@@ -202,7 +205,8 @@ async def run_passive_recon(*,
         await orchestrator.close()
 
 
-async def _run_recon_streaming(*, 
+async def _run_recon_streaming(
+    *,
     scan_id: str,
     request,
     repo,
@@ -216,22 +220,25 @@ async def _run_recon_streaming(*,
     modules = (
         request.modules
         if request.modules and "all" not in request.modules
-        else list(getattr(orchestrator, 'MODULES', {}).keys()) or request.modules
+        else list(getattr(orchestrator, "MODULES", {}).keys()) or request.modules
     )
 
     try:
         for i, module_name in enumerate(modules):
-
             # Cancel check
-            if stream_bus.is_cancelled(scan_id):
-                await stream_bus.publish(scan_id, {
-                    "type": "cancelled",
-                    "scan_id": scan_id,
-                    "modules_completed": i,
-                    "findings_so_far": len(all_findings),
-                })
-                from app.repositories import ScanRepository as SR
+            if await redis_bus.check_control_signal(scan_id) == "cancel":
+                await redis_bus.publish_event(
+                    scan_id,
+                    {
+                        "type": "cancelled",
+                        "scan_id": scan_id,
+                        "modules_completed": i,
+                        "findings_so_far": len(all_findings),
+                    },
+                )
+                from app.repositories import ScanRepository as SR  # noqa: N817
                 from app.workers.db_utils import worker_db_session
+
                 async with worker_db_session() as db2:
                     await SR(db2).complete_scan(
                         int(scan_id),
@@ -241,39 +248,42 @@ async def _run_recon_streaming(*,
                 return
 
             # Pause loop — 0.5s polling, exits on cancel or resume
-            while stream_bus.is_paused(scan_id):
+            while await redis_bus.check_control_signal(scan_id) == "pause":
                 await asyncio.sleep(0.5)
-                if stream_bus.is_cancelled(scan_id):
+                if await redis_bus.check_control_signal(scan_id) == "cancel":
                     break
 
             try:
                 result = await orchestrator.run_module(module_name, request.target)
-                findings = (
-                    result.get("findings")
-                    or result.get("vulnerabilities")
-                    or []
-                )
+                findings = result.get("findings") or result.get("vulnerabilities") or []
                 all_findings.extend(findings)
 
-                await stream_bus.publish(scan_id, {
-                    "type": "module_complete",
-                    "module": module_name,
-                    "index": i + 1,
-                    "total": len(modules),
-                    "findings_count": len(findings),
-                    "data": result,
-                })
+                await redis_bus.publish_event(
+                    scan_id,
+                    {
+                        "type": "module_complete",
+                        "module": module_name,
+                        "index": i + 1,
+                        "total": len(modules),
+                        "findings_count": len(findings),
+                        "data": result,
+                    },
+                )
 
             except Exception as e:
-                await stream_bus.publish(scan_id, {
-                    "type": "module_error",
-                    "module": module_name,
-                    "error": str(e),
-                })
+                await redis_bus.publish_event(
+                    scan_id,
+                    {
+                        "type": "module_error",
+                        "module": module_name,
+                        "error": str(e),
+                    },
+                )
 
         # Persist accumulated findings
-        from app.repositories import ScanRepository as SR
+        from app.repositories import ScanRepository as SR  # noqa: N817
         from app.workers.db_utils import worker_db_session
+
         async with worker_db_session() as db2:
             repo2 = SR(db2)
             if all_findings:
@@ -286,23 +296,26 @@ async def _run_recon_streaming(*,
                 },
             )
 
-        await stream_bus.publish(scan_id, {
-            "type": "done",
-            "scan_id": scan_id,
-            "total_findings": len(all_findings),
-        })
+        await redis_bus.publish_event(
+            scan_id,
+            {
+                "type": "done",
+                "scan_id": scan_id,
+                "total_findings": len(all_findings),
+            },
+        )
 
     except Exception as e:
-        await stream_bus.publish(scan_id, {"type": "error", "error": str(e)})
+        await redis_bus.publish_event(scan_id, {"type": "error", "error": str(e)})
 
     finally:
-        await stream_bus.close(scan_id)
-        stream_bus.cleanup_control(scan_id)
+        pass  # cleanup handled by redis TTLEs or unused
         await orchestrator.close()
 
 
 @router.get("/stream/{scan_id}", tags=["Reconnaissance"])
-async def stream_scan_results(*, 
+async def stream_scan_results(
+    *,
     scan_id: str,
     user: CurrentUser,
 ) -> StreamingResponse:
@@ -312,8 +325,9 @@ async def stream_scan_results(*,
     Each event is a JSON-encoded module result.
     Stream closes automatically when the scan completes.
     """
+
     async def event_generator():
-        async for event in stream_bus.subscribe(scan_id):
+        async for event in redis_bus.get_stream(scan_id):
             yield f"data: {json.dumps(event)}\n\n"
         yield 'data: {"type": "stream_closed"}\n\n'
 
@@ -347,7 +361,7 @@ async def websocket_scan_stream(*, websocket: WebSocket, scan_id: str) -> None:
 
     async def _forward_events() -> None:
         """Forward stream_bus events to WebSocket until done/cancelled/error."""
-        async for event in stream_bus.subscribe(scan_id):
+        async for event in redis_bus.get_stream(scan_id):
             try:
                 await websocket.send_json(event)
                 if event.get("type") in ("done", "cancelled", "error"):
@@ -360,29 +374,21 @@ async def websocket_scan_stream(*, websocket: WebSocket, scan_id: str) -> None:
     try:
         while True:
             try:
-                raw = await asyncio.wait_for(
-                    websocket.receive_text(), timeout=120.0
-                )
+                raw = await asyncio.wait_for(websocket.receive_text(), timeout=120.0)
                 msg = _json.loads(raw)
                 action = msg.get("action", "")
 
                 if action == "cancel":
-                    stream_bus.cancel(scan_id)
-                    await websocket.send_json({
-                        "type": "ack", "action": "cancel", "status": "cancelling"
-                    })
+                    await redis_bus.set_control_signal(scan_id, "cancel")
+                    await websocket.send_json({"type": "ack", "action": "cancel", "status": "cancelling"})
 
                 elif action == "pause":
-                    stream_bus.pause(scan_id)
-                    await websocket.send_json({
-                        "type": "ack", "action": "pause", "status": "paused"
-                    })
+                    await redis_bus.set_control_signal(scan_id, "pause")
+                    await websocket.send_json({"type": "ack", "action": "pause", "status": "paused"})
 
                 elif action == "resume":
-                    stream_bus.resume(scan_id)
-                    await websocket.send_json({
-                        "type": "ack", "action": "resume", "status": "running"
-                    })
+                    await redis_bus.set_control_signal(scan_id, "resume")
+                    await websocket.send_json({"type": "ack", "action": "resume", "status": "running"})
 
                 elif action == "ping":
                     await websocket.send_json({"type": "pong"})
@@ -391,14 +397,15 @@ async def websocket_scan_stream(*, websocket: WebSocket, scan_id: str) -> None:
                 await websocket.send_json({"type": "ping"})
 
     except WebSocketDisconnect:
-        stream_bus.cancel(scan_id)     # tab closed = cancel the scan
+        await redis_bus.set_control_signal(scan_id, "cancel")  # tab closed = cancel the scan
 
     finally:
         forward_task.cancel()
 
 
 @router.post("/report", tags=["Reconnaissance"], response_model=None)
-async def generate_recon_report(*, 
+async def generate_recon_report(
+    *,
     request: ReconScanRequest,
     user: CurrentUser,
     fmt: str = "json",
@@ -417,7 +424,8 @@ async def generate_recon_report(*,
 
 
 @router.get("/results", tags=["Reconnaissance"])
-async def list_recon_results(*, 
+async def list_recon_results(
+    *,
     db: DbSession,
     user: CurrentUser,
     target: str | None = None,
@@ -426,9 +434,7 @@ async def list_recon_results(*,
 ) -> dict:
     """List recon scan results from database."""
     repo = ScanRepository(db)
-    items, total = await repo.list_scans(
-        scan_type="recon", target=target, limit=limit, offset=offset
-    )
+    items, total = await repo.list_scans(scan_type="recon", target=target, limit=limit, offset=offset)
     return {
         "items": [
             {
@@ -448,7 +454,8 @@ async def list_recon_results(*,
 
 
 @router.get("/results/{scan_id}", tags=["Reconnaissance"])
-async def get_recon_result(*, 
+async def get_recon_result(
+    *,
     scan_id: int,
     db: DbSession,
     user: CurrentUser,

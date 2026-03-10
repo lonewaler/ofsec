@@ -34,6 +34,7 @@ ALERT_CONFIDENCE = 0.85
 
 # ─── Source: AlienVault OTX ──────────────────────────────────────────
 
+
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def _fetch_otx_pulses(client: httpx.AsyncClient) -> list[dict]:
     """
@@ -62,18 +63,20 @@ async def _fetch_otx_pulses(client: httpx.AsyncClient) -> list[dict]:
                 ioc_type = _normalise_otx_type(indicator.get("type", ""))
                 if not ioc_type:
                     continue
-                iocs.append({
-                    "ioc_type": ioc_type,
-                    "value": indicator.get("indicator", ""),
-                    "source": "otx",
-                    "confidence": 0.75,
-                    "tags": tags[:5],
-                    "metadata": {
-                        "pulse": pulse_name,
-                        "otx_id": indicator.get("id"),
-                        "description": indicator.get("description", ""),
-                    },
-                })
+                iocs.append(
+                    {
+                        "ioc_type": ioc_type,
+                        "value": indicator.get("indicator", ""),
+                        "source": "otx",
+                        "confidence": 0.75,
+                        "tags": tags[:5],
+                        "metadata": {
+                            "pulse": pulse_name,
+                            "otx_id": indicator.get("id"),
+                            "description": indicator.get("description", ""),
+                        },
+                    }
+                )
         logger.info("intel.otx.fetched", pulses=len(pulses), iocs=len(iocs))
     except Exception as e:
         logger.error("intel.otx.error", error=str(e))
@@ -101,6 +104,7 @@ def _normalise_otx_type(otx_type: str) -> str | None:
 
 # ─── Source: AbuseIPDB ───────────────────────────────────────────────
 
+
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def _fetch_abuseipdb(client: httpx.AsyncClient) -> list[dict]:
     """Fetch top 100 most-reported IPs from AbuseIPDB blacklist."""
@@ -122,18 +126,20 @@ async def _fetch_abuseipdb(client: httpx.AsyncClient) -> list[dict]:
         resp.raise_for_status()
         for entry in resp.json().get("data", []):
             score = entry.get("abuseConfidenceScore", 0)
-            iocs.append({
-                "ioc_type": "ip",
-                "value": entry.get("ipAddress", ""),
-                "source": "abuseipdb",
-                "confidence": round(score / 100, 2),
-                "tags": [entry.get("countryCode", ""), "blacklist"],
-                "metadata": {
-                    "abuse_score": score,
-                    "total_reports": entry.get("totalReports", 0),
-                    "last_reported": entry.get("lastReportedAt", ""),
-                },
-            })
+            iocs.append(
+                {
+                    "ioc_type": "ip",
+                    "value": entry.get("ipAddress", ""),
+                    "source": "abuseipdb",
+                    "confidence": round(score / 100, 2),
+                    "tags": [entry.get("countryCode", ""), "blacklist"],
+                    "metadata": {
+                        "abuse_score": score,
+                        "total_reports": entry.get("totalReports", 0),
+                        "last_reported": entry.get("lastReportedAt", ""),
+                    },
+                }
+            )
         logger.info("intel.abuseipdb.fetched", iocs=len(iocs))
     except Exception as e:
         logger.error("intel.abuseipdb.error", error=str(e))
@@ -142,6 +148,7 @@ async def _fetch_abuseipdb(client: httpx.AsyncClient) -> list[dict]:
 
 
 # ─── Source: VirusTotal ──────────────────────────────────────────────
+
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def _fetch_virustotal(client: httpx.AsyncClient) -> list[dict]:
@@ -173,18 +180,20 @@ async def _fetch_virustotal(client: httpx.AsyncClient) -> list[dict]:
                 confidence = round(min(malicious / total, 1.0), 2)
                 if confidence < MIN_CONFIDENCE:
                     continue
-                iocs.append({
-                    "ioc_type": "hash",
-                    "value": sha256,
-                    "source": "virustotal",
-                    "confidence": confidence,
-                    "tags": attrs.get("type_tags", [])[:5],
-                    "metadata": {
-                        "malicious_detections": malicious,
-                        "meaningful_name": attrs.get("meaningful_name", ""),
-                        "type_description": attrs.get("type_description", ""),
-                    },
-                })
+                iocs.append(
+                    {
+                        "ioc_type": "hash",
+                        "value": sha256,
+                        "source": "virustotal",
+                        "confidence": confidence,
+                        "tags": attrs.get("type_tags", [])[:5],
+                        "metadata": {
+                            "malicious_detections": malicious,
+                            "meaningful_name": attrs.get("meaningful_name", ""),
+                            "type_description": attrs.get("type_description", ""),
+                        },
+                    }
+                )
         logger.info("intel.virustotal.fetched", iocs=len(iocs))
     except Exception as e:
         logger.error("intel.virustotal.error", error=str(e))
@@ -193,6 +202,7 @@ async def _fetch_virustotal(client: httpx.AsyncClient) -> list[dict]:
 
 
 # ─── Sweep Task ──────────────────────────────────────────────────────
+
 
 @broker.task
 async def run_threat_intel_sweep() -> dict:
@@ -245,9 +255,7 @@ async def run_threat_intel_sweep() -> dict:
                     metadata=ioc.get("metadata", {}),
                 )
                 # Determine if it was newly created
-                is_new = (
-                    abs((result.last_seen - result.first_seen).total_seconds()) < 2
-                )
+                is_new = abs((result.last_seen - result.first_seen).total_seconds()) < 2
                 if is_new:
                     new_count += 1
                     if ioc.get("confidence", 0) >= ALERT_CONFIDENCE:
@@ -271,6 +279,7 @@ async def run_threat_intel_sweep() -> dict:
     if high_confidence_new:
         try:
             from app.core.notifier import dispatch_alert
+
             await dispatch_alert(
                 title=f"Threat Intel: {len(high_confidence_new)} high-confidence IOC(s) detected",
                 message=_format_ioc_summary(high_confidence_new),

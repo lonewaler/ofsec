@@ -121,9 +121,7 @@ IT Security
             emails: list[dict] = []
 
             for target in targets:
-                tracking_id = hashlib.md5(
-                    f"{campaign_id}:{target.get('email', '')}".encode()
-                ).hexdigest()[:12]
+                tracking_id = hashlib.md5(f"{campaign_id}:{target.get('email', '')}".encode()).hexdigest()[:12]  # noqa: S324
 
                 tracked_url = f"{phishing_url}?t={tracking_id}"
 
@@ -140,16 +138,18 @@ IT Security
                     document_name=kwargs.get("document_name", "Q4 Financial Report.xlsx"),
                 )
 
-                emails.append({
-                    "to": target.get("email"),
-                    "subject": template["subject"].format(
-                        invoice_id=kwargs.get("invoice_id", "INV-" + secrets.token_hex(3).upper()),
-                        sender=kwargs.get("sender", "John Smith"),
-                    ),
-                    "body": email_body,
-                    "tracking_id": tracking_id,
-                    "pretext": template["pretext"],
-                })
+                emails.append(
+                    {
+                        "to": target.get("email"),
+                        "subject": template["subject"].format(
+                            invoice_id=kwargs.get("invoice_id", "INV-" + secrets.token_hex(3).upper()),
+                            sender=kwargs.get("sender", "John Smith"),
+                        ),
+                        "body": email_body,
+                        "tracking_id": tracking_id,
+                        "pretext": template["pretext"],
+                    }
+                )
 
             logger.info(
                 "attack.phishing.campaign_generated",
@@ -231,10 +231,7 @@ class SocialEngineeringToolkit:
         return self.PRETEXT_SCENARIOS.get(scenario_id)
 
     def list_scenarios(self) -> list[dict]:
-        return [
-            {"id": k, "name": v["name"], "risk": v["risk_level"]}
-            for k, v in self.PRETEXT_SCENARIOS.items()
-        ]
+        return [{"id": k, "name": v["name"], "risk": v["risk_level"]} for k, v in self.PRETEXT_SCENARIOS.items()]
 
     def generate_domain_variants(self, domain: str) -> list[dict]:
         """Generate typosquatting/lookalike domain variants."""
@@ -248,13 +245,13 @@ class SocialEngineeringToolkit:
         homoglyphs = {"a": "а", "e": "е", "o": "о", "c": "с", "p": "р", "i": "і"}
         for i, char in enumerate(name):
             if char.lower() in homoglyphs:
-                variant = name[:i] + homoglyphs[char.lower()] + name[i + 1:]
+                variant = name[:i] + homoglyphs[char.lower()] + name[i + 1 :]
                 variants.append({"domain": f"{variant}.{tld}", "type": "homoglyph", "char": char})
 
         # Missing/extra character
         for i in range(len(name)):
             # Missing char
-            variant = name[:i] + name[i + 1:]
+            variant = name[:i] + name[i + 1 :]
             if variant:
                 variants.append({"domain": f"{variant}.{tld}", "type": "omission"})
             # Double char
@@ -263,16 +260,29 @@ class SocialEngineeringToolkit:
 
         # Adjacent key swaps (QWERTY)
         qwerty_adjacent = {
-            "a": "sq", "s": "awd", "d": "sfe", "f": "dgr",
-            "g": "fht", "h": "gjy", "j": "hku", "k": "jli",
-            "l": "ko", "q": "wa", "w": "qse", "e": "wrd",
-            "r": "etf", "t": "ryg", "y": "tuh", "u": "yij",
-            "i": "uok", "o": "ipl",
+            "a": "sq",
+            "s": "awd",
+            "d": "sfe",
+            "f": "dgr",
+            "g": "fht",
+            "h": "gjy",
+            "j": "hku",
+            "k": "jli",
+            "l": "ko",
+            "q": "wa",
+            "w": "qse",
+            "e": "wrd",
+            "r": "etf",
+            "t": "ryg",
+            "y": "tuh",
+            "u": "yij",
+            "i": "uok",
+            "o": "ipl",
         }
         for i, char in enumerate(name):
             if char.lower() in qwerty_adjacent:
                 for adj in qwerty_adjacent[char.lower()]:
-                    variant = name[:i] + adj + name[i + 1:]
+                    variant = name[:i] + adj + name[i + 1 :]
                     variants.append({"domain": f"{variant}.{tld}", "type": "typosquat"})
 
         # Different TLD

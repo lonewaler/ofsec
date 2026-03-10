@@ -20,6 +20,7 @@ tracer = get_tracer("ops.scheduler")
 
 # ─── #89-90 Job Scheduler ───────────────────
 
+
 class JobScheduler:
     """Schedule and manage recurring security jobs."""
 
@@ -30,7 +31,7 @@ class JobScheduler:
         self,
         name: str,
         job_type: str,
-        schedule: str,      # cron expression
+        schedule: str,  # cron expression
         target: str = "",
         config: dict | None = None,
     ) -> dict:
@@ -88,14 +89,14 @@ class JobScheduler:
 
 # ─── #91-92 Audit Logger ────────────────────
 
+
 class AuditLogger:
     """Comprehensive audit logging for all platform operations."""
 
     def __init__(self):
         self._log: list[dict] = []
 
-    def log(self, action: str, user: str, resource: str,
-            details: dict | None = None, result: str = "success") -> dict:
+    def log(self, action: str, user: str, resource: str, details: dict | None = None, result: str = "success") -> dict:
         entry = {
             "id": secrets.token_hex(6),
             "action": action,
@@ -109,8 +110,9 @@ class AuditLogger:
         self._log.append(entry)
         return entry
 
-    def search(self, user: str | None = None, action: str | None = None,
-               resource: str | None = None, limit: int = 100) -> list[dict]:
+    def search(
+        self, user: str | None = None, action: str | None = None, resource: str | None = None, limit: int = 100
+    ) -> list[dict]:
         results = self._log
         if user:
             results = [e for e in results if e["user"] == user]
@@ -135,19 +137,21 @@ class AuditLogger:
 
 # ─── #93-94 Asset Management ────────────────
 
+
 class AssetManager:
     """Track and manage security assets and targets."""
 
     def __init__(self):
         self._assets: dict[str, dict] = {}
 
-    def add_asset(self, name: str, asset_type: str, address: str,
-                  tags: list[str] | None = None, criticality: str = "medium") -> dict:
+    def add_asset(
+        self, name: str, asset_type: str, address: str, tags: list[str] | None = None, criticality: str = "medium"
+    ) -> dict:
         asset_id = f"ASSET-{secrets.token_hex(4).upper()}"
         asset = {
             "id": asset_id,
             "name": name,
-            "type": asset_type,   # server, web_app, api, database, network
+            "type": asset_type,  # server, web_app, api, database, network
             "address": address,
             "tags": tags or [],
             "criticality": criticality,
@@ -182,21 +186,19 @@ class AssetManager:
         return {
             "total_assets": len(assets),
             "by_criticality": {
-                c: len([a for a in assets if a["criticality"] == c])
-                for c in ("critical", "high", "medium", "low")
+                c: len([a for a in assets if a["criticality"] == c]) for c in ("critical", "high", "medium", "low")
             },
             "by_type": {
                 t: len([a for a in assets if a["type"] == t])
                 for t in ("server", "web_app", "api", "database", "network")
             },
             "assets_with_vulns": len([a for a in assets if a["vulnerability_count"] > 0]),
-            "avg_risk_score": round(
-                sum(a["risk_score"] for a in assets) / max(len(assets), 1), 1
-            ),
+            "avg_risk_score": round(sum(a["risk_score"] for a in assets) / max(len(assets), 1), 1),
         }
 
 
 # ─── #95 User & Team Management ─────────────
+
 
 class TeamManager:
     """Manage security team members and roles."""

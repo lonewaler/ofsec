@@ -1,4 +1,5 @@
 """User persistence repository."""
+
 from datetime import UTC, datetime
 
 from sqlalchemy import func, select
@@ -13,9 +14,7 @@ class UserRepository:
         self.db = db
 
     async def get_by_email(self, email: str) -> User | None:
-        r = await self.db.execute(
-            select(User).where(User.email == email.lower())
-        )
+        r = await self.db.execute(select(User).where(User.email == email.lower()))
         return r.scalar_one_or_none()
 
     async def get_by_id(self, user_id: int) -> User | None:
@@ -57,9 +56,7 @@ class UserRepository:
         user.last_login = datetime.now(UTC)  # type: ignore[assignment]
         return user
 
-    async def change_password(
-        self, user_id: int, old_password: str, new_password: str
-    ) -> tuple[bool, str]:
+    async def change_password(self, user_id: int, old_password: str, new_password: str) -> tuple[bool, str]:
         user = await self.get_by_id(user_id)
         if not user:
             return False, "User not found"

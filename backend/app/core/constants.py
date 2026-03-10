@@ -6,11 +6,11 @@ Application-wide constants, enums, and configuration values.
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 
 # ─── Scan Types ───────────────────────────────
-class ScanType(str, Enum):
+class ScanType(StrEnum):
     RECON = "recon"
     VULNERABILITY = "vulnerability"
     ATTACK = "attack"
@@ -24,7 +24,7 @@ class ScanType(str, Enum):
 
 
 # ─── Severity Levels ─────────────────────────
-class Severity(str, Enum):
+class Severity(StrEnum):
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
@@ -33,7 +33,7 @@ class Severity(str, Enum):
 
 
 # ─── Scan Status ──────────────────────────────
-class ScanStatus(str, Enum):
+class ScanStatus(StrEnum):
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -42,7 +42,7 @@ class ScanStatus(str, Enum):
 
 
 # ─── Alert Status ─────────────────────────────
-class AlertStatus(str, Enum):
+class AlertStatus(StrEnum):
     NEW = "new"
     ACKNOWLEDGED = "acknowledged"
     INVESTIGATING = "investigating"
@@ -51,7 +51,7 @@ class AlertStatus(str, Enum):
 
 
 # ─── Attack Status ────────────────────────────
-class AttackStatus(str, Enum):
+class AttackStatus(StrEnum):
     PLANNED = "planned"
     RUNNING = "running"
     SUCCESS = "success"
@@ -60,14 +60,14 @@ class AttackStatus(str, Enum):
 
 
 # ─── User Roles ──────────────────────────────
-class UserRole(str, Enum):
+class UserRole(StrEnum):
     ADMIN = "admin"
     OPERATOR = "operator"
     VIEWER = "viewer"
 
 
 # ─── Recon Module IDs ────────────────────────
-class ReconModule(str, Enum):
+class ReconModule(StrEnum):
     CERT_TRANSPARENCY = "cert_transparency"
     PASSIVE_DNS = "passive_dns"
     CT_DASHBOARD = "ct_dashboard"

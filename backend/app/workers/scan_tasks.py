@@ -38,11 +38,7 @@ async def _run_and_persist(
         try:
             result = await orchestrator.run_module(module_name, target, config)
 
-            findings = (
-                result.get("findings")
-                or result.get("vulnerabilities")
-                or []
-            )
+            findings = result.get("findings") or result.get("vulnerabilities") or []
             if findings:
                 await repo.add_vulnerabilities(scan.id, findings)
 
@@ -168,7 +164,7 @@ async def run_full_vulnerability_scan(target: str, modules: list[str] | None = N
 
             # Extract findings from correct keys returned by ScannerOrchestrator
             findings = list(result.get("correlated_findings", []))
-            for mod_name, mod_result in result.get("module_results", {}).items():
+            for _mod_name, mod_result in result.get("module_results", {}).items():
                 if isinstance(mod_result, dict):
                     findings.extend(mod_result.get("findings", []))
                     findings.extend(mod_result.get("vulnerabilities", []))

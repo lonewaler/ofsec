@@ -16,7 +16,6 @@ Sub-enhancements:
 10. JavaScript file archival
 """
 
-
 from __future__ import annotations
 
 import httpx
@@ -47,7 +46,11 @@ class WebArchiveScraper:
         return self._client
 
     async def get_snapshots(
-        self, domain: str, limit: int = 100, from_date: str | None = None, to_date: str | None = None,
+        self,
+        domain: str,
+        limit: int = 100,
+        from_date: str | None = None,
+        to_date: str | None = None,
     ) -> list[dict]:
         """Fetch available snapshots from Wayback Machine CDX API."""
         with tracer.start_as_current_span("archive_snapshots") as span:
@@ -77,10 +80,8 @@ class WebArchiveScraper:
                 headers = rows[0]
                 snapshots = []
                 for row in rows[1:]:
-                    record = dict(zip(headers, row))
-                    record["archive_url"] = (
-                        f"{self.WAYBACK_URL}/{record.get('timestamp')}/{record.get('original')}"
-                    )
+                    record = dict(zip(headers, row, strict=False))
+                    record["archive_url"] = f"{self.WAYBACK_URL}/{record.get('timestamp')}/{record.get('original')}"
                     snapshots.append(record)
 
                 logger.info("recon.archive.snapshots_found", domain=domain, count=len(snapshots))
@@ -106,17 +107,28 @@ class WebArchiveScraper:
             if not rows or len(rows) < 2:
                 return []
             headers = rows[0]
-            return [dict(zip(headers, row)) for row in rows[1:]]
+            return [dict(zip(headers, row, strict=False)) for row in rows[1:]]
         except Exception:
             return []
 
     async def find_sensitive_files(self, domain: str) -> list[dict]:
         """Search archive for potentially sensitive files."""
         sensitive_patterns = [
-            ".env", ".git/config", "wp-config.php", ".htaccess",
-            "web.config", "config.yml", "config.json", "secrets",
-            ".aws/credentials", "id_rsa", "backup", ".sql",
-            "phpinfo.php", "debug", "admin",
+            ".env",
+            ".git/config",
+            "wp-config.php",
+            ".htaccess",
+            "web.config",
+            "config.yml",
+            "config.json",
+            "secrets",
+            ".aws/credentials",
+            "id_rsa",
+            "backup",
+            ".sql",
+            "phpinfo.php",
+            "debug",
+            "admin",
         ]
 
         client = await self._get_client()
@@ -136,14 +148,18 @@ class WebArchiveScraper:
                     if rows and len(rows) > 1:
                         headers = rows[0]
                         for row in rows[1:]:
-                            record = dict(zip(headers, row))
+                            record = dict(zip(headers, row, strict=False))
                             if record.get("statuscode") == "200":
-                                found.append({
-                                    **record,
-                                    "pattern": pattern,
-                                    "severity": "high" if pattern in [".env", ".git/config", "id_rsa"] else "medium",
-                                })
-            except Exception:
+                                found.append(
+                                    {
+                                        **record,
+                                        "pattern": pattern,
+                                        "severity": "high"
+                                        if pattern in [".env", ".git/config", "id_rsa"]
+                                        else "medium",
+                                    }
+                                )
+            except Exception:  # noqa: S112
                 continue
 
         logger.info("recon.archive.sensitive_files", domain=domain, found=len(found))

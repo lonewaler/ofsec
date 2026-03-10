@@ -21,13 +21,14 @@ tracer = get_tracer("defense.hunting")
 
 # ─── #72 Hypothesis-Driven Hunting ──────────
 
+
 class ThreatHuntingEngine:
     """Hypothesis-based threat hunting framework."""
 
     HUNT_HYPOTHESES = {
         "h001_apt_persistence": {
             "name": "APT Persistence Mechanisms",
-            "hypothesis": "Adversaries have established persistence via scheduled tasks, registry keys, or startup items",
+            "hypothesis": "Adversaries have established persistence via scheduled tasks, registry keys, or startup items",  # noqa: E501
             "data_sources": ["process_logs", "registry_changes", "scheduled_tasks"],
             "indicators": [
                 "New scheduled task with encoded command",
@@ -80,10 +81,7 @@ class ThreatHuntingEngine:
         self._hunt_results: dict[str, list[dict]] = defaultdict(list)
 
     def list_hypotheses(self) -> list[dict]:
-        return [
-            {"id": k, "name": v["name"], "mitre": v["mitre"]}
-            for k, v in self.HUNT_HYPOTHESES.items()
-        ]
+        return [{"id": k, "name": v["name"], "mitre": v["mitre"]} for k, v in self.HUNT_HYPOTHESES.items()]
 
     def start_hunt(self, hypothesis_id: str, hunter: str = "system") -> dict:
         """Start a threat hunt based on a hypothesis."""
@@ -126,6 +124,7 @@ class ThreatHuntingEngine:
 
 # ─── #73 IOC Sweep Engine ───────────────────
 
+
 class IOCSweepEngine:
     """Sweep infrastructure for known Indicators of Compromise."""
 
@@ -155,12 +154,14 @@ class IOCSweepEngine:
                 for ioc_type, iocs in self._ioc_database.items():
                     for ioc in iocs:
                         if ioc.lower() in log_lower:
-                            matches.append({
-                                "ioc": ioc,
-                                "type": ioc_type,
-                                "log_line": i + 1,
-                                "log_excerpt": log[:200],
-                            })
+                            matches.append(
+                                {
+                                    "ioc": ioc,
+                                    "type": ioc_type,
+                                    "log_line": i + 1,
+                                    "log_excerpt": log[:200],
+                                }
+                            )
 
             return {
                 "logs_scanned": len(logs),
@@ -182,7 +183,7 @@ class IOCSweepEngine:
                 )
                 if resp.status_code == 200:
                     results.append({"feed": "AbuseIPDB", "data": resp.json()})
-            except Exception:
+            except Exception:  # noqa: S110
                 pass
 
             # Check VirusTotal (would need API key)
@@ -193,13 +194,14 @@ class IOCSweepEngine:
                 )
                 if resp.status_code == 200:
                     results.append({"feed": "VirusTotal", "data": resp.json()})
-            except Exception:
+            except Exception:  # noqa: S110
                 pass
 
             return {"ioc": ioc_value, "feeds_checked": 2, "results": results}
 
 
 # ─── #74 Behavioral Hunting ─────────────────
+
 
 class BehavioralHunter:
     """Detect threats through behavioral analysis patterns."""
@@ -233,11 +235,12 @@ class BehavioralHunter:
         if len(timestamps) < 3:
             return {"beaconing": False, "reason": "Insufficient data"}
 
-        intervals = [timestamps[i+1] - timestamps[i] for i in range(len(timestamps)-1)]
+        intervals = [timestamps[i + 1] - timestamps[i] for i in range(len(timestamps) - 1)]
         if not intervals:
             return {"beaconing": False}
 
         import statistics
+
         mean = statistics.mean(intervals)
         stdev = statistics.stdev(intervals) if len(intervals) > 1 else 0
 
@@ -255,6 +258,7 @@ class BehavioralHunter:
     def detect_dga(domain: str) -> dict:
         """Detect DGA domains via entropy and character analysis."""
         import math
+
         # Remove TLD
         parts = domain.split(".")
         name = parts[0] if parts else domain
@@ -265,7 +269,7 @@ class BehavioralHunter:
             freq[c] = freq.get(c, 0) + 1
 
         length = len(name)
-        entropy = -sum((count/length) * math.log2(count/length) for count in freq.values()) if length > 0 else 0
+        entropy = -sum((count / length) * math.log2(count / length) for count in freq.values()) if length > 0 else 0
 
         # Consonant/vowel ratio
         vowels = sum(1 for c in name.lower() if c in "aeiou")

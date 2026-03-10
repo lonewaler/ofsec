@@ -19,11 +19,13 @@ logger = structlog.get_logger()
 
 def setup_telemetry() -> None:
     """Initialize OpenTelemetry tracing."""
-    resource = Resource.create({
-        "service.name": settings.OTEL_SERVICE_NAME,
-        "service.version": settings.VERSION,
-        "deployment.environment": settings.ENVIRONMENT,
-    })
+    resource = Resource.create(
+        {
+            "service.name": settings.OTEL_SERVICE_NAME,
+            "service.version": settings.VERSION,
+            "deployment.environment": settings.ENVIRONMENT,
+        }
+    )
 
     provider = TracerProvider(resource=resource)
 
@@ -35,6 +37,7 @@ def setup_telemetry() -> None:
             from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
                 OTLPSpanExporter,
             )
+
             exporter = OTLPSpanExporter(endpoint=settings.OTEL_EXPORTER_OTLP_ENDPOINT)
             processor = SimpleSpanProcessor(exporter)
         except ImportError:

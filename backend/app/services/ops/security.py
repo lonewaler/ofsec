@@ -21,6 +21,7 @@ tracer = get_tracer("ops.security")
 
 # ─── #96-97 API Security & Rate Limiter ─────
 
+
 class RateLimiter:
     """Token bucket rate limiter for API endpoints."""
 
@@ -51,7 +52,11 @@ class RateLimiter:
             bucket["tokens"] -= 1
             return {"allowed": True, "remaining": int(bucket["tokens"])}
         else:
-            return {"allowed": False, "remaining": 0, "retry_after_seconds": round((1 - bucket["tokens"]) * 60 / self._rpm, 1)}
+            return {
+                "allowed": False,
+                "remaining": 0,
+                "retry_after_seconds": round((1 - bucket["tokens"]) * 60 / self._rpm, 1),
+            }
 
     def get_stats(self) -> dict:
         return {
@@ -61,6 +66,7 @@ class RateLimiter:
 
 
 # ─── #98 Platform Configuration ─────────────
+
 
 class PlatformConfig:
     """Centralized platform configuration management."""
@@ -114,6 +120,7 @@ class PlatformConfig:
 
 # ─── #99-100 API Key Manager & Security ─────
 
+
 class APIKeyManager:
     """Manage API keys for platform access."""
 
@@ -149,14 +156,11 @@ class APIKeyManager:
         return None
 
     def revoke_key(self, key_id: str) -> dict:
-        for k_hash, entry in self._keys.items():
+        for _k_hash, entry in self._keys.items():
             if entry["id"] == key_id:
                 entry["status"] = "revoked"
                 return entry
         return {"error": "Key not found"}
 
     def list_keys(self) -> list[dict]:
-        return [
-            {k: v for k, v in entry.items() if k != "api_key"}
-            for entry in self._keys.values()
-        ]
+        return [{k: v for k, v in entry.items() if k != "api_key"} for entry in self._keys.values()]

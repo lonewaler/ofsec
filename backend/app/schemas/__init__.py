@@ -5,14 +5,16 @@ Request/Response models for the API.
 """
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional  # noqa: F401
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field  # noqa: F401
 
 # ─── Common / Shared ─────────────────────────
 
+
 class SuccessResponse(BaseModel):
     """Standard success response."""
+
     status: str = "success"
     message: str = ""
     data: Any = None
@@ -20,6 +22,7 @@ class SuccessResponse(BaseModel):
 
 class PaginatedResponse(BaseModel):
     """Paginated response wrapper."""
+
     items: list[Any] = []
     total: int = 0
     page: int = 1
@@ -29,11 +32,13 @@ class PaginatedResponse(BaseModel):
 
 class ErrorResponse(BaseModel):
     """Standard error response."""
+
     error: str
     details: dict = {}
 
 
 # ─── Auth Schemas ─────────────────────────────
+
 
 class LoginRequest(BaseModel):
     email: str
@@ -42,7 +47,7 @@ class LoginRequest(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
-    token_type: str = "bearer"
+    token_type: str = "bearer"  # noqa: S105
     expires_in: int = 86400  # 24 hours
 
 
@@ -59,8 +64,10 @@ class UserResponse(BaseModel):
 
 # ─── Recon Schemas ────────────────────────────
 
+
 class ReconScanRequest(BaseModel):
     """Request to start a recon scan."""
+
     target: str = Field(..., description="Target domain or IP", examples=["example.com"])
     modules: list[str] = Field(
         default=["all"],
@@ -72,6 +79,7 @@ class ReconScanRequest(BaseModel):
 
 class ReconResultResponse(BaseModel):
     """Recon scan result."""
+
     scan_id: int
     target: str
     status: str
@@ -86,8 +94,10 @@ class ReconResultResponse(BaseModel):
 
 # ─── Scanner Schemas ──────────────────────────
 
+
 class VulnScanRequest(BaseModel):
     """Request to start a vulnerability scan."""
+
     target: str = Field(..., description="Target URL, IP, or domain", examples=["https://example.com"])
     scan_type: str = Field(
         default="web",
@@ -99,6 +109,7 @@ class VulnScanRequest(BaseModel):
 
 class VulnerabilityResponse(BaseModel):
     """Single vulnerability finding."""
+
     id: int
     title: str
     severity: str
@@ -116,6 +127,7 @@ class VulnerabilityResponse(BaseModel):
 
 class ScanResultResponse(BaseModel):
     """Scan result with findings."""
+
     scan_id: int
     target: str
     scan_type: str
@@ -129,6 +141,7 @@ class ScanResultResponse(BaseModel):
 
 
 # ─── Alert Schemas ────────────────────────────
+
 
 class AlertResponse(BaseModel):
     id: int
@@ -144,8 +157,10 @@ class AlertResponse(BaseModel):
 
 # ─── Dashboard Schemas ────────────────────────
 
+
 class DashboardStats(BaseModel):
     """Main dashboard statistics."""
+
     total_scans: int = 0
     active_scans: int = 0
     total_vulnerabilities: int = 0

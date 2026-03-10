@@ -5,7 +5,7 @@ All database models for the platform.
 Compatible with both SQLite (dev) and PostgreSQL (production).
 """
 
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime, timezone  # noqa: F401
 
 from sqlalchemy import (
     JSON,
@@ -31,6 +31,7 @@ def utcnow() -> datetime:
 
 # ─── Asset Models ─────────────────────────────
 
+
 class Domain(Base):
     __tablename__ = "domains"
 
@@ -43,9 +44,7 @@ class Domain(Base):
     certificates = relationship("Certificate", back_populates="domain", lazy="selectin")
     ip_addresses = relationship("IPAddress", back_populates="domain", lazy="selectin")
 
-    __table_args__ = (
-        Index("ix_domains_risk_score", "risk_score"),
-    )
+    __table_args__ = (Index("ix_domains_risk_score", "risk_score"),)
 
 
 class IPAddress(Base):
@@ -80,6 +79,7 @@ class Certificate(Base):
 
 # ─── Scan & Vulnerability Models ──────────────
 
+
 class Scan(Base):
     __tablename__ = "scans"
 
@@ -96,9 +96,7 @@ class Scan(Base):
 
     vulnerabilities = relationship("Vulnerability", back_populates="scan", lazy="selectin")
 
-    __table_args__ = (
-        Index("ix_scans_type_status", "scan_type", "status"),
-    )
+    __table_args__ = (Index("ix_scans_type_status", "scan_type", "status"),)
 
 
 class Vulnerability(Base):
@@ -119,12 +117,11 @@ class Vulnerability(Base):
 
     scan = relationship("Scan", back_populates="vulnerabilities")
 
-    __table_args__ = (
-        Index("ix_vulns_severity", "severity"),
-    )
+    __table_args__ = (Index("ix_vulns_severity", "severity"),)
 
 
 # ─── Attack Models ────────────────────────────
+
 
 class AttackSimulation(Base):
     __tablename__ = "attack_simulations"
@@ -141,6 +138,7 @@ class AttackSimulation(Base):
 
 
 # ─── Alert & Incident Models ─────────────────
+
 
 class Alert(Base):
     __tablename__ = "alerts"
@@ -172,6 +170,7 @@ class Incident(Base):
 
 # ─── User & Auth Models ──────────────────────
 
+
 class User(Base):
     __tablename__ = "users"
 
@@ -199,6 +198,7 @@ class AuditLog(Base):
 
 # ─── Threat Intelligence ─────────────────────
 
+
 class ThreatIOC(Base):
     __tablename__ = "threat_iocs"
 
@@ -212,6 +212,4 @@ class ThreatIOC(Base):
     last_seen = Column(DateTime, default=utcnow)
     metadata_ = Column("metadata", JSON, default={})
 
-    __table_args__ = (
-        Index("ix_iocs_type_value", "ioc_type", "value"),
-    )
+    __table_args__ = (Index("ix_iocs_type_value", "ioc_type", "value"),)

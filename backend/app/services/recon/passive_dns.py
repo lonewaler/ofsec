@@ -34,17 +34,78 @@ tracer = get_tracer("recon.passive_dns")
 
 # Common subdomains for enumeration
 COMMON_SUBDOMAINS = [
-    "www", "mail", "ftp", "smtp", "pop", "imap", "webmail", "ns1", "ns2",
-    "dns", "mx", "vpn", "remote", "dev", "staging", "api", "app", "admin",
-    "panel", "portal", "blog", "shop", "store", "cdn", "static", "media",
-    "test", "demo", "beta", "alpha", "internal", "intranet", "git", "gitlab",
-    "jenkins", "ci", "docker", "k8s", "grafana", "prometheus", "elk", "kibana",
-    "db", "database", "mysql", "postgres", "redis", "mongo", "elastic",
-    "auth", "sso", "login", "oauth", "id", "identity",
-    "backup", "bak", "old", "legacy", "archive",
-    "m", "mobile", "wap",
-    "docs", "wiki", "help", "support", "status",
-    "cloud", "aws", "azure", "gcp",
+    "www",
+    "mail",
+    "ftp",
+    "smtp",
+    "pop",
+    "imap",
+    "webmail",
+    "ns1",
+    "ns2",
+    "dns",
+    "mx",
+    "vpn",
+    "remote",
+    "dev",
+    "staging",
+    "api",
+    "app",
+    "admin",
+    "panel",
+    "portal",
+    "blog",
+    "shop",
+    "store",
+    "cdn",
+    "static",
+    "media",
+    "test",
+    "demo",
+    "beta",
+    "alpha",
+    "internal",
+    "intranet",
+    "git",
+    "gitlab",
+    "jenkins",
+    "ci",
+    "docker",
+    "k8s",
+    "grafana",
+    "prometheus",
+    "elk",
+    "kibana",
+    "db",
+    "database",
+    "mysql",
+    "postgres",
+    "redis",
+    "mongo",
+    "elastic",
+    "auth",
+    "sso",
+    "login",
+    "oauth",
+    "id",
+    "identity",
+    "backup",
+    "bak",
+    "old",
+    "legacy",
+    "archive",
+    "m",
+    "mobile",
+    "wap",
+    "docs",
+    "wiki",
+    "help",
+    "support",
+    "status",
+    "cloud",
+    "aws",
+    "azure",
+    "gcp",
 ]
 
 
@@ -111,12 +172,14 @@ class PassiveDNSHarvester:
                     try:
                         answers = await self._resolver.resolve(fqdn, "A")
                         ips = [str(rdata) for rdata in answers]
-                        found.append({
-                            "subdomain": fqdn,
-                            "ips": ips,
-                            "record_type": "A",
-                        })
-                    except Exception:
+                        found.append(
+                            {
+                                "subdomain": fqdn,
+                                "ips": ips,
+                                "record_type": "A",
+                            }
+                        )
+                    except Exception:  # noqa: S110
                         pass
 
             tasks = [check_subdomain(sub) for sub in words]
@@ -150,17 +213,18 @@ class PassiveDNSHarvester:
                 try:
                     import dns.query
                     import dns.zone
+
                     zone = dns.zone.from_xfr(dns.query.xfr(ns_host, domain, timeout=5))
                     results["vulnerable"] = True
-                    results["records"] = [str(name) for name in zone.nodes.keys()]
+                    results["records"] = [str(name) for name in zone.nodes]
                     logger.warning(
                         "recon.dns.zone_transfer_vulnerable",
                         domain=domain,
                         nameserver=ns_host,
                     )
-                except Exception:
+                except Exception:  # noqa: S110
                     pass
-        except Exception:
+        except Exception:  # noqa: S110
             pass
         return results
 

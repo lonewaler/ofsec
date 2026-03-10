@@ -8,7 +8,6 @@ Logs to both console (dev) AND rotating file (always).
 from __future__ import annotations
 
 import logging
-import os
 import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -41,12 +40,9 @@ def setup_logging() -> None:
             structlog.processors.StackInfoRenderer(),
             structlog.dev.set_exc_info,
             structlog.processors.TimeStamper(fmt="iso"),
-            structlog.processors.JSONRenderer() if not settings.DEBUG
-            else structlog.dev.ConsoleRenderer(colors=True),
+            structlog.processors.JSONRenderer() if not settings.DEBUG else structlog.dev.ConsoleRenderer(colors=True),
         ],
-        wrapper_class=structlog.make_filtering_bound_logger(
-            logging.getLevelName(settings.LOG_LEVEL)
-        ),
+        wrapper_class=structlog.make_filtering_bound_logger(logging.getLevelName(settings.LOG_LEVEL)),
         context_class=dict,
         logger_factory=structlog.PrintLoggerFactory(),
         cache_logger_on_first_use=True,
@@ -62,10 +58,12 @@ def setup_logging() -> None:
     # Console handler
     console = logging.StreamHandler(sys.stdout)
     console.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
-    console.setFormatter(logging.Formatter(
-        "[%(asctime)s] %(levelname)-8s %(name)s — %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    ))
+    console.setFormatter(
+        logging.Formatter(
+            "[%(asctime)s] %(levelname)-8s %(name)s — %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+    )
     root.addHandler(console)
 
     # Rotating file handler — all logs
@@ -76,10 +74,12 @@ def setup_logging() -> None:
         encoding="utf-8",
     )
     file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(logging.Formatter(
-        '{"time":"%(asctime)s","level":"%(levelname)s","logger":"%(name)s","msg":"%(message)s"}',
-        datefmt="%Y-%m-%dT%H:%M:%S",
-    ))
+    file_handler.setFormatter(
+        logging.Formatter(
+            '{"time":"%(asctime)s","level":"%(levelname)s","logger":"%(name)s","msg":"%(message)s"}',
+            datefmt="%Y-%m-%dT%H:%M:%S",
+        )
+    )
     root.addHandler(file_handler)
 
     # Separate error log file — only WARNING+
@@ -90,19 +90,19 @@ def setup_logging() -> None:
         encoding="utf-8",
     )
     error_handler.setLevel(logging.WARNING)
-    error_handler.setFormatter(logging.Formatter(
-        '{"time":"%(asctime)s","level":"%(levelname)s","logger":"%(name)s","msg":"%(message)s"}',
-        datefmt="%Y-%m-%dT%H:%M:%S",
-    ))
+    error_handler.setFormatter(
+        logging.Formatter(
+            '{"time":"%(asctime)s","level":"%(levelname)s","logger":"%(name)s","msg":"%(message)s"}',
+            datefmt="%Y-%m-%dT%H:%M:%S",
+        )
+    )
     root.addHandler(error_handler)
 
     # Redirect uvicorn / sqlalchemy logs through our handlers
     for logger_name in ["uvicorn", "uvicorn.error", "uvicorn.access", "sqlalchemy.engine"]:
         named_logger = logging.getLogger(logger_name)
         named_logger.handlers = root.handlers[:]
-        named_logger.setLevel(
-            logging.DEBUG if settings.DEBUG else logging.WARNING
-        )
+        named_logger.setLevel(logging.DEBUG if settings.DEBUG else logging.WARNING)
         named_logger.propagate = False
 
 

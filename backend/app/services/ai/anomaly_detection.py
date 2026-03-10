@@ -79,6 +79,7 @@ class StatisticalModel:
 
 # ─── #46 Network Anomaly Detector ────────────
 
+
 class NetworkAnomalyDetector:
     """Detect anomalies in network traffic patterns."""
 
@@ -131,6 +132,7 @@ class NetworkAnomalyDetector:
 
 # ─── #47 Behavioral Anomaly Detector ────────
 
+
 class BehavioralAnomalyDetector:
     """Detect anomalous user behavior patterns."""
 
@@ -141,37 +143,44 @@ class BehavioralAnomalyDetector:
 
     def update_profile(self, user_id: str, event: dict) -> dict | None:
         """Update user behavioral profile and detect anomalies."""
-        profile = self._user_profiles.setdefault(user_id, {
-            "login_count": 0,
-            "last_seen": None,
-            "typical_hours": [],
-            "known_ips": set(),
-            "actions": [],
-        })
+        profile = self._user_profiles.setdefault(
+            user_id,
+            {
+                "login_count": 0,
+                "last_seen": None,
+                "typical_hours": [],
+                "known_ips": set(),
+                "actions": [],
+            },
+        )
 
         anomalies = []
 
         # Time-based anomaly
         hour = datetime.now(UTC).hour
         if profile["typical_hours"] and hour not in profile["typical_hours"]:
-            anomalies.append({
-                "type": "Unusual Login Time",
-                "severity": "medium",
-                "user_id": user_id,
-                "hour": hour,
-                "typical_hours": profile["typical_hours"],
-            })
+            anomalies.append(
+                {
+                    "type": "Unusual Login Time",
+                    "severity": "medium",
+                    "user_id": user_id,
+                    "hour": hour,
+                    "typical_hours": profile["typical_hours"],
+                }
+            )
 
         # IP-based anomaly
         ip = event.get("ip")
         if ip and profile["known_ips"] and ip not in profile["known_ips"]:
-            anomalies.append({
-                "type": "New IP Address",
-                "severity": "medium",
-                "user_id": user_id,
-                "ip": ip,
-                "known_ips": list(profile["known_ips"])[:5],
-            })
+            anomalies.append(
+                {
+                    "type": "New IP Address",
+                    "severity": "medium",
+                    "user_id": user_id,
+                    "ip": ip,
+                    "known_ips": list(profile["known_ips"])[:5],
+                }
+            )
 
         # Update profile
         profile["login_count"] += 1
@@ -203,6 +212,7 @@ class BehavioralAnomalyDetector:
 
 # ─── #48 Log Anomaly Detector ────────────────
 
+
 class LogAnomalyDetector:
     """Detect anomalies in application and security logs."""
 
@@ -232,15 +242,17 @@ class LogAnomalyDetector:
 
         for check in self.SUSPICIOUS_PATTERNS:
             if check["pattern"] in lower:
-                findings.append({
-                    "type": "Suspicious Log Entry",
-                    "severity": check["severity"],
-                    "category": check["category"],
-                    "pattern": check["pattern"],
-                    "source": source,
-                    "log_line": log_line[:200],
-                    "detected_at": datetime.now(UTC).isoformat(),
-                })
+                findings.append(
+                    {
+                        "type": "Suspicious Log Entry",
+                        "severity": check["severity"],
+                        "category": check["category"],
+                        "pattern": check["pattern"],
+                        "source": source,
+                        "log_line": log_line[:200],
+                        "detected_at": datetime.now(UTC).isoformat(),
+                    }
+                )
 
         # Track event rate
         self._event_counts[source] += 1

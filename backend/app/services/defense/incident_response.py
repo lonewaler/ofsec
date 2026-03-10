@@ -20,6 +20,7 @@ tracer = get_tracer("defense.incident")
 
 # ─── #66 Incident Response Playbooks ────────
 
+
 class PlaybookEngine:
     """Manage and execute incident response playbooks."""
 
@@ -44,12 +45,32 @@ class PlaybookEngine:
             "steps": [
                 {"order": 1, "action": "assess_scope", "description": "Determine what data was accessed/exfiltrated"},
                 {"order": 2, "action": "contain_breach", "description": "Revoke compromised credentials, block access"},
-                {"order": 3, "action": "preserve_evidence", "description": "Preserve logs, network captures, and forensic images"},
-                {"order": 4, "action": "notify_stakeholders", "description": "Notify legal, management, and affected users"},
-                {"order": 5, "action": "investigate_root_cause", "description": "Identify entry point and attack vector"},
+                {
+                    "order": 3,
+                    "action": "preserve_evidence",
+                    "description": "Preserve logs, network captures, and forensic images",
+                },
+                {
+                    "order": 4,
+                    "action": "notify_stakeholders",
+                    "description": "Notify legal, management, and affected users",
+                },
+                {
+                    "order": 5,
+                    "action": "investigate_root_cause",
+                    "description": "Identify entry point and attack vector",
+                },
                 {"order": 6, "action": "remediate_vulnerabilities", "description": "Patch exploited vulnerabilities"},
-                {"order": 7, "action": "regulatory_notification", "description": "File regulatory notifications (GDPR, CCPA, etc.)"},
-                {"order": 8, "action": "post_incident_review", "description": "Conduct post-incident review and update policies"},
+                {
+                    "order": 7,
+                    "action": "regulatory_notification",
+                    "description": "File regulatory notifications (GDPR, CCPA, etc.)",
+                },
+                {
+                    "order": 8,
+                    "action": "post_incident_review",
+                    "description": "Conduct post-incident review and update policies",
+                },
             ],
             "estimated_time_minutes": 480,
         },
@@ -57,13 +78,33 @@ class PlaybookEngine:
             "name": "Phishing Incident Response",
             "severity": "high",
             "steps": [
-                {"order": 1, "action": "identify_recipients", "description": "Identify all recipients of phishing email"},
+                {
+                    "order": 1,
+                    "action": "identify_recipients",
+                    "description": "Identify all recipients of phishing email",
+                },
                 {"order": 2, "action": "block_sender", "description": "Block sender domain at email gateway"},
                 {"order": 3, "action": "remove_emails", "description": "Purge phishing emails from all mailboxes"},
-                {"order": 4, "action": "check_clicks", "description": "Identify users who clicked/submitted credentials"},
-                {"order": 5, "action": "reset_credentials", "description": "Force password reset for affected accounts"},
-                {"order": 6, "action": "scan_endpoints", "description": "Scan endpoints of users who clicked for malware"},
-                {"order": 7, "action": "user_notification", "description": "Notify users and provide awareness training"},
+                {
+                    "order": 4,
+                    "action": "check_clicks",
+                    "description": "Identify users who clicked/submitted credentials",
+                },
+                {
+                    "order": 5,
+                    "action": "reset_credentials",
+                    "description": "Force password reset for affected accounts",
+                },
+                {
+                    "order": 6,
+                    "action": "scan_endpoints",
+                    "description": "Scan endpoints of users who clicked for malware",
+                },
+                {
+                    "order": 7,
+                    "action": "user_notification",
+                    "description": "Notify users and provide awareness training",
+                },
             ],
             "estimated_time_minutes": 60,
         },
@@ -71,12 +112,20 @@ class PlaybookEngine:
             "name": "DDoS Attack Response",
             "severity": "high",
             "steps": [
-                {"order": 1, "action": "activate_mitigation", "description": "Enable DDoS mitigation service (Cloudflare, AWS Shield)"},
+                {
+                    "order": 1,
+                    "action": "activate_mitigation",
+                    "description": "Enable DDoS mitigation service (Cloudflare, AWS Shield)",
+                },
                 {"order": 2, "action": "rate_limiting", "description": "Apply aggressive rate limiting rules"},
                 {"order": 3, "action": "geo_blocking", "description": "Block traffic from attack source regions"},
                 {"order": 4, "action": "scale_infrastructure", "description": "Auto-scale backend infrastructure"},
                 {"order": 5, "action": "monitor_recovery", "description": "Monitor service recovery and latency"},
-                {"order": 6, "action": "post_attack_analysis", "description": "Analyze attack vectors for future prevention"},
+                {
+                    "order": 6,
+                    "action": "post_attack_analysis",
+                    "description": "Analyze attack vectors for future prevention",
+                },
             ],
             "estimated_time_minutes": 30,
         },
@@ -85,12 +134,28 @@ class PlaybookEngine:
             "severity": "critical",
             "steps": [
                 {"order": 1, "action": "isolate_network", "description": "Immediately disconnect affected systems"},
-                {"order": 2, "action": "assess_encryption", "description": "Determine ransomware variant and encryption scope"},
+                {
+                    "order": 2,
+                    "action": "assess_encryption",
+                    "description": "Determine ransomware variant and encryption scope",
+                },
                 {"order": 3, "action": "check_backups", "description": "Verify backup integrity and recency"},
-                {"order": 4, "action": "report_law_enforcement", "description": "Report to FBI IC3 / local cyber crime unit"},
-                {"order": 5, "action": "attempt_decryption", "description": "Check for available decryptors (NoMoreRansom)"},
+                {
+                    "order": 4,
+                    "action": "report_law_enforcement",
+                    "description": "Report to FBI IC3 / local cyber crime unit",
+                },
+                {
+                    "order": 5,
+                    "action": "attempt_decryption",
+                    "description": "Check for available decryptors (NoMoreRansom)",
+                },
                 {"order": 6, "action": "restore_systems", "description": "Restore from clean backups"},
-                {"order": 7, "action": "harden_defenses", "description": "Patch entry vector, enhance endpoint protection"},
+                {
+                    "order": 7,
+                    "action": "harden_defenses",
+                    "description": "Patch entry vector, enhance endpoint protection",
+                },
             ],
             "estimated_time_minutes": 240,
         },
@@ -121,10 +186,7 @@ class PlaybookEngine:
             "assignee": assignee,
             "status": "active",
             "created_at": datetime.now(UTC).isoformat(),
-            "steps": [
-                {**step, "status": "pending", "completed_at": None}
-                for step in playbook["steps"]
-            ],
+            "steps": [{**step, "status": "pending", "completed_at": None} for step in playbook["steps"]],
             "current_step": 1,
         }
         self._active_incidents[incident_id] = incident
@@ -158,6 +220,7 @@ class PlaybookEngine:
 
 # ─── #67 Alert Triage Engine ────────────────
 
+
 class AlertTriageEngine:
     """Automated alert triage and prioritization."""
 
@@ -181,8 +244,7 @@ class AlertTriageEngine:
 
             # Boost for repeated alerts
             similar_count = sum(
-                1 for a in self._alerts
-                if a.get("type") == alert.get("type") and a.get("source") == alert.get("source")
+                1 for a in self._alerts if a.get("type") == alert.get("type") and a.get("source") == alert.get("source")
             )
             repeat_boost = min(similar_count * 0.5, 3.0)
 
@@ -194,7 +256,13 @@ class AlertTriageEngine:
             triaged = {
                 **alert,
                 "priority_score": round(priority, 1),
-                "priority_level": "P1" if priority >= 10 else "P2" if priority >= 7 else "P3" if priority >= 4 else "P4",
+                "priority_level": "P1"
+                if priority >= 10
+                else "P2"
+                if priority >= 7
+                else "P3"
+                if priority >= 4
+                else "P4",
                 "similar_alerts": similar_count,
                 "triaged_at": datetime.now(UTC).isoformat(),
                 "status": "open",
@@ -208,10 +276,7 @@ class AlertTriageEngine:
         return rule
 
     def _matches_rule(self, alert: dict, rule: dict) -> bool:
-        for key, value in rule.get("conditions", {}).items():
-            if alert.get(key) != value:
-                return False
-        return True
+        return all(alert.get(key) == value for key, value in rule.get("conditions", {}).items())
 
     def get_queue(self, limit: int = 50) -> list[dict]:
         open_alerts = [a for a in self._alerts if a.get("status") == "open"]
@@ -220,6 +285,7 @@ class AlertTriageEngine:
 
 
 # ─── #68 Evidence Collection ────────────────
+
 
 class EvidenceCollector:
     """Collect and preserve digital evidence for incident response."""
@@ -236,9 +302,7 @@ class EvidenceCollector:
             "data": data,
             "collected_at": datetime.now(UTC).isoformat(),
             "hash": secrets.token_hex(32),  # In production, hash actual data
-            "chain_of_custody": [
-                {"action": "collected", "timestamp": datetime.now(UTC).isoformat(), "by": "system"}
-            ],
+            "chain_of_custody": [{"action": "collected", "timestamp": datetime.now(UTC).isoformat(), "by": "system"}],
         }
         self._evidence_store[incident_id].append(evidence)
         logger.info("defense.evidence.collected", incident_id=incident_id, type=evidence_type)

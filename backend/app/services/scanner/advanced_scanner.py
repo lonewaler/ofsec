@@ -19,11 +19,13 @@ tracer = get_tracer("scanner.advanced")
 
 # ─── #20 Container Security Scanner ──────────
 
+
 class ContainerSecurityScanner:
     """Scan Docker/container images for misconfigurations and vulnerabilities."""
 
     # Dockerfile security anti-patterns
     from typing import Any
+
     DOCKERFILE_CHECKS: list[dict[str, Any]] = [
         {
             "pattern": r"FROM\s+\S+:latest",
@@ -86,29 +88,34 @@ class ContainerSecurityScanner:
 
                 for check in self.DOCKERFILE_CHECKS:
                     flags = check.get("flags", 0)
-                    if re.search(check["pattern"], stripped, flags):
-                        if check["severity"] != "info":
-                            findings.append({
+                    if re.search(check["pattern"], stripped, flags) and check["severity"] != "info":
+                        findings.append(
+                            {
                                 "type": "Dockerfile Issue",
                                 "severity": check["severity"],
                                 "line": i,
                                 "content": stripped[:100],
                                 "finding": check["finding"],
-                            })
+                            }
+                        )
 
             if not has_user:
-                findings.append({
-                    "type": "Dockerfile Issue",
-                    "severity": "high",
-                    "finding": "No USER directive — container runs as root by default",
-                })
+                findings.append(
+                    {
+                        "type": "Dockerfile Issue",
+                        "severity": "high",
+                        "finding": "No USER directive — container runs as root by default",
+                    }
+                )
 
             if not has_healthcheck:
-                findings.append({
-                    "type": "Dockerfile Issue",
-                    "severity": "low",
-                    "finding": "No HEALTHCHECK defined",
-                })
+                findings.append(
+                    {
+                        "type": "Dockerfile Issue",
+                        "severity": "low",
+                        "finding": "No HEALTHCHECK defined",
+                    }
+                )
 
             severity_counts: dict[str, int] = {}
             for f in findings:
@@ -124,6 +131,7 @@ class ContainerSecurityScanner:
 
 
 # ─── #21 Cloud Configuration Auditor ─────────
+
 
 class CloudConfigAuditor:
     """Audit cloud configurations (AWS, Azure, GCP) for misconfigurations."""
@@ -142,21 +150,25 @@ class CloudConfigAuditor:
                 try:
                     resp = await client.get(url)
                     if resp.status_code == 200:
-                        findings.append({
-                            "type": "Public S3 Bucket",
-                            "severity": "critical",
-                            "url": url,
-                            "evidence": f"Bucket is publicly accessible (HTTP {resp.status_code})",
-                            "remediation": "Enable S3 Block Public Access",
-                        })
+                        findings.append(
+                            {
+                                "type": "Public S3 Bucket",
+                                "severity": "critical",
+                                "url": url,
+                                "evidence": f"Bucket is publicly accessible (HTTP {resp.status_code})",
+                                "remediation": "Enable S3 Block Public Access",
+                            }
+                        )
                     elif resp.status_code == 403:
-                        findings.append({
-                            "type": "S3 Bucket Exists",
-                            "severity": "info",
-                            "url": url,
-                            "evidence": "Bucket exists but access denied (properly configured)",
-                        })
-                except Exception:
+                        findings.append(
+                            {
+                                "type": "S3 Bucket Exists",
+                                "severity": "info",
+                                "url": url,
+                                "evidence": "Bucket exists but access denied (properly configured)",
+                            }
+                        )
+                except Exception:  # noqa: S112
                     continue
 
             return {"bucket": bucket_name, "findings": findings}
@@ -181,20 +193,23 @@ class CloudConfigAuditor:
                     try:
                         resp = await client.head(f"https://{pattern}")
                         if resp.status_code != 404:
-                            findings.append({
-                                "type": "Cloud Resource Found",
-                                "severity": "medium" if resp.status_code == 200 else "info",
-                                "resource": pattern,
-                                "status": resp.status_code,
-                                "public": resp.status_code == 200,
-                            })
-                    except Exception:
+                            findings.append(
+                                {
+                                    "type": "Cloud Resource Found",
+                                    "severity": "medium" if resp.status_code == 200 else "info",
+                                    "resource": pattern,
+                                    "status": resp.status_code,
+                                    "public": resp.status_code == 200,
+                                }
+                            )
+                    except Exception:  # noqa: S112
                         continue
 
             return {"domain": domain, "findings": findings, "count": len(findings)}
 
 
 # ─── #23 Credential & Authentication Tester ──
+
 
 class CredentialTester:
     """Test for default credentials and weak authentication."""
@@ -232,21 +247,25 @@ class CredentialTester:
                     auth=(cred["username"], cred["password"]),
                 )
                 if resp.status_code == 200:
-                    findings.append({
-                        "type": "Default Credentials",
-                        "severity": "critical",
-                        "url": url,
-                        "auth_type": "HTTP Basic",
-                        "username": cred["username"],
-                        "evidence": f"Login successful with {cred['username']}:{cred['password']}",
-                    })
+                    findings.append(
+                        {
+                            "type": "Default Credentials",
+                            "severity": "critical",
+                            "url": url,
+                            "auth_type": "HTTP Basic",
+                            "username": cred["username"],
+                            "evidence": f"Login successful with {cred['username']}:{cred['password']}",
+                        }
+                    )
                     break  # One hit is enough
-            except Exception:
+            except Exception:  # noqa: S112
                 continue
 
         return findings
 
-    async def test_form_login(self, url: str, form_data_field: str = "username", pass_field: str = "password") -> list[dict]:
+    async def test_form_login(
+        self, url: str, form_data_field: str = "username", pass_field: str = "password"  # noqa: S107
+    ) -> list[dict]:
         """Test login forms for default credentials."""
         findings: list[dict] = []
         client = await self._get_client()
@@ -259,20 +278,21 @@ class CredentialTester:
                 )
                 # Check for successful login indicators
                 if resp.status_code in (200, 302) and any(
-                    kw in resp.text.lower()
-                    for kw in ["dashboard", "welcome", "logout", "profile"]
+                    kw in resp.text.lower() for kw in ["dashboard", "welcome", "logout", "profile"]
                 ):
-                    findings.append({
-                        "type": "Default Credentials",
-                        "severity": "critical",
-                        "url": url,
-                        "auth_type": "Form Login",
-                        "username": cred["username"],
-                        "evidence": f"Login appears successful with {cred['username']}",
-                    })
+                    findings.append(
+                        {
+                            "type": "Default Credentials",
+                            "severity": "critical",
+                            "url": url,
+                            "auth_type": "Form Login",
+                            "username": cred["username"],
+                            "evidence": f"Login appears successful with {cred['username']}",
+                        }
+                    )
                     break
                 await asyncio.sleep(0.5)  # Avoid rate limiting
-            except Exception:
+            except Exception:  # noqa: S112
                 continue
 
         return findings
@@ -300,6 +320,7 @@ class CredentialTester:
 
 
 # ─── #27-30 Advanced Scanner Modules ─────────
+
 
 class WAFDetector:
     """#27 Detect Web Application Firewalls."""
@@ -334,12 +355,12 @@ class WAFDetector:
                 # Send malicious request to trigger WAF
                 try:
                     resp_malicious = await client.get(
-                        url, params={"id": "<script>alert(1)</script>"},
+                        url,
+                        params={"id": "<script>alert(1)</script>"},
                     )
-                    if resp_malicious.status_code in (403, 406, 429, 503):
-                        if not detected_wafs:
-                            detected_wafs.append("Unknown WAF")
-                except Exception:
+                    if resp_malicious.status_code in (403, 406, 429, 503) and not detected_wafs:
+                        detected_wafs.append("Unknown WAF")
+                except Exception:  # noqa: S110
                     pass
 
             except Exception as e:
@@ -357,14 +378,58 @@ class SubdomainBruteforcer:
     """#28 Subdomain brute-force discovery."""
 
     WORDLIST = [
-        "www", "mail", "ftp", "admin", "api", "dev", "staging", "test",
-        "blog", "shop", "store", "portal", "app", "m", "mobile",
-        "vpn", "gateway", "cdn", "media", "static", "assets",
-        "git", "jenkins", "ci", "docs", "wiki", "jira", "confluence",
-        "grafana", "prometheus", "kibana", "elastic", "redis",
-        "db", "mysql", "postgres", "mongo", "backup", "old",
-        "beta", "alpha", "sandbox", "demo", "preview", "internal",
-        "ns1", "ns2", "mx", "smtp", "imap", "pop", "webmail",
+        "www",
+        "mail",
+        "ftp",
+        "admin",
+        "api",
+        "dev",
+        "staging",
+        "test",
+        "blog",
+        "shop",
+        "store",
+        "portal",
+        "app",
+        "m",
+        "mobile",
+        "vpn",
+        "gateway",
+        "cdn",
+        "media",
+        "static",
+        "assets",
+        "git",
+        "jenkins",
+        "ci",
+        "docs",
+        "wiki",
+        "jira",
+        "confluence",
+        "grafana",
+        "prometheus",
+        "kibana",
+        "elastic",
+        "redis",
+        "db",
+        "mysql",
+        "postgres",
+        "mongo",
+        "backup",
+        "old",
+        "beta",
+        "alpha",
+        "sandbox",
+        "demo",
+        "preview",
+        "internal",
+        "ns1",
+        "ns2",
+        "mx",
+        "smtp",
+        "imap",
+        "pop",
+        "webmail",
     ]
 
     async def bruteforce(self, domain: str, wordlist: list[str] | None = None) -> list[str]:
@@ -383,7 +448,7 @@ class SubdomainBruteforcer:
                 try:
                     await resolver.resolve(subdomain, "A")
                     found.append(subdomain)
-                except Exception:
+                except Exception:  # noqa: S110
                     pass
 
         tasks = [check(w) for w in words]
@@ -414,10 +479,7 @@ class VulnerabilityCorrelator:
                 continue
 
             findings = module_data.get("findings", [])
-            score = sum(
-                self.SEVERITY_WEIGHTS.get(f.get("severity", "info"), 0)
-                for f in findings
-            )
+            score = sum(self.SEVERITY_WEIGHTS.get(f.get("severity", "info"), 0) for f in findings)
             module_scores[module_name] = score
             for f in findings:
                 f["source_module"] = module_name

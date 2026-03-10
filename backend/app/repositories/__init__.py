@@ -3,6 +3,7 @@ OfSec V3 — Repository Layer
 =============================
 Database access abstractions for all models.
 """
+
 from app.repositories.alert_repo import AlertRepository
 from app.repositories.audit_repo import AuditRepository
 from app.repositories.ioc_repo import IOCRepository

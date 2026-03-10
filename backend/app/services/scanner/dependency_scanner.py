@@ -6,8 +6,9 @@ Scans project dependencies for known CVEs using OSV API and safety checks.
 Supports: Python (pip), JavaScript (npm), Ruby (gem), Go, Rust (cargo).
 """
 
-
 from __future__ import annotations
+
+import contextlib
 
 import httpx
 import structlog
@@ -154,10 +155,8 @@ class DependencyScanner:
         for sev in vuln.get("severity", []):
             score = sev.get("score", "")
             if score:
-                try:
-                    cvss = float(score.split("/")[0].replace("CVSS:3.1/AV:", ""))
-                except (ValueError, IndexError):
-                    pass
+                with contextlib.suppress(ValueError, IndexError):
+                    float(score.split("/")[0].replace("CVSS:3.1/AV:", ""))
 
         # Fallback: check aliases for CVE
         if any(a.startswith("CVE") for a in vuln.get("aliases", [])):

@@ -5,8 +5,8 @@ Login, register, profile, change-password, list-users.
 """
 
 from __future__ import annotations
+
 import structlog
-import fastapi
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import CurrentUser, DbSession
@@ -40,15 +40,14 @@ async def login(*, request: LoginRequest, db: DbSession) -> TokenResponse:
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
         )
-    token = create_access_token({
-        "sub": str(user.id), "role": user.role, "email": user.email
-    })
+    token = create_access_token({"sub": str(user.id), "role": user.role, "email": user.email})
     logger.info("api.auth.login_ok", user_id=user.id, email=user.email)
     return TokenResponse(access_token=token)
 
 
 @router.post("/register", response_model=UserResponse)
-async def register(*, 
+async def register(
+    *,
     email: str,
     password: str,
     display_name: str = "",
@@ -83,16 +82,19 @@ async def me(*, db: DbSession, user: CurrentUser) -> dict:
     if not db_user:
         # API key auth fallback (no numeric user_id)
         return {
-            "id": 0, "email": "admin@ofsec.io",
+            "id": 0,
+            "email": "admin@ofsec.io",
             "display_name": "Admin (API Key)",
             "role": user.get("role", "admin"),
-            "is_active": True, "created_at": None,
+            "is_active": True,
+            "created_at": None,
         }
     return _user_dict(db_user)
 
 
 @router.post("/change-password")
-async def change_password(*, 
+async def change_password(
+    *,
     old_password: str,
     new_password: str,
     db: DbSession,
@@ -101,7 +103,7 @@ async def change_password(*,
     try:
         user_id = int(user["user_id"])
     except (ValueError, TypeError, KeyError):
-        raise HTTPException(status_code=400, detail="Cannot change password for API key auth")
+        raise HTTPException(status_code=400, detail="Cannot change password for API key auth")  # noqa: B904
 
     repo = UserRepository(db)
     ok, err = await repo.change_password(user_id, old_password, new_password)

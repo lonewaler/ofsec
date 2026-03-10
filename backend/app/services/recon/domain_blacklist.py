@@ -78,15 +78,17 @@ class DomainBlacklistAuditor:
                 query = f"{reversed_ip}.{dnsbl}"
                 try:
                     await self._resolver.resolve(query, "A")
-                    results.append({
-                        "blacklist": dnsbl,
-                        "listed": True,
-                        "query": query,
-                    })
+                    results.append(
+                        {
+                            "blacklist": dnsbl,
+                            "listed": True,
+                            "query": query,
+                        }
+                    )
                     logger.warning("recon.blacklist.listed", ip=ip, blacklist=dnsbl)
                 except (dns.asyncresolver.NXDOMAIN, dns.asyncresolver.NoAnswer):
                     pass  # Not listed — this is good
-                except Exception:
+                except Exception:  # noqa: S110
                     pass  # Timeout or other error
 
             tasks = [query_dnsbl(dnsbl) for dnsbl in DNSBL_SERVERS]
@@ -105,7 +107,7 @@ class DomainBlacklistAuditor:
             try:
                 answers = await self._resolver.resolve(domain, "A")
                 ips = [str(rdata) for rdata in answers]
-            except Exception:
+            except Exception:  # noqa: S110
                 pass
 
             # Check each IP against DNSBLs
@@ -151,7 +153,8 @@ class DomainBlacklistAuditor:
             lines = response.text.strip().split("\n")
             # Filter comments and empty lines
             indicators = [
-                line.strip() for line in lines
+                line.strip()
+                for line in lines
                 if line.strip() and not line.startswith("#") and not line.startswith("//")
             ]
             logger.info(

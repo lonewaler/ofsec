@@ -59,15 +59,17 @@ class SocialMediaMiner:
             data = response.json()
             repos = []
             for item in data.get("items", []):
-                repos.append({
-                    "name": item.get("full_name"),
-                    "description": item.get("description", ""),
-                    "url": item.get("html_url"),
-                    "language": item.get("language"),
-                    "stars": item.get("stargazers_count", 0),
-                    "updated_at": item.get("updated_at"),
-                    "is_fork": item.get("fork", False),
-                })
+                repos.append(
+                    {
+                        "name": item.get("full_name"),
+                        "description": item.get("description", ""),
+                        "url": item.get("html_url"),
+                        "language": item.get("language"),
+                        "stars": item.get("stargazers_count", 0),
+                        "updated_at": item.get("updated_at"),
+                        "is_fork": item.get("fork", False),
+                    }
+                )
             logger.info("recon.social.github_repos", domain=domain, found=len(repos))
             return repos
         except Exception as e:
@@ -94,15 +96,17 @@ class SocialMediaMiner:
                 if response.status_code == 200:
                     data = response.json()
                     for item in data.get("items", []):
-                        findings.append({
-                            "repository": item.get("repository", {}).get("full_name"),
-                            "path": item.get("path"),
-                            "url": item.get("html_url"),
-                            "pattern": pattern,
-                            "severity": "high",
-                        })
+                        findings.append(
+                            {
+                                "repository": item.get("repository", {}).get("full_name"),
+                                "path": item.get("path"),
+                                "url": item.get("html_url"),
+                                "pattern": pattern,
+                                "severity": "high",
+                            }
+                        )
                 await asyncio.sleep(2.0)  # GitHub rate limit
-            except Exception:
+            except Exception:  # noqa: S112
                 continue
 
         logger.info("recon.social.github_secrets", domain=domain, findings=len(findings))
@@ -122,13 +126,15 @@ class SocialMediaMiner:
                 data = response.json()
                 if isinstance(data, list):
                     for paste in data[:20]:
-                        results.append({
-                            "id": paste.get("id"),
-                            "time": paste.get("time"),
-                            "source": "pastebin",
-                            "severity": "medium",
-                        })
-        except Exception:
+                        results.append(
+                            {
+                                "id": paste.get("id"),
+                                "time": paste.get("time"),
+                                "source": "pastebin",
+                                "severity": "medium",
+                            }
+                        )
+        except Exception:  # noqa: S110
             pass
 
         logger.info("recon.social.paste_sites", domain=domain, found=len(results))

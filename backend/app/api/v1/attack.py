@@ -5,8 +5,8 @@ REST API for attack simulation operations (Upgrades #31–45).
 """
 
 from __future__ import annotations
+
 import structlog
-import fastapi
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import CurrentUser
@@ -64,7 +64,8 @@ async def list_attack_modules(*, user: CurrentUser) -> dict:
 
 
 @router.post("/simulate")
-async def start_attack_simulation(*, 
+async def start_attack_simulation(
+    *,
     target: str,
     modules: list[str] | None = None,
     user: CurrentUser,
@@ -94,7 +95,8 @@ async def start_attack_simulation(*,
 
 
 @router.post("/simulate/instant")
-async def instant_attack_simulation(*, 
+async def instant_attack_simulation(
+    *,
     target: str,
     modules: list[str] | None = None,
     user: CurrentUser,
@@ -110,7 +112,8 @@ async def instant_attack_simulation(*,
 
 
 @router.post("/payloads/generate")
-async def generate_payloads(*, 
+async def generate_payloads(
+    *,
     payload_type: str = "xss",
     category: str = "basic",
     encoding: str | None = None,
@@ -118,6 +121,7 @@ async def generate_payloads(*,
 ) -> dict:
     """Generate specific payloads."""
     from app.services.attack.payload_generator import PayloadGenerator
+
     gen = PayloadGenerator()
 
     if payload_type == "xss":
@@ -137,7 +141,8 @@ async def generate_payloads(*,
 
 
 @router.post("/phishing/campaign")
-async def create_phishing_campaign(*, 
+async def create_phishing_campaign(
+    *,
     template: str = "password_reset",
     phishing_url: str = "https://example.com/verify",
     targets: list[dict] | None = None,
@@ -145,6 +150,7 @@ async def create_phishing_campaign(*,
 ) -> dict:
     """Create a phishing campaign."""
     from app.services.attack.phishing_engine import PhishingSimulator
+
     sim = PhishingSimulator()
     return sim.generate_campaign(
         template_name=template,
@@ -157,17 +163,20 @@ async def create_phishing_campaign(*,
 async def list_phishing_templates(*, user: CurrentUser) -> dict:
     """List available phishing templates."""
     from app.services.attack.phishing_engine import PhishingSimulator
+
     sim = PhishingSimulator()
     return {"templates": sim.list_templates()}
 
 
 @router.post("/exploit/search")
-async def search_exploits(*, 
+async def search_exploits(
+    *,
     query: str,
     user: CurrentUser,
 ) -> dict:
     """Search exploit database."""
     from app.services.attack.exploit_engine import ExploitFramework
+
     fw = ExploitFramework()
     return {"query": query, "results": await fw.search_exploitdb(query)}
 
@@ -176,6 +185,7 @@ async def search_exploits(*,
 async def get_mitre_kill_chain(*, user: CurrentUser) -> dict:
     """Get MITRE ATT&CK kill chain."""
     from app.services.attack.c2_framework import MITREAttackMapper
+
     mapper = MITREAttackMapper()
     return {"kill_chain": mapper.get_kill_chain()}
 
@@ -184,5 +194,44 @@ async def get_mitre_kill_chain(*, user: CurrentUser) -> dict:
 async def map_to_mitre(*, finding_type: str, user: CurrentUser) -> dict:
     """Map a finding to MITRE ATT&CK."""
     from app.services.attack.c2_framework import MITREAttackMapper
+
     mapper = MITREAttackMapper()
     return {"finding_type": finding_type, "mappings": mapper.map_finding(finding_type)}
+
+
+import pydantic  # noqa: E402
+
+
+class PayloadExecutionRequest(pydantic.BaseModel):
+    code: str
+    language: str = "python"
+    timeout: int = 10
+
+
+@router.get("/execute/status")
+async def sandbox_status(*, user: CurrentUser) -> dict:
+    """Check whether Docker sandbox is available on this host."""
+    from app.config import get_settings
+    from app.core.sandbox import sandbox
+
+    available, err = sandbox._is_available()
+    return {
+        "available": available,
+        "enabled": getattr(get_settings(), "DOCKER_SANDBOX_ENABLED", False),
+        "error": err if not available else None,
+        "hint": ("Docker Desktop must be installed and running. Set DOCKER_SANDBOX_ENABLED=true in .env.")
+        if not available
+        else "Sandbox ready",
+    }
+
+
+@router.post("/payloads/execute")
+async def execute_payload(
+    *,
+    request: PayloadExecutionRequest,
+    user: CurrentUser,
+) -> dict:
+    """Execute a payload in a strict Docker sandbox."""
+    from app.core.sandbox import sandbox
+
+    return await sandbox.execute(script=request.code, language=request.language, timeout=request.timeout)

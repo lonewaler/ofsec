@@ -1920,18 +1920,18 @@ function initEventListeners() {
     e.preventDefault();
     API_KEY = document.getElementById('login-apikey').value.trim();
     if (!API_KEY) return toast('Please enter an API key', 'error');
-  
+
     try {
       const r = await api('/api/v1/status');
       if (r.status === 'operational') {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('app-layout').style.display = 'flex';
         toast('Welcome to OfSec V3', 'success');
-  
+
         const hashPage = location.hash.replace('#', '');
         const validPages = ['dashboard', 'scan', 'results', 'threats', 'ai', 'defense', 'reports', 'settings'];
         navigate(validPages.includes(hashPage) ? hashPage : 'dashboard');
-  
+
         loadDashboard();
         loadPersistedData();
         loadModuleGrid();
@@ -1939,7 +1939,7 @@ function initEventListeners() {
         loadAPIKeyStatus();
         loadPlatformInfo();
         loadDLQ();
-  
+
         setInterval(() => {
           loadDLQ();
         }, 30000); // Check DLQ every 30 seconds
@@ -1960,179 +1960,6 @@ function initEventListeners() {
   bind('btn-refresh-alerts', 'click', loadDefenseAlerts);
   bind('btn-export-json', 'click', exportReportJSON);
   bind('btn-export-html', 'click', exportReportHTML);
-  bind('btn-retest-keys', 'click', loadAPIKeyStatus); 
-  bind('btn-refresh-schedules', 'click', loadSchedules);
-  bind('btn-create-schedule', 'click', createSchedule);
-  bind('btn-change-password', 'click', changePassword);
-  bind('btn-intel-sweep', 'click', runIntelSweep);
-  bind('btn-refresh-notif', 'click', loadNotifConfig);
-  bind('btn-test-alert', 'click', sendTestAlert);
-  bind('btn-refresh-dlq', 'click', loadDLQ);
-  bind('btn-retry-dlq', 'click', retryDLQ);
-
-  const exportApiBtn = document.querySelector('[data-export-api="true"]');
-  if (exportApiBtn) exportApiBtn.addEventListener('click', () => exportReportViaAPI('json'));
-}
-
-document.addEventListener('DOMContentLoaded', initEventListeners);
-
-
-// ─── Initialize Event Listeners ─────────────
-function initEventListeners() {
-  const bind = (id, event, handler) => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener(event, handler);
-  };
-
-  bind('login-form', 'submit', async (e) => {
-    e.preventDefault();
-    API_KEY = document.getElementById('login-apikey').value.trim();
-    if (!API_KEY) return toast('Please enter an API key', 'error');
-  
-    try {
-      const r = await api('/api/v1/status');
-      if (r.status === 'operational') {
-        document.getElementById('login-page').style.display = 'none';
-        document.getElementById('app-layout').style.display = 'flex';
-        toast('Welcome to OfSec V3', 'success');
-  
-        const hashPage = location.hash.replace('#', '');
-        const validPages = ['dashboard', 'scan', 'results', 'threats', 'ai', 'defense', 'reports', 'settings'];
-        navigate(validPages.includes(hashPage) ? hashPage : 'dashboard');
-  
-        loadDashboard();
-        loadPersistedData();
-        loadModuleGrid();
-        loadAIModules();
-        loadAPIKeyStatus();
-        loadPlatformInfo();
-        loadDLQ();
-  
-        setInterval(() => {
-          loadDLQ();
-        }, 30000);
-      }
-    } catch (err) {
-      toast('Authentication failed: ' + err.message, 'error');
-    }
-  });
-
-  bind('launch-scan-btn', 'click', launchScan);
-  bind('btn-refresh-queue', 'click', loadQueueStatus);
-  bind('btn-submit-queue', 'click', submitScanQueue);
-  bind('btn-refresh-results', 'click', refreshResults);
-  bind('btn-check-ip', 'click', checkIP);
-  bind('btn-lookup-domain', 'click', lookupDomain);
-  bind('btn-track-ioc', 'click', trackIOC);
-  bind('btn-ask-ai', 'click', askAI);
-  bind('btn-refresh-alerts', 'click', loadDefenseAlerts);
-  bind('btn-export-json', 'click', exportReportJSON);
-  bind('btn-export-html', 'click', exportReportHTML);
-  bind('btn-retest-keys', 'click', loadAPIKeyStatus); 
-  bind('btn-refresh-schedules', 'click', loadSchedules);
-  bind('btn-create-schedule', 'click', createSchedule);
-  bind('btn-change-password', 'click', changePassword);
-  bind('btn-intel-sweep', 'click', runIntelSweep);
-  bind('btn-refresh-notif', 'click', loadNotifConfig);
-  bind('btn-test-alert', 'click', sendTestAlert);
-  bind('btn-refresh-dlq', 'click', loadDLQ);
-  bind('btn-retry-dlq', 'click', retryDLQ);
-
-  const exportApiBtn = document.querySelector('[data-export-api="true"]');
-  if (exportApiBtn) exportApiBtn.addEventListener('click', () => exportReportViaAPI('json'));
-}
-
-document.addEventListener('DOMContentLoaded', initEventListeners);
-
-// ─── Initialize Event Listeners ─────────────
-function initEventListeners() {
-  const bind = (id, event, handler) => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener(event, handler);
-  };
-
-  bind('launch-scan-btn', 'click', launchScan);
-  bind('btn-refresh-queue', 'click', loadQueueStatus);
-  bind('btn-submit-queue', 'click', submitScanQueue);
-  bind('btn-refresh-results', 'click', refreshResults);
-  bind('btn-check-ip', 'click', checkIP);
-  bind('btn-lookup-domain', 'click', lookupDomain);
-  bind('btn-track-ioc', 'click', trackIOC);
-  bind('btn-ask-ai', 'click', askAI);
-  bind('btn-refresh-alerts', 'click', loadDefenseAlerts);
-  bind('btn-export-json', 'click', exportReportJSON);
-  bind('btn-export-html', 'click', exportReportHTML);
-  
-  const exportApiBtn = document.querySelector('[data-export-api="true"]');
-  if (exportApiBtn) exportApiBtn.addEventListener('click', () => exportReportViaAPI('pdf'));
-  
-  bind('btn-retest-keys', 'click', loadAPIKeyStatus); 
-  bind('btn-refresh-schedules', 'click', loadSchedules);
-  bind('btn-create-schedule', 'click', createSchedule);
-  bind('btn-change-password', 'click', changePassword);
-  bind('btn-intel-sweep', 'click', runIntelSweep);
-  bind('btn-refresh-notif', 'click', loadNotifConfig);
-  bind('btn-test-alert', 'click', sendTestAlert);
-  bind('btn-refresh-dlq', 'click', loadDLQ);
-  bind('btn-retry-dlq', 'click', retryDLQ);
-}
-
-document.addEventListener('DOMContentLoaded', initEventListeners);
-
-
-// ─── Initialize Event Listeners ─────────────
-function initEventListeners() {
-  const bind = (id, event, handler) => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener(event, handler);
-  };
-
-  bind('launch-scan-btn', 'click', launchScan);
-  bind('btn-refresh-queue', 'click', loadQueueStatus);
-  bind('btn-submit-queue', 'click', submitScanQueue);
-  bind('btn-refresh-results', 'click', refreshResults);
-  bind('btn-check-ip', 'click', checkIP);
-  bind('btn-lookup-domain', 'click', lookupDomain);
-  bind('btn-track-ioc', 'click', trackIOC);
-  bind('btn-ask-ai', 'click', askAI);
-  bind('btn-refresh-alerts', 'click', loadDefenseAlerts);
-  bind('btn-export-json', 'click', exportReportJSON);
-  bind('btn-export-html', 'click', exportReportHTML);
-  
-  const exportApiBtn = document.querySelector('[data-export-api="true"]');
-  if (exportApiBtn) exportApiBtn.addEventListener('click', () => exportReportViaAPI('pdf'));
-  
-  bind('btn-retest-keys', 'click', loadAPIKeyStatus); 
-  bind('btn-refresh-schedules', 'click', loadSchedules);
-  bind('btn-create-schedule', 'click', createSchedule);
-  bind('btn-change-password', 'click', changePassword);
-  bind('btn-intel-sweep', 'click', runIntelSweep);
-  bind('btn-refresh-notif', 'click', loadNotifConfig);
-  bind('btn-test-alert', 'click', sendTestAlert);
-  bind('btn-refresh-dlq', 'click', loadDLQ);
-  bind('btn-retry-dlq', 'click', retryDLQ);
-}
-
-document.addEventListener('DOMContentLoaded', initEventListeners);
-
-// --- Initialize Event Listeners -------------
-function initEventListeners() {
-  const bind = (id, event, handler) => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener(event, handler);
-  };
-  bind('login-form', 'submit', async (e) => { e.preventDefault(); API_KEY = document.getElementById('login-apikey').value.trim(); if (!API_KEY) return toast('Please enter an API key', 'error'); try { const r = await api('/api/v1/status'); if (r.status === 'operational') { document.getElementById('login-page').style.display = 'none'; document.getElementById('app-layout').style.display = 'flex'; toast('Welcome to OfSec V3', 'success'); const hashPage = location.hash.replace('#', ''); const validPages = ['dashboard', 'scan', 'results', 'threats', 'ai', 'defense', 'reports', 'settings']; navigate(validPages.includes(hashPage) ? hashPage : 'dashboard'); loadDashboard(); loadPersistedData(); loadModuleGrid(); loadAIModules(); loadAPIKeyStatus(); loadPlatformInfo(); loadDLQ(); setInterval(() => { loadDLQ(); }, 30000); } } catch (err) { toast('Authentication failed: ' + err.message, 'error'); } });
-  bind('launch-scan-btn', 'click', launchScan);
-  bind('btn-refresh-queue', 'click', loadQueueStatus);
-  bind('btn-submit-queue', 'click', submitScanQueue);
-  bind('btn-refresh-results', 'click', refreshResults);
-  bind('btn-check-ip', 'click', checkIP);
-  bind('btn-lookup-domain', 'click', lookupDomain);
-  bind('btn-track-ioc', 'click', trackIOC);
-  bind('btn-ask-ai', 'click', askAI);
-  bind('btn-refresh-alerts', 'click', loadDefenseAlerts);
-  bind('btn-export-json', 'click', exportReportJSON);
-  bind('btn-export-html', 'click', exportReportHTML);
   bind('btn-retest-keys', 'click', loadAPIKeyStatus);
   bind('btn-refresh-schedules', 'click', loadSchedules);
   bind('btn-create-schedule', 'click', createSchedule);
@@ -2142,7 +1969,8 @@ function initEventListeners() {
   bind('btn-test-alert', 'click', sendTestAlert);
   bind('btn-refresh-dlq', 'click', loadDLQ);
   bind('btn-retry-dlq', 'click', retryDLQ);
-  const exportApiBtn = document.querySelector('[data-export-api= true]');
+
+  const exportApiBtn = document.querySelector('[data-export-api="true"]');
   if (exportApiBtn) exportApiBtn.addEventListener('click', () => exportReportViaAPI('json'));
 }
 document.addEventListener('DOMContentLoaded', initEventListeners);

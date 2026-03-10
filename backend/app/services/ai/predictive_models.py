@@ -21,6 +21,7 @@ tracer = get_tracer("ai.predictive")
 
 # ─── #52 Attack Prediction Engine ────────────
 
+
 class AttackPredictionEngine:
     """Predict likely attack vectors based on scan data and historical patterns."""
 
@@ -75,7 +76,7 @@ class AttackPredictionEngine:
         indicators = set()
         for finding in findings:
             f_type = finding.get("type", "").lower()
-            severity = finding.get("severity", "").lower()
+            finding.get("severity", "").lower()
 
             if "credential" in f_type or "default" in f_type:
                 indicators.add("default_credentials")
@@ -102,6 +103,7 @@ class AttackPredictionEngine:
 
 # ─── #53 Vulnerability Forecaster ────────────
 
+
 class VulnerabilityForecaster:
     """Forecast future vulnerability trends using time series analysis."""
 
@@ -110,11 +112,13 @@ class VulnerabilityForecaster:
 
     def add_scan_result(self, target: str, vuln_count: int, severity_breakdown: dict) -> None:
         """Record a scan result for trend analysis."""
-        self._history[target].append({
-            "timestamp": datetime.now(UTC).isoformat(),
-            "total_vulns": vuln_count,
-            "severity": severity_breakdown,
-        })
+        self._history[target].append(
+            {
+                "timestamp": datetime.now(UTC).isoformat(),
+                "total_vulns": vuln_count,
+                "severity": severity_breakdown,
+            }
+        )
 
     def forecast(self, target: str, periods: int = 3) -> dict:
         """Forecast future vulnerability counts using linear regression."""
@@ -134,7 +138,7 @@ class VulnerabilityForecaster:
             x_mean = statistics.mean(x_values)
             y_mean = statistics.mean(values)
 
-            numerator = sum((x - x_mean) * (y - y_mean) for x, y in zip(x_values, values))
+            numerator = sum((x - x_mean) * (y - y_mean) for x, y in zip(x_values, values, strict=False))
             denominator = sum((x - x_mean) ** 2 for x in x_values)
 
             if denominator == 0:
@@ -148,11 +152,13 @@ class VulnerabilityForecaster:
             forecasts = []
             for i in range(1, periods + 1):
                 predicted = max(0, round(slope * (n + i - 1) + intercept))
-                forecasts.append({
-                    "period": i,
-                    "predicted_vulns": predicted,
-                    "trend": "increasing" if slope > 0.5 else "decreasing" if slope < -0.5 else "stable",
-                })
+                forecasts.append(
+                    {
+                        "period": i,
+                        "predicted_vulns": predicted,
+                        "trend": "increasing" if slope > 0.5 else "decreasing" if slope < -0.5 else "stable",
+                    }
+                )
 
             return {
                 "target": target,
@@ -164,6 +170,7 @@ class VulnerabilityForecaster:
 
 
 # ─── #54 ML Risk Scorer ─────────────────────
+
 
 class MLRiskScorer:
     """Machine learning-based risk scoring using weighted feature vectors."""
@@ -228,9 +235,7 @@ class MLRiskScorer:
                 "risk_score": risk_score,
                 "risk_level": risk_level,
                 "feature_contributions": feature_scores,
-                "top_risk_factors": [
-                    {"feature": f, "contribution": s} for f, s in top_factors
-                ],
+                "top_risk_factors": [{"feature": f, "contribution": s} for f, s in top_factors],
                 "scored_at": datetime.now(UTC).isoformat(),
             }
 

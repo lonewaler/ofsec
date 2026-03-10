@@ -43,10 +43,12 @@ async_session_factory = async_sessionmaker(
 
 class Base(DeclarativeBase):
     """SQLAlchemy declarative base for all models."""
+
     pass
 
 
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator  # noqa: E402
+
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """Dependency injection for database sessions."""

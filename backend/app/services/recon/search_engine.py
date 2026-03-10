@@ -31,16 +31,16 @@ tracer = get_tracer("recon.search_engine")
 
 # Google Dorks for security reconnaissance
 SECURITY_DORKS = {
-    "login_pages": 'site:{domain} inurl:login OR inurl:signin OR inurl:admin',
-    "exposed_files": 'site:{domain} filetype:pdf OR filetype:doc OR filetype:xlsx OR filetype:csv',
-    "config_files": 'site:{domain} filetype:env OR filetype:yml OR filetype:config OR filetype:xml',
+    "login_pages": "site:{domain} inurl:login OR inurl:signin OR inurl:admin",
+    "exposed_files": "site:{domain} filetype:pdf OR filetype:doc OR filetype:xlsx OR filetype:csv",
+    "config_files": "site:{domain} filetype:env OR filetype:yml OR filetype:config OR filetype:xml",
     "error_pages": 'site:{domain} intitle:"error" OR intitle:"exception" OR intitle:"stack trace"',
     "directory_listings": 'site:{domain} intitle:"index of" OR intitle:"directory listing"',
-    "api_endpoints": 'site:{domain} inurl:api OR inurl:v1 OR inurl:v2 OR inurl:graphql',
-    "backup_files": 'site:{domain} filetype:bak OR filetype:sql OR filetype:zip OR filetype:tar',
+    "api_endpoints": "site:{domain} inurl:api OR inurl:v1 OR inurl:v2 OR inurl:graphql",
+    "backup_files": "site:{domain} filetype:bak OR filetype:sql OR filetype:zip OR filetype:tar",
     "credentials": 'site:{domain} intext:"password" OR intext:"api_key" OR intext:"secret"',
-    "subdomains": 'site:*.{domain} -www',
-    "wordpress": 'site:{domain} inurl:wp-admin OR inurl:wp-content OR inurl:wp-includes',
+    "subdomains": "site:*.{domain} -www",
+    "wordpress": "site:{domain} inurl:wp-admin OR inurl:wp-content OR inurl:wp-includes",
 }
 
 
@@ -60,10 +60,7 @@ class SearchEngineRecon:
 
     def generate_dorks(self, domain: str) -> dict[str, str]:
         """Generate security-focused search dorks for a domain."""
-        return {
-            name: dork.format(domain=domain)
-            for name, dork in SECURITY_DORKS.items()
-        }
+        return {name: dork.format(domain=domain) for name, dork in SECURITY_DORKS.items()}
 
     async def search_bing(self, query: str, count: int = 10) -> list[dict]:
         """Execute a search query via Bing Web Search (no API key needed for basic)."""
@@ -76,11 +73,13 @@ class SearchEngineRecon:
             )
             # In production, parse HTML or use Bing API with key
             # For now, return the query metadata
-            return [{
-                "query": query,
-                "engine": "bing",
-                "status": response.status_code,
-            }]
+            return [
+                {
+                    "query": query,
+                    "engine": "bing",
+                    "status": response.status_code,
+                }
+            ]
         except Exception as e:
             logger.error("recon.search.bing_error", query=query, error=str(e))
             return []

@@ -112,7 +112,7 @@ REPORT_TEMPLATE = """
     </div>
 </body>
 </html>
-"""
+"""  # noqa: E501
 
 
 class ReconReportGenerator:
@@ -153,6 +153,7 @@ class ReconReportGenerator:
         html = self.generate_html(domain, scan_results)
         try:
             from weasyprint import HTML
+
             pdf_bytes = HTML(string=html).write_pdf()
             logger.info("recon.report.pdf_generated", domain=domain, size=len(pdf_bytes))
             return pdf_bytes
@@ -173,7 +174,7 @@ class ReconReportGenerator:
             "certificates": 0,
         }
 
-        for module, data in scan_results.items():
+        for _module, data in scan_results.items():
             if not isinstance(data, dict):
                 continue
 

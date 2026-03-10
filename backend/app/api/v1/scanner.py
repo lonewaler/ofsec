@@ -5,8 +5,8 @@ REST API for vulnerability scanning operations (Upgrades #16–30).
 """
 
 from __future__ import annotations
+
 import structlog
-import fastapi
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import CurrentUser, DbSession
@@ -54,12 +54,27 @@ async def list_scanner_modules(*, user: CurrentUser) -> dict:
     """List all available scanner modules."""
     return {
         "modules": [
-            {"id": "web_scanner", "name": "#16 Web Application Scanner", "category": "active", "tags": ["xss", "sqli", "csrf"]},
+            {
+                "id": "web_scanner",
+                "name": "#16 Web Application Scanner",
+                "category": "active",
+                "tags": ["xss", "sqli", "csrf"],
+            },
             {"id": "header_analyzer", "name": "#17 Header Security Analyzer", "category": "passive"},
-            {"id": "api_scanner", "name": "#18 API Security Scanner", "category": "active", "tags": ["rest", "graphql"]},
+            {
+                "id": "api_scanner",
+                "name": "#18 API Security Scanner",
+                "category": "active",
+                "tags": ["rest", "graphql"],
+            },
             {"id": "dependency_scanner", "name": "#19 Dependency Vuln Scanner", "category": "passive", "tags": ["sca"]},
             {"id": "container_scanner", "name": "#20 Container Security", "category": "passive", "tags": ["docker"]},
-            {"id": "cloud_auditor", "name": "#21 Cloud Config Auditor", "category": "active", "tags": ["aws", "azure", "gcp"]},
+            {
+                "id": "cloud_auditor",
+                "name": "#21 Cloud Config Auditor",
+                "category": "active",
+                "tags": ["aws", "azure", "gcp"],
+            },
             {"id": "network_discovery", "name": "#22 Network Service Discovery", "category": "active"},
             {"id": "credential_tester", "name": "#23 Credential Tester", "category": "active"},
             {"id": "ssl_auditor", "name": "#24 SSL/TLS Auditor", "category": "passive"},
@@ -72,7 +87,8 @@ async def list_scanner_modules(*, user: CurrentUser) -> dict:
 
 
 @router.post("/scan")
-async def start_vulnerability_scan(*, 
+async def start_vulnerability_scan(
+    *,
     target: str,
     modules: list[str] | None = None,
     db: DbSession,
@@ -103,7 +119,8 @@ async def start_vulnerability_scan(*,
 
 
 @router.post("/scan/instant")
-async def instant_vulnerability_scan(*, 
+async def instant_vulnerability_scan(
+    *,
     target: str,
     modules: list[str] | None = None,
     db: DbSession,
@@ -129,10 +146,13 @@ async def instant_vulnerability_scan(*,
             sev = (f.get("severity") or "info").upper()
             severity_summary[sev] = severity_summary.get(sev, 0) + 1
 
-        await repo.complete_scan(scan.id, result_summary={
-            "total_findings": len(findings),
-            "severity_summary": severity_summary,
-        })
+        await repo.complete_scan(
+            scan.id,
+            result_summary={
+                "total_findings": len(findings),
+                "severity_summary": severity_summary,
+            },
+        )
 
         results["scan_id"] = scan.id
         return results
@@ -165,7 +185,8 @@ async def quick_ssl_scan(*, host: str, port: int = 443, user: CurrentUser) -> di
 
 
 @router.get("/results")
-async def list_scan_results(*, 
+async def list_scan_results(
+    *,
     db: DbSession,
     user: CurrentUser,
     limit: int = 20,
@@ -198,7 +219,8 @@ async def get_scan_result(*, scan_id: int, db: DbSession, user: CurrentUser) -> 
 
 
 @router.get("/vulnerabilities")
-async def list_vulnerabilities(*, 
+async def list_vulnerabilities(
+    *,
     db: DbSession,
     user: CurrentUser,
     severity: str | None = None,

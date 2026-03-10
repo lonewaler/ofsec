@@ -16,7 +16,6 @@ Sub-enhancements:
 10. Feed health monitoring
 """
 
-
 from __future__ import annotations
 
 import httpx

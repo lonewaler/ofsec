@@ -19,6 +19,7 @@ tracer = get_tracer("attack.c2")
 
 # ─── #40 C2 Framework (Sliver Integration) ──
 
+
 class C2Framework:
     """
     Command & Control framework integration.
@@ -38,7 +39,7 @@ class C2Framework:
         self,
         name: str,
         protocol: str = "https",
-        host: str = "0.0.0.0",
+        host: str = "0.0.0.0",  # noqa: S104
         port: int = 443,
     ) -> dict:
         """Create a new C2 listener."""
@@ -114,6 +115,7 @@ class C2Framework:
 
 # ─── #36 Wireless Attack Module ─────────────
 
+
 class WirelessAttackModule:
     """Wireless network attack simulation and assessment."""
 
@@ -158,10 +160,7 @@ class WirelessAttackModule:
     }
 
     def list_attacks(self) -> list[dict]:
-        return [
-            {"id": k, "name": v["name"], "severity": v["severity"]}
-            for k, v in self.ATTACK_TYPES.items()
-        ]
+        return [{"id": k, "name": v["name"], "severity": v["severity"]} for k, v in self.ATTACK_TYPES.items()]
 
     def get_attack_plan(self, attack_type: str, target_ssid: str = "TargetAP") -> dict:
         """Generate detailed attack plan."""
@@ -183,52 +182,95 @@ class WirelessAttackModule:
 
 # ─── #41-45 Advanced Attack Modules ─────────
 
+
 class MITREAttackMapper:
     """#41 Map attacks to MITRE ATT&CK framework."""
 
     TACTICS = {
-        "TA0001": {"name": "Initial Access", "techniques": [
-            "T1566 Phishing", "T1190 Exploit Public-Facing Application",
-            "T1133 External Remote Services",
-        ]},
-        "TA0002": {"name": "Execution", "techniques": [
-            "T1059 Command and Scripting Interpreter",
-            "T1053 Scheduled Task/Job", "T1204 User Execution",
-        ]},
-        "TA0003": {"name": "Persistence", "techniques": [
-            "T1547 Boot/Logon Autostart", "T1136 Create Account",
-            "T1078 Valid Accounts",
-        ]},
-        "TA0004": {"name": "Privilege Escalation", "techniques": [
-            "T1068 Exploitation for Privilege Escalation",
-            "T1055 Process Injection", "T1548 Abuse Elevation Control",
-        ]},
-        "TA0005": {"name": "Defense Evasion", "techniques": [
-            "T1027 Obfuscated Files", "T1070 Indicator Removal",
-            "T1036 Masquerading",
-        ]},
-        "TA0006": {"name": "Credential Access", "techniques": [
-            "T1003 OS Credential Dumping", "T1110 Brute Force",
-            "T1558 Steal or Forge Kerberos Tickets",
-        ]},
-        "TA0007": {"name": "Discovery", "techniques": [
-            "T1046 Network Service Discovery", "T1087 Account Discovery",
-            "T1018 Remote System Discovery",
-        ]},
-        "TA0008": {"name": "Lateral Movement", "techniques": [
-            "T1021 Remote Services", "T1550 Use Alternate Auth Material",
-        ]},
-        "TA0009": {"name": "Collection", "techniques": [
-            "T1005 Data from Local System", "T1039 Data from Network Shared Drive",
-        ]},
-        "TA0010": {"name": "Exfiltration", "techniques": [
-            "T1048 Exfiltration Over Alternative Protocol",
-            "T1567 Exfiltration Over Web Service",
-        ]},
-        "TA0011": {"name": "Command and Control", "techniques": [
-            "T1071 Application Layer Protocol",
-            "T1105 Ingress Tool Transfer",
-        ]},
+        "TA0001": {
+            "name": "Initial Access",
+            "techniques": [
+                "T1566 Phishing",
+                "T1190 Exploit Public-Facing Application",
+                "T1133 External Remote Services",
+            ],
+        },
+        "TA0002": {
+            "name": "Execution",
+            "techniques": [
+                "T1059 Command and Scripting Interpreter",
+                "T1053 Scheduled Task/Job",
+                "T1204 User Execution",
+            ],
+        },
+        "TA0003": {
+            "name": "Persistence",
+            "techniques": [
+                "T1547 Boot/Logon Autostart",
+                "T1136 Create Account",
+                "T1078 Valid Accounts",
+            ],
+        },
+        "TA0004": {
+            "name": "Privilege Escalation",
+            "techniques": [
+                "T1068 Exploitation for Privilege Escalation",
+                "T1055 Process Injection",
+                "T1548 Abuse Elevation Control",
+            ],
+        },
+        "TA0005": {
+            "name": "Defense Evasion",
+            "techniques": [
+                "T1027 Obfuscated Files",
+                "T1070 Indicator Removal",
+                "T1036 Masquerading",
+            ],
+        },
+        "TA0006": {
+            "name": "Credential Access",
+            "techniques": [
+                "T1003 OS Credential Dumping",
+                "T1110 Brute Force",
+                "T1558 Steal or Forge Kerberos Tickets",
+            ],
+        },
+        "TA0007": {
+            "name": "Discovery",
+            "techniques": [
+                "T1046 Network Service Discovery",
+                "T1087 Account Discovery",
+                "T1018 Remote System Discovery",
+            ],
+        },
+        "TA0008": {
+            "name": "Lateral Movement",
+            "techniques": [
+                "T1021 Remote Services",
+                "T1550 Use Alternate Auth Material",
+            ],
+        },
+        "TA0009": {
+            "name": "Collection",
+            "techniques": [
+                "T1005 Data from Local System",
+                "T1039 Data from Network Shared Drive",
+            ],
+        },
+        "TA0010": {
+            "name": "Exfiltration",
+            "techniques": [
+                "T1048 Exfiltration Over Alternative Protocol",
+                "T1567 Exfiltration Over Web Service",
+            ],
+        },
+        "TA0011": {
+            "name": "Command and Control",
+            "techniques": [
+                "T1071 Application Layer Protocol",
+                "T1105 Ingress Tool Transfer",
+            ],
+        },
     }
 
     def map_finding(self, finding_type: str) -> list[dict]:
@@ -257,10 +299,7 @@ class MITREAttackMapper:
 
     def get_kill_chain(self) -> list[dict]:
         """Return ordered MITRE ATT&CK kill chain."""
-        return [
-            {"id": k, "name": v["name"], "technique_count": len(v["techniques"])}
-            for k, v in self.TACTICS.items()
-        ]
+        return [{"id": k, "name": v["name"], "technique_count": len(v["techniques"])} for k, v in self.TACTICS.items()]
 
 
 class AttackReportGenerator:
@@ -277,9 +316,7 @@ class AttackReportGenerator:
 
         # Risk score
         weights = {"critical": 10, "high": 7, "medium": 4, "low": 1, "info": 0}
-        risk_score = sum(
-            weights.get(f.get("severity", "info"), 0) for f in findings
-        )
+        risk_score = sum(weights.get(f.get("severity", "info"), 0) for f in findings)
 
         return {
             "report_type": "attack_simulation",
@@ -288,7 +325,13 @@ class AttackReportGenerator:
             "modules_run": attack_results.get("modules_run", []),
             "executive_summary": {
                 "risk_score": risk_score,
-                "risk_rating": "Critical" if risk_score >= 50 else "High" if risk_score >= 30 else "Medium" if risk_score >= 15 else "Low",
+                "risk_rating": "Critical"
+                if risk_score >= 50
+                else "High"
+                if risk_score >= 30
+                else "Medium"
+                if risk_score >= 15
+                else "Low",
                 "total_findings": len(findings),
                 "severity_breakdown": severity_counts,
             },
@@ -307,6 +350,8 @@ class AttackReportGenerator:
         if any("credential" in t for t in finding_types):
             recs.append({"priority": "critical", "recommendation": "Enforce strong password policy and MFA"})
         if any("header" in t for t in finding_types):
-            recs.append({"priority": "medium", "recommendation": "Configure security headers (HSTS, CSP, X-Frame-Options)"})
+            recs.append(
+                {"priority": "medium", "recommendation": "Configure security headers (HSTS, CSP, X-Frame-Options)"}
+            )
 
         return recs

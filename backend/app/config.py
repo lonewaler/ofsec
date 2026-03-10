@@ -4,7 +4,6 @@ OfSec V3 — Application Configuration
 Pydantic Settings for environment management.
 """
 
-
 from pydantic_settings import BaseSettings
 
 
@@ -19,7 +18,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
 
     # ─── Security ─────────────────────────────────
-    SECRET_KEY: str = "change-me-in-production"
+    SECRET_KEY: str = "change-me-in-production"  # noqa: S105
     API_KEY: str = "dev-api-key"
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 1440  # 24 hours
@@ -28,7 +27,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://ofsec:ofsec_secret@localhost:5432/ofsec"
     POSTGRES_DB: str = "ofsec"
     POSTGRES_USER: str = "ofsec"
-    POSTGRES_PASSWORD: str = "ofsec_secret"
+    POSTGRES_PASSWORD: str = "ofsec_secret"  # noqa: S105
     DB_POOL_SIZE: int = 20
     DB_MAX_OVERFLOW: int = 10
     DB_POOL_TIMEOUT: int = 30
@@ -74,11 +73,11 @@ class Settings(BaseSettings):
     ALERT_EMAIL_USERNAME: str = ""
     ALERT_EMAIL_PASSWORD: str = ""
     ALERT_EMAIL_FROM: str = "OfSec V3 <alerts@ofsec.io>"
-    ALERT_EMAIL_TO: str = ""          # comma-separated recipients
+    ALERT_EMAIL_TO: str = ""  # comma-separated recipients
 
     ALERT_WEBHOOK_ENABLED: bool = False
     ALERT_WEBHOOK_URL: str = ""
-    ALERT_WEBHOOK_URL_2: str = ""     # optional second webhook
+    ALERT_WEBHOOK_URL_2: str = ""  # optional second webhook
 
     # ─── CORS / Hosts ────────────────────────────
     CORS_ORIGINS: list[str] = [

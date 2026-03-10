@@ -16,6 +16,13 @@ PY_VER=$(python3 --version 2>&1 | grep -oP '3\.\K[0-9]+' || echo "0")
 [ "$PY_VER" -lt 11 ] && error "Python 3.11+ required (found 3.$PY_VER)"
 info "Python 3.$PY_VER found"
 
+# 1b. Node check
+if ! command -v npm &> /dev/null; then
+    error "npm could not be found. Please install Node.js."
+fi
+NPM_VER=$(npm --version)
+info "Node/npm $NPM_VER found"
+
 # 2. Virtualenv
 [ ! -d ".venv" ] && python3 -m venv .venv && info "Created .venv"
 source .venv/bin/activate
@@ -28,13 +35,28 @@ else
     warn "requirements.txt not found, installing from pyproject.toml..."
     cd backend && pip install -q -e . && cd ..
 fi
-info "Dependencies installed"
+info "Backend dependencies installed"
+
+# 3b. Frontend build
+info "Building Frontend with Vite..."
+cd frontend
+npm install --silent >/dev/null 2>&1
+npm run build --silent >/dev/null 2>&1
+cd ..
+info "Frontend built and ready in dist/"
 
 # 4. .env check
 if [ ! -f "backend/.env" ]; then
     cp backend/.env.example backend/.env
     warn ".env created from .env.example — fill in API keys before use"
 fi
+
+# 4b. Database Migrations
+info "Running Database Migrations..."
+cd backend
+alembic upgrade head
+cd ..
+info "Migrations complete"
 
 # 5. Redis check
 if redis-cli ping &>/dev/null; then
@@ -64,14 +86,14 @@ cd ..
 echo "$WORKER_PID $SERVER_PID" > .pids
 
 # 10. Health check
-sleep 3
+sleep 6
 if curl -sf http://localhost:8000/health > /dev/null; then
     echo ""
     echo "═══════════════════════════════════════════"
     info "OfSec V3 is running!"
     info "Dashboard:  http://localhost:8000"
     info "API docs:   http://localhost:8000/docs"
-    info "Logs:       backend/logs/ofsec.log"
+    info "Logs:       backend/logs/server.log"
     echo "═══════════════════════════════════════════"
 else
     error "Server failed to start — last 20 lines of log:\n$(tail -20 backend/logs/server.log)"

@@ -1,4 +1,5 @@
 """Scan and Vulnerability persistence."""
+
 from datetime import UTC, datetime
 
 from sqlalchemy import and_, func, select
@@ -26,7 +27,7 @@ class ScanRepository:
             started_at=datetime.now(UTC),
         )
         self.db.add(scan)
-        await self.db.flush()   # get the auto-increment id without committing
+        await self.db.flush()  # get the auto-increment id without committing
         return scan
 
     async def complete_scan(
@@ -46,9 +47,7 @@ class ScanRepository:
             scan.error_message = error  # type: ignore[assignment]
         return scan
 
-    async def add_vulnerabilities(
-        self, scan_id: int, findings: list[dict]
-    ) -> list[Vulnerability]:
+    async def add_vulnerabilities(self, scan_id: int, findings: list[dict]) -> list[Vulnerability]:
         """Bulk insert vulnerability findings for a scan."""
         vulns = []
         for f in findings:
@@ -93,9 +92,7 @@ class ScanRepository:
         if filters:
             q = q.where(and_(*filters))
 
-        total = (await self.db.execute(
-            select(func.count()).select_from(q.subquery())
-        )).scalar_one()
+        total = (await self.db.execute(select(func.count()).select_from(q.subquery()))).scalar_one()
 
         q = q.order_by(Scan.started_at.desc()).limit(limit).offset(offset)
         result = await self.db.execute(q)
@@ -117,9 +114,7 @@ class ScanRepository:
         if filters:
             q = q.where(and_(*filters))
 
-        total = (await self.db.execute(
-            select(func.count()).select_from(q.subquery())
-        )).scalar_one()
+        total = (await self.db.execute(select(func.count()).select_from(q.subquery()))).scalar_one()
 
         q = q.order_by(Vulnerability.discovered_at.desc()).limit(limit).offset(offset)
         result = await self.db.execute(q)

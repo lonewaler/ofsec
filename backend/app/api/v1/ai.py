@@ -5,8 +5,8 @@ REST API for AI-powered security intelligence (Upgrades #46–65).
 """
 
 from __future__ import annotations
+
 import structlog
-import fastapi
 from fastapi import APIRouter
 
 from app.api.deps import CurrentUser
@@ -25,6 +25,7 @@ router = APIRouter(prefix="/ai", tags=["AI/ML Engine"])
 
 
 # ─── Module listing ─────────────────────────
+
 
 @router.get("/modules")
 async def list_ai_modules(*, user: CurrentUser) -> dict:
@@ -51,6 +52,7 @@ async def list_ai_modules(*, user: CurrentUser) -> dict:
 
 # ─── Scan analysis ──────────────────────────
 
+
 @router.post("/analyze")
 async def analyze_scan(*, scan_data: dict, user: CurrentUser) -> SuccessResponse:
     """Queue AI analysis of scan results (async)."""
@@ -72,6 +74,7 @@ async def analyze_scan_instant(*, scan_data: dict, user: CurrentUser) -> dict:
 
 
 # ─── Anomaly detection ──────────────────────
+
 
 @router.post("/anomaly/network")
 async def detect_network_anomaly(*, traffic_data: list[dict], user: CurrentUser) -> dict:
@@ -104,6 +107,7 @@ async def detect_behavior_anomaly(*, user_id: str, event: dict, user: CurrentUse
 
 
 # ─── NLP / Threat Intel ──────────────────────
+
 
 @router.post("/threat/parse")
 async def parse_threat(*, text: str, user: CurrentUser) -> SuccessResponse:
@@ -147,6 +151,7 @@ async def monitor_dark_web(*, domain: str, user: CurrentUser) -> SuccessResponse
 
 # ─── Predictive ─────────────────────────────
 
+
 @router.post("/predict/attacks")
 async def predict_attacks(*, findings: list[dict], user: CurrentUser) -> dict:
     """Predict likely attacks based on findings."""
@@ -169,8 +174,10 @@ async def score_risk(*, features: dict, user: CurrentUser) -> dict:
 
 # ─── Feedback ────────────────────────────────
 
+
 @router.post("/feedback")
-async def submit_feedback(*, 
+async def submit_feedback(
+    *,
     finding_id: str,
     module: str,
     is_true_positive: bool,
@@ -180,12 +187,15 @@ async def submit_feedback(*,
     """Submit feedback on a finding."""
     orchestrator = AIOrchestrator()
     try:
-        return await orchestrator.run_module("feedback", {
-            "finding_id": finding_id,
-            "module": module,
-            "is_true_positive": is_true_positive,
-            "analyst_notes": analyst_notes,
-        })
+        return await orchestrator.run_module(
+            "feedback",
+            {
+                "finding_id": finding_id,
+                "module": module,
+                "is_true_positive": is_true_positive,
+                "analyst_notes": analyst_notes,
+            },
+        )
     finally:
         await orchestrator.close()
 
@@ -201,6 +211,7 @@ async def get_accuracy(*, user: CurrentUser) -> dict:
 
 
 # ─── LLM ─────────────────────────────────────
+
 
 @router.post("/llm/analyze")
 async def llm_analyze(*, findings: list[dict], user: CurrentUser) -> dict:
@@ -233,6 +244,7 @@ async def llm_explain(*, vuln_type: str, user: CurrentUser) -> dict:
 
 
 # ─── Reports ────────────────────────────────
+
 
 @router.post("/report")
 async def generate_report(*, scan_data: dict, user: CurrentUser) -> SuccessResponse:

@@ -172,9 +172,7 @@ class CertTransparencyMonitor:
                 # Check certificates expiring within 30 days
                 if cert.get("not_after"):
                     try:
-                        expiry = datetime.fromisoformat(
-                            cert["not_after"].replace("Z", "+00:00")
-                        )
+                        expiry = datetime.fromisoformat(cert["not_after"].replace("Z", "+00:00"))
                         days_left = (expiry - datetime.now(UTC)).days
                         if 0 < days_left <= 30:
                             cert["days_until_expiry"] = days_left

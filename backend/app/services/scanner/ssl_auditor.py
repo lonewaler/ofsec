@@ -23,7 +23,14 @@ tracer = get_tracer("scanner.ssl")
 
 # Weak ciphers to flag
 WEAK_CIPHERS = [
-    "RC4", "DES", "3DES", "MD5", "NULL", "EXPORT", "anon", "RC2",
+    "RC4",
+    "DES",
+    "3DES",
+    "MD5",
+    "NULL",
+    "EXPORT",
+    "anon",
+    "RC2",
 ]
 
 # Deprecated protocols
@@ -53,11 +60,13 @@ class SSLTLSAuditor:
                     cert_findings = self._analyze_certificate(cert_info)
                     findings.extend(cert_findings)
             except Exception as e:
-                findings.append({
-                    "type": "SSL Connection Error",
-                    "severity": "critical",
-                    "evidence": str(e),
-                })
+                findings.append(
+                    {
+                        "type": "SSL Connection Error",
+                        "severity": "critical",
+                        "evidence": str(e),
+                    }
+                )
 
             # Check protocol support
             protocol_info = await self._check_protocols(host, port)
@@ -109,7 +118,7 @@ class SSLTLSAuditor:
 
         def _get_cert():
             ctx = ssl.create_default_context()
-            with socket.create_connection((host, port), timeout=10) as sock:
+            with socket.create_connection((host, port), timeout=10) as sock:  # noqa: SIM117
                 with ctx.wrap_socket(sock, server_hostname=host) as ssock:
                     cert = ssock.getpeercert()
                     cipher = ssock.cipher()
@@ -152,34 +161,42 @@ class SSLTLSAuditor:
 
         days = cert.get("days_remaining", 0)
         if days < 0:
-            findings.append({
-                "type": "Expired Certificate",
-                "severity": "critical",
-                "evidence": f"Certificate expired {abs(days)} days ago",
-            })
+            findings.append(
+                {
+                    "type": "Expired Certificate",
+                    "severity": "critical",
+                    "evidence": f"Certificate expired {abs(days)} days ago",
+                }
+            )
         elif days < 30:
-            findings.append({
-                "type": "Certificate Expiring Soon",
-                "severity": "high",
-                "evidence": f"Certificate expires in {days} days",
-            })
+            findings.append(
+                {
+                    "type": "Certificate Expiring Soon",
+                    "severity": "high",
+                    "evidence": f"Certificate expires in {days} days",
+                }
+            )
 
         # Key size check
         bits = cert.get("cipher_bits", 0)
         if bits > 0 and bits < 128:
-            findings.append({
-                "type": "Weak Cipher Key Size",
-                "severity": "high",
-                "evidence": f"Cipher uses only {bits}-bit key",
-            })
+            findings.append(
+                {
+                    "type": "Weak Cipher Key Size",
+                    "severity": "high",
+                    "evidence": f"Cipher uses only {bits}-bit key",
+                }
+            )
 
         # Self-signed check
         if cert.get("common_name") == cert.get("issuer_cn"):
-            findings.append({
-                "type": "Self-Signed Certificate",
-                "severity": "medium",
-                "evidence": "Certificate appears to be self-signed",
-            })
+            findings.append(
+                {
+                    "type": "Self-Signed Certificate",
+                    "severity": "medium",
+                    "evidence": "Certificate appears to be self-signed",
+                }
+            )
 
         return findings
 
@@ -209,7 +226,7 @@ class SSLTLSAuditor:
                     ctx.minimum_version = ssl.TLSVersion.TLSv1_2
                     ctx.maximum_version = ssl.TLSVersion.TLSv1_2
 
-                with socket.create_connection((host, port), timeout=5) as sock:
+                with socket.create_connection((host, port), timeout=5) as sock:  # noqa: SIM117
                     with ctx.wrap_socket(sock, server_hostname=host) as ssock:
                         return ssock.version()
             except Exception as e:
@@ -233,13 +250,15 @@ class SSLTLSAuditor:
 
         for proto in deprecated:
             if protocols.get(proto, {}).get("supported"):
-                findings.append({
-                    "type": "Deprecated Protocol",
-                    "severity": "high" if proto == "SSLv3" else "medium",
-                    "protocol": proto,
-                    "evidence": f"{proto} is supported but deprecated",
-                    "remediation": f"Disable {proto} support",
-                })
+                findings.append(
+                    {
+                        "type": "Deprecated Protocol",
+                        "severity": "high" if proto == "SSLv3" else "medium",
+                        "protocol": proto,
+                        "evidence": f"{proto} is supported but deprecated",
+                        "remediation": f"Disable {proto} support",
+                    }
+                )
         return findings
 
     async def _get_cipher_info(self, host: str, port: int) -> dict:
@@ -265,13 +284,15 @@ class SSLTLSAuditor:
         for cipher_name in cipher_info.get("supported", []):
             for weak in WEAK_CIPHERS:
                 if weak in cipher_name:
-                    findings.append({
-                        "type": "Weak Cipher Suite",
-                        "severity": "high",
-                        "cipher": cipher_name,
-                        "evidence": f"Weak cipher detected: {cipher_name} (contains {weak})",
-                        "remediation": f"Disable cipher {cipher_name}",
-                    })
+                    findings.append(
+                        {
+                            "type": "Weak Cipher Suite",
+                            "severity": "high",
+                            "cipher": cipher_name,
+                            "evidence": f"Weak cipher detected: {cipher_name} (contains {weak})",
+                            "remediation": f"Disable cipher {cipher_name}",
+                        }
+                    )
                     break
         return findings
 

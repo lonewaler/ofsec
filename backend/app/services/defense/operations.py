@@ -22,6 +22,7 @@ tracer = get_tracer("defense.ops")
 
 # ─── #75 Firewall Rule Manager ──────────────
 
+
 class FirewallRuleManager:
     """Automated firewall rule generation and management."""
 
@@ -67,14 +68,15 @@ class FirewallRuleManager:
             if rule["type"] == "ip":
                 commands.append(f"iptables -A INPUT -s {rule['value']} -j DROP")
             elif rule["type"] == "port":
-                commands.append(
-                    f"iptables -A INPUT -p {rule.get('protocol', 'tcp')} --dport {rule['port']} -j DROP"
-                )
+                commands.append(f"iptables -A INPUT -p {rule.get('protocol', 'tcp')} --dport {rule['port']} -j DROP")
         return commands
 
     def generate_nftables(self) -> list[str]:
         """Generate nftables commands."""
-        commands = ["nft add table inet filter", "nft add chain inet filter input { type filter hook input priority 0 \\; }"]
+        commands = [
+            "nft add table inet filter",
+            "nft add chain inet filter input { type filter hook input priority 0 \\; }",
+        ]
         for rule in self._rules:
             if rule["status"] != "active":
                 continue
@@ -87,6 +89,7 @@ class FirewallRuleManager:
 
 
 # ─── #76 Patch Manager ──────────────────────
+
 
 class PatchManager:
     """Track and manage security patches."""
@@ -138,6 +141,7 @@ class PatchManager:
 
 # ─── #77 Quarantine Manager ─────────────────
 
+
 class QuarantineManager:
     """Manage quarantine of compromised assets."""
 
@@ -173,6 +177,7 @@ class QuarantineManager:
 
 
 # ─── #78-80 Health Monitor ──────────────────
+
 
 class HealthMonitor:
     """Continuous health monitoring for infrastructure."""
@@ -240,6 +245,7 @@ class HealthMonitor:
 
 # ─── #81 Compliance Drift Monitor ───────────
 
+
 class ComplianceDriftMonitor:
     """Monitor for compliance configuration drift."""
 
@@ -298,12 +304,14 @@ class ComplianceDriftMonitor:
         for control_id, current_status in current_statuses.items():
             baseline_status = baseline["controls"].get(control_id)
             if baseline_status and current_status != baseline_status:
-                drifts.append({
-                    "control": control_id,
-                    "baseline": baseline_status,
-                    "current": current_status,
-                    "drift_type": "regression" if current_status == "non_compliant" else "improvement",
-                })
+                drifts.append(
+                    {
+                        "control": control_id,
+                        "baseline": baseline_status,
+                        "current": current_status,
+                        "drift_type": "regression" if current_status == "non_compliant" else "improvement",
+                    }
+                )
 
         result = {
             "framework": framework,
@@ -317,13 +325,11 @@ class ComplianceDriftMonitor:
         return result
 
     def list_frameworks(self) -> list[dict]:
-        return [
-            {"id": k, "name": v["name"], "controls": len(v["controls"])}
-            for k, v in self.FRAMEWORKS.items()
-        ]
+        return [{"id": k, "name": v["name"], "controls": len(v["controls"])} for k, v in self.FRAMEWORKS.items()]
 
 
 # ─── #82 SLA Tracker ────────────────────────
+
 
 class SLATracker:
     """Track SLA compliance for security operations."""

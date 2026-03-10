@@ -101,10 +101,9 @@ class AttackOrchestrator:
                 elif module_name == "brute_force":
                     protocol = cfg.get("protocol", "http_basic")
                     if protocol == "http_form":
-                        return await module.brute_http_form(target, **{
-                            k: v for k, v in cfg.items() if k != "protocol"
-                        })
-                    return await module.brute_http_basic(target,
+                        return await module.brute_http_form(target, **{k: v for k, v in cfg.items() if k != "protocol"})
+                    return await module.brute_http_basic(
+                        target,
                         usernames=cfg.get("usernames"),
                         passwords=cfg.get("passwords"),
                     )
@@ -182,8 +181,12 @@ class AttackOrchestrator:
             span.set_attribute("target", target)
 
             default_modules = [
-                "payload_generator", "exploit_framework", "privesc",
-                "lateral_movement", "social_engineering", "mitre_mapper",
+                "payload_generator",
+                "exploit_framework",
+                "privesc",
+                "lateral_movement",
+                "social_engineering",
+                "mitre_mapper",
             ]
             selected = modules or default_modules
             results: dict = {}
@@ -207,16 +210,20 @@ class AttackOrchestrator:
 
             # Generate report
             report_gen = self._get_module("report_generator")
-            report = report_gen.generate_report({
-                "target": target,
-                "modules_run": selected,
-                "findings": all_findings,
-            })
+            report = report_gen.generate_report(
+                {
+                    "target": target,
+                    "modules_run": selected,
+                    "findings": all_findings,
+                }
+            )
 
             logger.info(
                 "attack.orchestrator.complete",
-                target=target, modules=len(selected),
-                elapsed=round(elapsed, 2), findings=len(all_findings),
+                target=target,
+                modules=len(selected),
+                elapsed=round(elapsed, 2),
+                findings=len(all_findings),
             )
 
             return {
@@ -226,6 +233,63 @@ class AttackOrchestrator:
                 "report": report,
                 "module_results": results,
             }
+
+    async def execute_payload(self, code: str, language: str = "python", timeout: int = 10) -> dict:
+        """
+        Execute an attack payload in a strictly isolated Docker sandbox.
+        """
+        with tracer.start_as_current_span("attack.sandbox.execute") as span:
+            span.set_attribute("language", language)
+
+            # Map language to docker image & command
+            runners = {
+                "python": {"image": "python:3.12-alpine", "cmd": ["python", "-c", code]},
+                "sh": {"image": "alpine:latest", "cmd": ["sh", "-c", code]},
+                "bash": {"image": "bash:latest", "cmd": ["bash", "-c", code]},
+                "node": {"image": "node:current-alpine", "cmd": ["node", "-e", code]},
+            }
+            runner = runners.get(language)
+            if not runner:
+                return {"error": f"Unsupported language sandbox: {language}"}
+
+            docker_cmd = [
+                "docker",
+                "run",
+                "--rm",
+                "--network",
+                "none",
+                "--memory",
+                "128m",
+                "--cpus",
+                "0.5",
+                runner["image"],
+            ] + runner["cmd"]
+
+            try:
+                start_t = datetime.now(UTC)
+                proc = await asyncio.create_subprocess_exec(
+                    *docker_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                )
+
+                try:
+                    stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
+                except TimeoutError:
+                    proc.kill()
+                    return {"error": "Execution timed out", "status": "timeout"}
+
+                elapsed = (datetime.now(UTC) - start_t).total_seconds()
+
+                return {
+                    "stdout": stdout.decode(errors="replace").strip(),
+                    "stderr": stderr.decode(errors="replace").strip(),
+                    "exit_code": proc.returncode,
+                    "elapsed_seconds": round(elapsed, 2),
+                    "status": "success" if proc.returncode == 0 else "error",
+                }
+
+            except Exception as e:
+                logger.error("attack.sandbox.error", error=str(e), exc_info=True)
+                return {"error": str(e), "status": "failed"}
 
     async def close(self):
         for name, instance in self._instances.items():

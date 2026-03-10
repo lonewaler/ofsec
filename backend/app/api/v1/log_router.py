@@ -8,13 +8,13 @@ from __future__ import annotations
 
 import os
 from collections import deque
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 import structlog
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, Field
 
-from app.core.logging import get_log_file_path, get_error_log_file_path
+from app.core.logging import get_error_log_file_path, get_log_file_path
 
 router = APIRouter(prefix="/log", tags=["Logging"])
 logger = structlog.get_logger()
@@ -22,6 +22,7 @@ logger = structlog.get_logger()
 
 class FrontendErrorReport(BaseModel):
     """Error reported from the frontend JS."""
+
     message: str = Field(..., description="Error message")
     source: str = Field(default="frontend", description="Error source (page, component)")
     stack: str = Field(default="", description="Stack trace if available")
@@ -58,7 +59,7 @@ async def get_recent_logs(lines: int = 50, level: str = "all"):
 
     # Read last N lines efficiently
     try:
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             all_lines = deque(f, maxlen=lines)
         entries = [line.strip() for line in all_lines if line.strip()]
         return {"entries": entries, "total": len(entries), "file": log_path}

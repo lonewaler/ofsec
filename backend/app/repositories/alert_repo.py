@@ -1,4 +1,5 @@
 """Alert and Incident persistence."""
+
 from datetime import UTC, datetime
 
 from sqlalchemy import and_, func, select
@@ -48,9 +49,7 @@ class AlertRepository:
         if filters:
             q = q.where(and_(*filters))
 
-        total = (await self.db.execute(
-            select(func.count()).select_from(q.subquery())
-        )).scalar_one()
+        total = (await self.db.execute(select(func.count()).select_from(q.subquery()))).scalar_one()
 
         q = q.order_by(Alert.created_at.desc()).limit(limit).offset(offset)
         result = await self.db.execute(q)
@@ -66,7 +65,5 @@ class AlertRepository:
         return alert
 
     async def count_open(self) -> int:
-        result = await self.db.execute(
-            select(func.count()).where(Alert.status.in_(["new", "open"]))
-        )
+        result = await self.db.execute(select(func.count()).where(Alert.status.in_(["new", "open"])))
         return result.scalar_one()

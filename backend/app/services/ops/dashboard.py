@@ -20,6 +20,7 @@ tracer = get_tracer("ops.dashboard")
 
 # ─── #83-84 Dashboard Analytics ─────────────
 
+
 class DashboardAnalytics:
     """Real-time dashboard analytics and metrics aggregation."""
 
@@ -28,11 +29,13 @@ class DashboardAnalytics:
         self._widgets: dict[str, dict] = {}
 
     def record_metric(self, name: str, value: float, tags: dict | None = None) -> None:
-        self._metrics[name].append({
-            "value": value,
-            "tags": tags or {},
-            "ts": datetime.now(UTC).isoformat(),
-        })
+        self._metrics[name].append(
+            {
+                "value": value,
+                "tags": tags or {},
+                "ts": datetime.now(UTC).isoformat(),
+            }
+        )
 
     def get_overview(self) -> dict:
         """Get platform-wide security overview."""
@@ -78,6 +81,7 @@ class DashboardAnalytics:
 
 
 # ─── #85-87 Report Generator ────────────────
+
 
 class ReportGenerator:
     """Generate comprehensive security reports in multiple formats."""
@@ -147,9 +151,27 @@ class ReportGenerator:
         findings = data.get("findings", [])
         sections = []
         builders = {
-            "overview": lambda: {"title": "Overview", "content": f"Security assessment of {data.get('target', 'target')}."},
-            "risk_score": lambda: {"title": "Risk Score", "content": {"score": min(sum({"critical": 10, "high": 7, "medium": 4, "low": 1}.get(f.get("severity", "info"), 0) for f in findings), 100), "breakdown": severity}},
-            "critical_findings": lambda: {"title": "Critical Findings", "content": [f for f in findings if f.get("severity") == "critical"][:10]},
+            "overview": lambda: {
+                "title": "Overview",
+                "content": f"Security assessment of {data.get('target', 'target')}.",
+            },
+            "risk_score": lambda: {
+                "title": "Risk Score",
+                "content": {
+                    "score": min(
+                        sum(
+                            {"critical": 10, "high": 7, "medium": 4, "low": 1}.get(f.get("severity", "info"), 0)
+                            for f in findings
+                        ),
+                        100,
+                    ),
+                    "breakdown": severity,
+                },
+            },
+            "critical_findings": lambda: {
+                "title": "Critical Findings",
+                "content": [f for f in findings if f.get("severity") == "critical"][:10],
+            },
             "findings": lambda: {"title": "All Findings", "content": findings[:50]},
             "recommendations": lambda: {"title": "Recommendations", "content": self._gen_recommendations(findings)},
             "methodology": lambda: {"title": "Methodology", "content": "Automated scanning with manual verification."},
@@ -157,10 +179,16 @@ class ReportGenerator:
             "remediation": lambda: {"title": "Remediation Plan", "content": self._gen_recommendations(findings)},
             "severity_breakdown": lambda: {"title": "Severity Breakdown", "content": severity},
             "scope": lambda: {"title": "Scope", "content": f"Target: {data.get('target', '')}"},
-            "attack_narrative": lambda: {"title": "Attack Narrative", "content": "Detailed attack chain documentation."},
+            "attack_narrative": lambda: {
+                "title": "Attack Narrative",
+                "content": "Detailed attack chain documentation.",
+            },
             "framework": lambda: {"title": "Framework", "content": "Assessed against OWASP Top 10 / NIST CSF"},
             "controls": lambda: {"title": "Controls Assessment", "content": "Controls evaluation results."},
-            "gaps": lambda: {"title": "Gaps Identified", "content": [f for f in findings if f.get("severity") in ("critical", "high")][:10]},
+            "gaps": lambda: {
+                "title": "Gaps Identified",
+                "content": [f for f in findings if f.get("severity") in ("critical", "high")][:10],
+            },
             "remediation_plan": lambda: {"title": "Remediation Plan", "content": self._gen_recommendations(findings)},
             "trend_analysis": lambda: {"title": "Trend Analysis", "content": "Comparison with previous assessments."},
         }
@@ -174,11 +202,16 @@ class ReportGenerator:
         recs = set()
         for f in findings:
             ft = f.get("type", "").lower()
-            if "sql" in ft: recs.add("Use parameterized queries")
-            elif "xss" in ft: recs.add("Implement CSP and output encoding")
-            elif "credential" in ft: recs.add("Enforce MFA and strong passwords")
-            elif "ssl" in ft: recs.add("Upgrade to TLS 1.3")
-            elif "header" in ft: recs.add("Configure security headers")
+            if "sql" in ft:
+                recs.add("Use parameterized queries")
+            elif "xss" in ft:
+                recs.add("Implement CSP and output encoding")
+            elif "credential" in ft:
+                recs.add("Enforce MFA and strong passwords")
+            elif "ssl" in ft:
+                recs.add("Upgrade to TLS 1.3")
+            elif "header" in ft:
+                recs.add("Configure security headers")
         return [{"recommendation": r} for r in list(recs)[:10]]
 
     def list_types(self) -> list[dict]:
@@ -186,6 +219,7 @@ class ReportGenerator:
 
 
 # ─── #88 Notification System ────────────────
+
 
 class NotificationSystem:
     """Multi-channel notification dispatching."""

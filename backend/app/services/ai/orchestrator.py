@@ -93,7 +93,9 @@ class AIOrchestrator:
             # Record for forecasting
             severity = scan_data.get("severity_summary", {})
             self.vuln_forecaster.add_scan_result(
-                target, len(scan_data.get("findings", [])), severity,
+                target,
+                len(scan_data.get("findings", [])),
+                severity,
             )
 
             return {
@@ -124,7 +126,8 @@ class AIOrchestrator:
                     return self.network_anomaly.analyze_traffic_pattern(data.get("traffic", []))
                 elif module_name == "behavioral_anomaly":
                     result = self.behavioral_anomaly.update_profile(
-                        data.get("user_id", ""), data,
+                        data.get("user_id", ""),
+                        data,
                     )
                     return result or {"anomalies": []}
                 elif module_name == "log_anomaly":

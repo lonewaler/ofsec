@@ -21,6 +21,7 @@ tracer = get_tracer("ai.learning")
 
 # ─── #55 Feedback Loop Manager ──────────────
 
+
 class FeedbackLoopManager:
     """Manage feedback loops for continuous model improvement."""
 
@@ -60,11 +61,13 @@ class FeedbackLoopManager:
 
         logger.info(
             "ai.feedback.submitted",
-            module=module, tp=is_true_positive, accuracy=round(accuracy, 3),
+            module=module,
+            tp=is_true_positive,
+            accuracy=round(accuracy, 3),
         )
 
         return {
-            "feedback_id": hashlib.md5(json.dumps(feedback, default=str).encode()).hexdigest()[:12],
+            "feedback_id": hashlib.md5(json.dumps(feedback, default=str).encode()).hexdigest()[:12],  # noqa: S324
             "status": "accepted",
             "current_accuracy": round(accuracy, 3),
         }
@@ -95,6 +98,7 @@ class FeedbackLoopManager:
 
 # ─── #56 Adaptive Scanner ───────────────────
 
+
 class AdaptiveScanner:
     """Adaptive scanning that adjusts based on past results and feedback."""
 
@@ -108,14 +112,12 @@ class AdaptiveScanner:
             return
         fp_rate = false_positives / findings
         effectiveness = max(0.1, 1.0 - fp_rate)
-        self._module_effectiveness[module] = round(
-            0.7 * self._module_effectiveness[module] + 0.3 * effectiveness, 3
-        )
+        self._module_effectiveness[module] = round(0.7 * self._module_effectiveness[module] + 0.3 * effectiveness, 3)
 
     def recommend_modules(self, target: str, available_modules: list[str]) -> list[dict]:
         """Recommend which modules to run based on target profile and effectiveness."""
         profile = self._target_profiles.get(target, {})
-        previous_findings = profile.get("finding_types", [])
+        profile.get("finding_types", [])
 
         recommendations = []
         for module in available_modules:
@@ -126,24 +128,29 @@ class AdaptiveScanner:
             if module in profile.get("productive_modules", []):
                 priority *= 1.3
 
-            recommendations.append({
-                "module": module,
-                "priority": round(min(priority, 1.0), 2),
-                "effectiveness": effectiveness,
-                "reason": "Previously productive" if priority > 1.0 else "Standard",
-            })
+            recommendations.append(
+                {
+                    "module": module,
+                    "priority": round(min(priority, 1.0), 2),
+                    "effectiveness": effectiveness,
+                    "reason": "Previously productive" if priority > 1.0 else "Standard",
+                }
+            )
 
         recommendations.sort(key=lambda x: -x["priority"])
         return recommendations
 
     def update_target_profile(self, target: str, scan_result: dict) -> None:
         """Update target profile after a scan."""
-        profile = self._target_profiles.setdefault(target, {
-            "scan_count": 0,
-            "finding_types": [],
-            "productive_modules": [],
-            "last_scanned": None,
-        })
+        profile = self._target_profiles.setdefault(
+            target,
+            {
+                "scan_count": 0,
+                "finding_types": [],
+                "productive_modules": [],
+                "last_scanned": None,
+            },
+        )
         profile["scan_count"] += 1
         profile["last_scanned"] = datetime.now(UTC).isoformat()
 
@@ -159,6 +166,7 @@ class AdaptiveScanner:
 
 
 # ─── #57 Model Retrainer ────────────────────
+
 
 class ModelRetrainer:
     """Manage model retraining schedules and versioning."""
@@ -189,10 +197,7 @@ class ModelRetrainer:
 
     def get_active_model(self, name: str) -> dict | None:
         """Get the active version of a model."""
-        active = [
-            m for k, m in self._model_registry.items()
-            if m["name"] == name and m["status"] == "active"
-        ]
+        active = [m for k, m in self._model_registry.items() if m["name"] == name and m["status"] == "active"]
         return active[-1] if active else None
 
     def should_retrain(self, name: str, accuracy_threshold: float = 0.85) -> dict:
@@ -219,6 +224,7 @@ class ModelRetrainer:
 
 
 # ─── #58-60 Feature Engineering & Pipeline ──
+
 
 class FeatureEngineering:
     """Extract and transform features from security data for ML models."""
@@ -255,7 +261,9 @@ class FeatureEngineering:
             "open_ports": len(services),
             "exposed_ports": len([s for s in services if s.get("port", 0) < 1024]),
             "has_ssh": 1 if any(s.get("service") == "ssh" for s in services) else 0,
-            "has_database": 1 if any(s.get("service") in ("mysql", "postgresql", "mongodb", "redis") for s in services) else 0,
+            "has_database": 1
+            if any(s.get("service") in ("mysql", "postgresql", "mongodb", "redis") for s in services)
+            else 0,
             "has_web": 1 if any(s.get("service") in ("http", "https") for s in services) else 0,
             "attack_surface_size": len(services) * 2,  # Weighted
         }

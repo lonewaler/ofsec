@@ -20,6 +20,7 @@ tracer = get_tracer("scanner.network")
 
 # ─── #22 Network Service Discovery ───────────
 
+
 class NetworkDiscoveryScanner:
     """Discover network services, banners, and versions via nmap wrapper."""
 
@@ -50,7 +51,8 @@ class NetworkDiscoveryScanner:
                 async with semaphore:
                     try:
                         _, writer = await asyncio.wait_for(
-                            asyncio.open_connection(host, port), timeout=3.0,
+                            asyncio.open_connection(host, port),
+                            timeout=3.0,
                         )
                         # Try to grab banner
                         banner = ""
@@ -58,7 +60,8 @@ class NetworkDiscoveryScanner:
                             writer.write(b"\r\n")
                             await writer.drain()
                             data = await asyncio.wait_for(
-                                asyncio.ensure_future(self._read_banner(writer)), timeout=2.0,
+                                asyncio.ensure_future(self._read_banner(writer)),
+                                timeout=2.0,
                             )
                             banner = data
                         except Exception as e:
@@ -69,13 +72,15 @@ class NetworkDiscoveryScanner:
                             await writer.wait_closed()
 
                         service_name = self._identify_service(port, banner)
-                        open_services.append({
-                            "port": port,
-                            "state": "open",
-                            "service": service_name,
-                            "banner": banner[:200] if banner else "",
-                            "version": self._extract_version(banner),
-                        })
+                        open_services.append(
+                            {
+                                "port": port,
+                                "state": "open",
+                                "service": service_name,
+                                "banner": banner[:200] if banner else "",
+                                "version": self._extract_version(banner),
+                            }
+                        )
                     except (TimeoutError, ConnectionRefusedError, OSError) as e:
                         logger.debug("scanner.network.probe.failed", host=host, port=port, error=str(e))
                         pass
@@ -101,15 +106,28 @@ class NetworkDiscoveryScanner:
 
     @staticmethod
     async def _read_banner(writer) -> str:
-        reader = writer.transport.get_extra_info("socket")
+        writer.transport.get_extra_info("socket")
         return ""  # Banner from initial connection
 
     def _identify_service(self, port: int, banner: str) -> str:
         known = {
-            21: "ftp", 22: "ssh", 25: "smtp", 53: "dns", 80: "http",
-            110: "pop3", 143: "imap", 443: "https", 445: "smb",
-            1433: "mssql", 3306: "mysql", 3389: "rdp", 5432: "postgresql",
-            5900: "vnc", 6379: "redis", 8080: "http-proxy", 9200: "elasticsearch",
+            21: "ftp",
+            22: "ssh",
+            25: "smtp",
+            53: "dns",
+            80: "http",
+            110: "pop3",
+            143: "imap",
+            443: "https",
+            445: "smb",
+            1433: "mssql",
+            3306: "mysql",
+            3389: "rdp",
+            5432: "postgresql",
+            5900: "vnc",
+            6379: "redis",
+            8080: "http-proxy",
+            9200: "elasticsearch",
             27017: "mongodb",
         }
         return known.get(port, "unknown")
@@ -117,11 +135,12 @@ class NetworkDiscoveryScanner:
     def _extract_version(self, banner: str) -> str:
         if not banner:
             return ""
-        version_match = re.search(r'(\d+\.\d+[\.\d]*)', banner)
+        version_match = re.search(r"(\d+\.\d+[\.\d]*)", banner)
         return version_match.group(1) if version_match else ""
 
 
 # ─── #25 CMS Scanner ─────────────────────────
+
 
 class CMSScanner:
     """Detect and scan Content Management Systems (WordPress, Joomla, Drupal)."""
@@ -132,9 +151,13 @@ class CMSScanner:
             "meta": ["wp-content", "wordpress", "wp-json"],
             "version_path": "/feed/",
             "vuln_paths": [
-                "/wp-config.php.bak", "/wp-config.txt", "/.wp-config.php.swp",
-                "/wp-content/debug.log", "/wp-content/uploads/",
-                "/xmlrpc.php", "/wp-json/wp/v2/users",
+                "/wp-config.php.bak",
+                "/wp-config.txt",
+                "/.wp-config.php.swp",
+                "/wp-content/debug.log",
+                "/wp-content/uploads/",
+                "/xmlrpc.php",
+                "/wp-json/wp/v2/users",
             ],
         },
         "joomla": {
@@ -157,7 +180,8 @@ class CMSScanner:
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
             self._client = httpx.AsyncClient(
-                timeout=10.0, follow_redirects=True,
+                timeout=10.0,
+                follow_redirects=True,
                 headers={"User-Agent": "Mozilla/5.0 (compatible; OfSec-V3)"},
             )
         return self._client
@@ -211,13 +235,15 @@ class CMSScanner:
                 resp = await client.get(full_url)
                 if resp.status_code == 200:
                     severity = "high" if any(s in vuln_path for s in [".bak", "debug", "config"]) else "medium"
-                    findings.append({
-                        "type": f"{cms.title()} Misconfiguration",
-                        "severity": severity,
-                        "url": full_url,
-                        "path": vuln_path,
-                        "evidence": f"Accessible ({resp.status_code}), size: {len(resp.content)} bytes",
-                    })
+                    findings.append(
+                        {
+                            "type": f"{cms.title()} Misconfiguration",
+                            "severity": severity,
+                            "url": full_url,
+                            "path": vuln_path,
+                            "evidence": f"Accessible ({resp.status_code}), size: {len(resp.content)} bytes",
+                        }
+                    )
             except Exception as e:
                 logger.debug("scanner.cms.vulns.error", url=full_url, error=str(e))
                 continue
@@ -229,12 +255,14 @@ class CMSScanner:
                 if resp.status_code == 200:
                     users = resp.json()
                     if isinstance(users, list) and users:
-                        findings.append({
-                            "type": "WordPress User Enumeration",
-                            "severity": "medium",
-                            "url": f"{url}/wp-json/wp/v2/users",
-                            "evidence": f"Exposed {len(users)} user(s): {[u.get('slug') for u in users[:5]]}",
-                        })
+                        findings.append(
+                            {
+                                "type": "WordPress User Enumeration",
+                                "severity": "medium",
+                                "url": f"{url}/wp-json/wp/v2/users",
+                                "evidence": f"Exposed {len(users)} user(s): {[u.get('slug') for u in users[:5]]}",
+                            }
+                        )
             except Exception as e:
                 logger.debug("scanner.cms.wp_enum.error", url=url, error=str(e))
                 pass
@@ -270,10 +298,12 @@ class CMSScanner:
 
 # ─── #26 Compliance & Configuration Audit ────
 
+
 class ComplianceAuditor:
     """Audit configurations against security benchmarks (CIS, OWASP)."""
 
     from typing import Any
+
     OWASP_CHECKS: dict[str, list[dict[str, Any]]] = {
         "A01_Broken_Access_Control": [
             {"check": "directory_listing", "path": "/", "expect": "no_index_of"},
@@ -289,7 +319,11 @@ class ComplianceAuditor:
             {"check": "error_handling", "path": "/nonexistent-page-12345", "expect": "custom_error"},
         ],
         "A09_Security_Logging": [
-            {"check": "log_exposure", "paths": ["/logs", "/log", "/error.log", "/debug.log"], "expect": "not_accessible"},
+            {
+                "check": "log_exposure",
+                "paths": ["/logs", "/log", "/error.log", "/debug.log"],
+                "expect": "not_accessible",
+            },
         ],
     }
 
@@ -405,7 +439,7 @@ class ComplianceAuditor:
                         "remediation": "Implement custom error pages, disable debug mode",
                     }
             except Exception as e:
-                logger.debug("scanner.compliance.error_handling.error", url=base_url, path=check['path'], error=str(e))
+                logger.debug("scanner.compliance.error_handling.error", url=base_url, path=check["path"], error=str(e))
                 pass
 
         return None

@@ -119,7 +119,9 @@ class ScannerOrchestrator:
             except Exception as e:
                 logger.error(
                     f"scanner.{module_name}.error",
-                    target=target, error=str(e), exc_info=True,
+                    target=target,
+                    error=str(e),
+                    exc_info=True,
                 )
                 return {"error": str(e), "module": module_name}
 
@@ -135,9 +137,14 @@ class ScannerOrchestrator:
 
             # Default URL-based modules (skip dependency/container which need file input)
             default_modules = [
-                "web_scanner", "header_analyzer", "api_scanner",
-                "ssl_auditor", "cms_scanner", "compliance_auditor",
-                "waf_detector", "credential_tester",
+                "web_scanner",
+                "header_analyzer",
+                "api_scanner",
+                "ssl_auditor",
+                "cms_scanner",
+                "compliance_auditor",
+                "waf_detector",
+                "credential_tester",
             ]
             selected = modules or default_modules
             results: dict = {}

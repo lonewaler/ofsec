@@ -8,7 +8,6 @@ OfSec V3 — #11-15 Additional Recon Modules
 #15 Subdomain Takeover Detection
 """
 
-
 from __future__ import annotations
 
 import httpx
@@ -21,6 +20,7 @@ tracer = get_tracer("recon.advanced")
 
 
 # ─── #11 Technology Fingerprinting ────────────
+
 
 class TechFingerprinter:
     """Detect web technologies via HTTP headers, cookies, and HTML signatures."""
@@ -67,7 +67,8 @@ class TechFingerprinter:
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
             self._client = httpx.AsyncClient(
-                timeout=10.0, follow_redirects=True,
+                timeout=10.0,
+                follow_redirects=True,
                 headers={"User-Agent": "Mozilla/5.0 (compatible; OfSec-V3)"},
             )
         return self._client
@@ -94,7 +95,11 @@ class TechFingerprinter:
                     if header_val:
                         for sig, tech in signatures.items():
                             if sig == "*" or sig.lower() in header_val.lower():
-                                if header_name in ("x-frame-options", "strict-transport-security", "content-security-policy"):
+                                if header_name in (
+                                    "x-frame-options",
+                                    "strict-transport-security",
+                                    "content-security-policy",
+                                ):
                                     security_headers.append(tech)
                                 else:
                                     technologies.append(tech)
@@ -123,18 +128,44 @@ class TechFingerprinter:
 
 # ─── #12 Port & Service Discovery ────────────
 
+
 class PortScanner:
     """Lightweight async TCP port scanner."""
 
     COMMON_PORTS = [
-        21, 22, 23, 25, 53, 80, 110, 111, 135, 139, 143, 443, 445, 993, 995,
-        1433, 1521, 2049, 3306, 3389, 5432, 5900, 6379, 8000, 8080, 8443, 8888,
-        9090, 9200, 27017,
+        21,
+        22,
+        23,
+        25,
+        53,
+        80,
+        110,
+        111,
+        135,
+        139,
+        143,
+        443,
+        445,
+        993,
+        995,
+        1433,
+        1521,
+        2049,
+        3306,
+        3389,
+        5432,
+        5900,
+        6379,
+        8000,
+        8080,
+        8443,
+        8888,
+        9090,
+        9200,
+        27017,
     ]
 
-    async def scan_ports(
-        self, host: str, ports: list[int] | None = None, timeout: float = 2.0
-    ) -> list[dict]:
+    async def scan_ports(self, host: str, ports: list[int] | None = None, timeout: float = 2.0) -> list[dict]:
         """Scan TCP ports on a host."""
         import asyncio
 
@@ -145,16 +176,16 @@ class PortScanner:
         async def check_port(port: int):
             async with semaphore:
                 try:
-                    _, writer = await asyncio.wait_for(
-                        asyncio.open_connection(host, port), timeout=timeout
-                    )
+                    _, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=timeout)
                     writer.close()
                     await writer.wait_closed()
-                    open_ports.append({
-                        "port": port,
-                        "state": "open",
-                        "service": self._guess_service(port),
-                    })
+                    open_ports.append(
+                        {
+                            "port": port,
+                            "state": "open",
+                            "service": self._guess_service(port),
+                        }
+                    )
                 except (TimeoutError, ConnectionRefusedError, OSError):
                     pass
 
@@ -166,15 +197,30 @@ class PortScanner:
 
     def _guess_service(self, port: int) -> str:
         services = {
-            21: "ftp", 22: "ssh", 23: "telnet", 25: "smtp", 53: "dns",
-            80: "http", 110: "pop3", 143: "imap", 443: "https", 445: "smb",
-            1433: "mssql", 3306: "mysql", 3389: "rdp", 5432: "postgresql",
-            6379: "redis", 8080: "http-proxy", 9200: "elasticsearch", 27017: "mongodb",
+            21: "ftp",
+            22: "ssh",
+            23: "telnet",
+            25: "smtp",
+            53: "dns",
+            80: "http",
+            110: "pop3",
+            143: "imap",
+            443: "https",
+            445: "smb",
+            1433: "mssql",
+            3306: "mysql",
+            3389: "rdp",
+            5432: "postgresql",
+            6379: "redis",
+            8080: "http-proxy",
+            9200: "elasticsearch",
+            27017: "mongodb",
         }
         return services.get(port, "unknown")
 
 
 # ─── #13 Cloud Asset Discovery ───────────────
+
 
 class CloudAssetDiscovery:
     """Discover cloud-hosted assets (AWS, Azure, GCP)."""
@@ -205,6 +251,7 @@ class CloudAssetDiscovery:
     async def discover(self, domain: str) -> dict:
         """Check for cloud-hosted assets related to a domain."""
         import asyncio
+
         client = await self._get_client()
         found: list[dict] = []
 
@@ -218,13 +265,15 @@ class CloudAssetDiscovery:
             try:
                 resp = await client.head(url)
                 if resp.status_code < 404:
-                    found.append({
-                        "provider": provider,
-                        "url": url,
-                        "status": resp.status_code,
-                        "public": resp.status_code == 200,
-                    })
-            except Exception:
+                    found.append(
+                        {
+                            "provider": provider,
+                            "url": url,
+                            "status": resp.status_code,
+                            "public": resp.status_code == 200,
+                        }
+                    )
+            except Exception:  # noqa: S110
                 pass
 
         tasks = []
@@ -245,6 +294,7 @@ class CloudAssetDiscovery:
 
 # ─── #15 Subdomain Takeover Detection ────────
 
+
 class SubdomainTakeoverChecker:
     """Detect potentially vulnerable subdomains for takeover."""
 
@@ -264,6 +314,7 @@ class SubdomainTakeoverChecker:
 
     def __init__(self):
         import dns.asyncresolver
+
         self._resolver = dns.asyncresolver.Resolver()
         self._resolver.timeout = 5
         self._client: httpx.AsyncClient | None = None
@@ -301,13 +352,14 @@ class SubdomainTakeoverChecker:
                             "vulnerable": True,
                             "severity": "high",
                         }
-        except Exception:
+        except Exception:  # noqa: S110
             pass
         return None
 
     async def scan(self, subdomains: list[str]) -> list[dict]:
         """Check a list of subdomains for takeover vulnerability."""
         import asyncio
+
         results: list[dict] = []
         semaphore = asyncio.Semaphore(10)
 

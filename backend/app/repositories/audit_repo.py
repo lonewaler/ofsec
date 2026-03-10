@@ -1,4 +1,5 @@
 """Audit log persistence."""
+
 from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession

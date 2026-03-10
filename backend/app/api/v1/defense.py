@@ -5,8 +5,8 @@ REST API for defense, incident response, SIEM, and operations (#66–82).
 """
 
 from __future__ import annotations
+
 import structlog
-import fastapi
 from fastapi import APIRouter
 
 from app.api.deps import CurrentUser, DbSession
@@ -23,6 +23,7 @@ router = APIRouter(prefix="/defense", tags=["Defense & Operations"])
 
 
 # ─── Module listing ──────────────────────────
+
 
 @router.get("/modules")
 async def list_defense_modules(*, user: CurrentUser) -> dict:
@@ -50,6 +51,7 @@ async def list_defense_modules(*, user: CurrentUser) -> dict:
 
 # ─── Security Posture ───────────────────────
 
+
 @router.get("/posture")
 async def get_security_posture(*, user: CurrentUser) -> dict:
     orchestrator = DefenseOrchestrator()
@@ -57,6 +59,7 @@ async def get_security_posture(*, user: CurrentUser) -> dict:
 
 
 # ─── Events Pipeline ────────────────────────
+
 
 @router.post("/event")
 async def ingest_security_event(*, event: dict, user: CurrentUser) -> SuccessResponse:
@@ -72,6 +75,7 @@ async def process_event_instant(*, event: dict, user: CurrentUser) -> dict:
 
 # ─── Incident Response ──────────────────────
 
+
 @router.get("/playbooks")
 async def list_playbooks(*, user: CurrentUser) -> dict:
     orchestrator = DefenseOrchestrator()
@@ -79,8 +83,11 @@ async def list_playbooks(*, user: CurrentUser) -> dict:
 
 
 @router.post("/incident")
-async def start_incident(*, 
-    playbook_id: str, description: str, assignee: str = "",
+async def start_incident(
+    *,
+    playbook_id: str,
+    description: str,
+    assignee: str = "",
     user: CurrentUser,
 ) -> dict:
     orchestrator = DefenseOrchestrator()
@@ -100,6 +107,7 @@ async def get_incident(*, incident_id: str, user: CurrentUser) -> dict:
 
 
 # ─── Alert Triage ────────────────────────────
+
 
 @router.post("/alert")
 async def triage_alert(*, alert: dict, db: DbSession, user: CurrentUser) -> dict:
@@ -123,7 +131,8 @@ async def triage_alert(*, alert: dict, db: DbSession, user: CurrentUser) -> dict
 
 
 @router.get("/alerts")
-async def get_alert_queue(*, 
+async def get_alert_queue(
+    *,
     db: DbSession,
     limit: int = 50,
     user: CurrentUser,
@@ -158,8 +167,10 @@ async def get_alert_queue(*,
 
 # ─── IOC Tracking ──────────────────────────────
 
+
 @router.post("/ioc/track")
-async def track_ioc(*, 
+async def track_ioc(
+    *,
     ioc_value: str,
     ioc_type: str = "ip",
     source: str = "manual",
@@ -186,7 +197,8 @@ async def track_ioc(*,
 
 
 @router.get("/ioc/history")
-async def list_ioc_history(*, 
+async def list_ioc_history(
+    *,
     ioc_type: str | None = None,
     limit: int = 50,
     db: DbSession,
@@ -215,6 +227,7 @@ async def list_ioc_history(*,
 
 # ─── SIEM ────────────────────────────────────
 
+
 @router.post("/logs/ingest")
 async def ingest_logs(*, logs: list[str], source: str = "app", log_format: str = "syslog", user: CurrentUser) -> dict:
     orchestrator = DefenseOrchestrator()
@@ -241,6 +254,7 @@ async def get_correlation_alerts(*, limit: int = 50, user: CurrentUser) -> dict:
 
 # ─── Threat Hunting ──────────────────────────
 
+
 @router.get("/hunting/hypotheses")
 async def list_hunt_hypotheses(*, user: CurrentUser) -> dict:
     orchestrator = DefenseOrchestrator()
@@ -265,6 +279,7 @@ async def check_dga(*, domain: str, user: CurrentUser) -> dict:
 
 
 # ─── Remediation ─────────────────────────────
+
 
 @router.post("/firewall/block")
 async def block_ip(*, ip: str, reason: str, duration_hours: int = 24, user: CurrentUser) -> dict:
@@ -298,6 +313,7 @@ async def list_quarantined(*, user: CurrentUser) -> dict:
 
 # ─── Monitoring ──────────────────────────────
 
+
 @router.post("/health/check")
 async def health_check(*, endpoints: dict, user: CurrentUser) -> dict:
     orchestrator = DefenseOrchestrator()
@@ -311,8 +327,11 @@ async def list_compliance_frameworks(*, user: CurrentUser) -> dict:
 
 
 @router.post("/compliance/drift")
-async def check_compliance_drift(*, 
-    framework: str, current_statuses: dict, user: CurrentUser,
+async def check_compliance_drift(
+    *,
+    framework: str,
+    current_statuses: dict,
+    user: CurrentUser,
 ) -> dict:
     orchestrator = DefenseOrchestrator()
     return orchestrator.compliance.check_drift(framework, current_statuses)
@@ -326,6 +345,7 @@ async def sla_report(*, user: CurrentUser) -> dict:
 
 # ─── Threat Intelligence Auto-Ingestion ──────
 
+
 @router.post("/intel/sweep")
 async def trigger_intel_sweep(*, user: CurrentUser) -> dict:
     """
@@ -334,6 +354,7 @@ async def trigger_intel_sweep(*, user: CurrentUser) -> dict:
     The same sweep also runs automatically at 03:00 UTC daily.
     """
     from app.workers.intel_tasks import run_threat_intel_sweep
+
     task = await run_threat_intel_sweep.kiq()
     logger.info("api.defense.intel_sweep.triggered")
     return {
@@ -347,6 +368,7 @@ async def trigger_intel_sweep(*, user: CurrentUser) -> dict:
 async def intel_sweep_status(*, user: CurrentUser) -> dict:
     """Returns info about the scheduled daily sweep."""
     from app.core.scheduler import get_scheduler
+
     sched = get_scheduler()
     job = sched.get_job("__threat_intel_sweep__")
     return {
@@ -354,4 +376,3 @@ async def intel_sweep_status(*, user: CurrentUser) -> dict:
         "next_run": job.next_run_time.isoformat() if job and job.next_run_time else None,
         "status": "active" if job else "not_registered",
     }
-

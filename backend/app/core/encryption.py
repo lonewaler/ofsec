@@ -16,9 +16,8 @@ def _get_fernet() -> Fernet:
     """Get Fernet encryption instance from secret key."""
     import base64
     import hashlib
-    key = base64.urlsafe_b64encode(
-        hashlib.sha256(settings.SECRET_KEY.encode()).digest()
-    )
+
+    key = base64.urlsafe_b64encode(hashlib.sha256(settings.SECRET_KEY.encode()).digest())
     return Fernet(key)
 
 

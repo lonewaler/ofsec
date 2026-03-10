@@ -20,12 +20,13 @@ tracer = get_tracer("defense.siem")
 
 # ─── #69 Log Aggregator ─────────────────────
 
+
 class LogAggregator:
     """Centralized log aggregation and normalization."""
 
     NORMALIZERS = {
-        "syslog": r"(?P<timestamp>\w+\s+\d+\s+\d+:\d+:\d+)\s+(?P<host>\S+)\s+(?P<process>\S+?)(?:\[(?P<pid>\d+)\])?\s*:\s*(?P<message>.*)",
-        "apache": r'(?P<ip>\S+)\s+\S+\s+\S+\s+\[(?P<timestamp>[^\]]+)\]\s+"(?P<method>\S+)\s+(?P<path>\S+)\s+\S+"\s+(?P<status>\d+)\s+(?P<bytes>\d+)',
+        "syslog": r"(?P<timestamp>\w+\s+\d+\s+\d+:\d+:\d+)\s+(?P<host>\S+)\s+(?P<process>\S+?)(?:\[(?P<pid>\d+)\])?\s*:\s*(?P<message>.*)",  # noqa: E501
+        "apache": r'(?P<ip>\S+)\s+\S+\s+\S+\s+\[(?P<timestamp>[^\]]+)\]\s+"(?P<method>\S+)\s+(?P<path>\S+)\s+\S+"\s+(?P<status>\d+)\s+(?P<bytes>\d+)',  # noqa: E501
         "json": None,  # JSON logs parsed directly
     }
 
@@ -50,6 +51,7 @@ class LogAggregator:
     def _normalize(self, raw: str, log_format: str) -> dict:
         if log_format == "json":
             import json
+
             try:
                 return json.loads(raw)
             except Exception:
@@ -66,7 +68,8 @@ class LogAggregator:
     def search(self, query: str, limit: int = 100) -> list[dict]:
         query_lower = query.lower()
         return [
-            log for log in self._logs
+            log
+            for log in self._logs
             if query_lower in log.get("raw", "").lower() or query_lower in log.get("message", "").lower()
         ][:limit]
 
@@ -75,6 +78,7 @@ class LogAggregator:
 
 
 # ─── #70 Correlation Rules Engine ────────────
+
 
 class CorrelationEngine:
     """Security event correlation using detection rules."""
@@ -121,8 +125,15 @@ class CorrelationEngine:
             "conditions": {
                 "event_type": "process_start",
                 "suspicious_names": [
-                    "mimikatz", "psexec", "lazagne", "bloodhound",
-                    "certutil", "bitsadmin", "mshta", "regsvr32", "rundll32",
+                    "mimikatz",
+                    "psexec",
+                    "lazagne",
+                    "bloodhound",
+                    "certutil",
+                    "bitsadmin",
+                    "mshta",
+                    "regsvr32",
+                    "rundll32",
                 ],
             },
             "severity": "high",
@@ -143,10 +154,12 @@ class CorrelationEngine:
 
     def add_event(self, event: dict) -> list[dict]:
         """Add a security event and check correlation rules."""
-        self._events.append({
-            **event,
-            "received_at": datetime.now(UTC).isoformat(),
-        })
+        self._events.append(
+            {
+                **event,
+                "received_at": datetime.now(UTC).isoformat(),
+            }
+        )
 
         triggered = []
         for rule_id, rule in self.RULES.items():
@@ -175,7 +188,8 @@ class CorrelationEngine:
         # Threshold-based checks
         if "threshold" in conditions:
             similar = [
-                e for e in self._events[-100:]
+                e
+                for e in self._events[-100:]
                 if e.get("event_type") == event_type and e.get("source_ip") == event.get("source_ip")
             ]
             return len(similar) >= conditions["threshold"]
@@ -203,6 +217,7 @@ class CorrelationEngine:
 
 # ─── #71 Security Dashboard Data ────────────
 
+
 class SecurityDashboardData:
     """Aggregate security metrics for dashboard display."""
 
@@ -210,11 +225,13 @@ class SecurityDashboardData:
         self._metrics: dict[str, list[dict]] = defaultdict(list)
 
     def record_metric(self, metric_name: str, value: float, dimensions: dict | None = None) -> None:
-        self._metrics[metric_name].append({
-            "value": value,
-            "dimensions": dimensions or {},
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        self._metrics[metric_name].append(
+            {
+                "value": value,
+                "dimensions": dimensions or {},
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
     def get_summary(self) -> dict:
         summary = {}

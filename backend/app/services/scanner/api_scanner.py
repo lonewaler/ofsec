@@ -22,16 +22,37 @@ class APISecurityScanner:
     """REST and GraphQL API security scanner."""
 
     COMMON_API_PATHS = [
-        "/api", "/api/v1", "/api/v2", "/api/v3",
-        "/graphql", "/graphiql", "/playground",
-        "/swagger", "/swagger.json", "/swagger-ui",
-        "/openapi.json", "/docs", "/redoc",
-        "/api-docs", "/api/docs", "/.well-known/openapi",
-        "/health", "/healthcheck", "/status",
-        "/metrics", "/actuator", "/actuator/health",
-        "/debug", "/debug/vars", "/debug/pprof",
-        "/admin", "/admin/api", "/internal",
-        "/api/users", "/api/config", "/api/settings",
+        "/api",
+        "/api/v1",
+        "/api/v2",
+        "/api/v3",
+        "/graphql",
+        "/graphiql",
+        "/playground",
+        "/swagger",
+        "/swagger.json",
+        "/swagger-ui",
+        "/openapi.json",
+        "/docs",
+        "/redoc",
+        "/api-docs",
+        "/api/docs",
+        "/.well-known/openapi",
+        "/health",
+        "/healthcheck",
+        "/status",
+        "/metrics",
+        "/actuator",
+        "/actuator/health",
+        "/debug",
+        "/debug/vars",
+        "/debug/pprof",
+        "/admin",
+        "/admin/api",
+        "/internal",
+        "/api/users",
+        "/api/config",
+        "/api/settings",
     ]
 
     IDOR_PATTERNS = [
@@ -48,7 +69,8 @@ class APISecurityScanner:
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:
             self._client = httpx.AsyncClient(
-                timeout=10.0, follow_redirects=True,
+                timeout=10.0,
+                follow_redirects=True,
                 headers={"User-Agent": "OfSec-V3/3.0", "Accept": "application/json"},
             )
         return self._client
@@ -69,15 +91,17 @@ class APISecurityScanner:
                         response = await client.get(url)
                         if response.status_code < 404:
                             content_type = response.headers.get("content-type", "")
-                            found.append({
-                                "path": path,
-                                "url": url,
-                                "status": response.status_code,
-                                "content_type": content_type,
-                                "is_json": "json" in content_type,
-                                "size": len(response.content),
-                            })
-                    except Exception:
+                            found.append(
+                                {
+                                    "path": path,
+                                    "url": url,
+                                    "status": response.status_code,
+                                    "content_type": content_type,
+                                    "is_json": "json" in content_type,
+                                    "size": len(response.content),
+                                }
+                            )
+                    except Exception:  # noqa: S110
                         pass
 
             tasks = [probe(p) for p in self.COMMON_API_PATHS]
@@ -102,14 +126,16 @@ class APISecurityScanner:
                     sensitive_keys = ["password", "token", "secret", "api_key", "email", "ssn", "credit_card"]
                     for key in sensitive_keys:
                         if key in body.lower():
-                            findings.append({
-                                "type": "Authentication Bypass",
-                                "severity": "critical",
-                                "url": url,
-                                "evidence": f"Sensitive data '{key}' accessible without auth",
-                            })
+                            findings.append(
+                                {
+                                    "type": "Authentication Bypass",
+                                    "severity": "critical",
+                                    "url": url,
+                                    "evidence": f"Sensitive data '{key}' accessible without auth",
+                                }
+                            )
                             break
-            except Exception:
+            except Exception:  # noqa: S112
                 continue
 
         return findings
@@ -125,15 +151,17 @@ class APISecurityScanner:
                 try:
                     response = await client.request(method, ep["url"])
                     if response.status_code not in (401, 403, 404, 405):
-                        findings.append({
-                            "type": "Dangerous HTTP Method",
-                            "severity": "high",
-                            "url": ep["url"],
-                            "method": method,
-                            "status": response.status_code,
-                            "evidence": f"{method} returned {response.status_code}",
-                        })
-                except Exception:
+                        findings.append(
+                            {
+                                "type": "Dangerous HTTP Method",
+                                "severity": "high",
+                                "url": ep["url"],
+                                "method": method,
+                                "status": response.status_code,
+                                "evidence": f"{method} returned {response.status_code}",
+                            }
+                        )
+                except Exception:  # noqa: S112
                     continue
 
         return findings
@@ -163,7 +191,9 @@ class APISecurityScanner:
             "rate_limited": has_rate_limit,
             "requests_sent": len(statuses),
             "severity": "medium" if not has_rate_limit else "info",
-            "finding": None if has_rate_limit else {
+            "finding": None
+            if has_rate_limit
+            else {
                 "type": "Missing Rate Limiting",
                 "severity": "medium",
                 "url": url,
@@ -176,6 +206,7 @@ class APISecurityScanner:
         client = await self._get_client()
         graphql_paths = ["/graphql", "/graphiql", "/api/graphql"]
         from typing import Any
+
         result: dict[str, Any] = {"graphql_found": False, "findings": []}
 
         for path in graphql_paths:
@@ -190,15 +221,17 @@ class APISecurityScanner:
                 if resp.status_code == 200 and "__schema" in resp.text:
                     result["graphql_found"] = True
                     result["endpoint"] = url
-                    result["findings"].append({
-                        "type": "GraphQL Introspection Enabled",
-                        "severity": "medium",
-                        "url": url,
-                        "evidence": "Introspection query returned schema data",
-                        "remediation": "Disable introspection in production",
-                    })
+                    result["findings"].append(
+                        {
+                            "type": "GraphQL Introspection Enabled",
+                            "severity": "medium",
+                            "url": url,
+                            "evidence": "Introspection query returned schema data",
+                            "remediation": "Disable introspection in production",
+                        }
+                    )
                     break
-            except Exception:
+            except Exception:  # noqa: S112
                 continue
 
         return result

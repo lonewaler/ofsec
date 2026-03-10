@@ -17,6 +17,7 @@ Usage:
         metadata={"target": "example.com", "scan_id": 42},
     )
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -38,16 +39,18 @@ logger = structlog.get_logger()
 # ─── Severity colour map (for Slack/Discord attachments) ─────────────
 _SEVERITY_COLORS = {
     "critical": "#FF0000",
-    "high":     "#FF8C00",
-    "medium":   "#FFD700",
-    "low":      "#00BFFF",
-    "info":     "#808080",
+    "high": "#FF8C00",
+    "medium": "#FFD700",
+    "low": "#00BFFF",
+    "info": "#808080",
 }
 
 # ─── Dead Letter Queue Settings ──────────────────────────────────────
-import tempfile as _tempfile
+import tempfile as _tempfile  # noqa: E402
+
 DLQ_DIR = Path(_tempfile.gettempdir()) / "ofsec_dlq"
 DLQ_DIR.mkdir(parents=True, exist_ok=True)
+
 
 async def _write_dlq(payload: dict, url: str) -> None:
     """Save a failed webhook struct to the DLQ file."""
@@ -65,8 +68,8 @@ async def _write_dlq(payload: dict, url: str) -> None:
         logger.error("notifier.dlq.error", error=str(e))
 
 
-
 # ─── Email ────────────────────────────────────────────────────────────
+
 
 async def _send_email(
     title: str,
@@ -77,12 +80,14 @@ async def _send_email(
     """Send an alert email via SMTP with STARTTLS."""
     if not settings.ALERT_EMAIL_ENABLED:
         return
-    if not all([
-        settings.ALERT_EMAIL_SMTP_HOST,
-        settings.ALERT_EMAIL_USERNAME,
-        settings.ALERT_EMAIL_PASSWORD,
-        settings.ALERT_EMAIL_TO,
-    ]):
+    if not all(
+        [
+            settings.ALERT_EMAIL_SMTP_HOST,
+            settings.ALERT_EMAIL_USERNAME,
+            settings.ALERT_EMAIL_PASSWORD,
+            settings.ALERT_EMAIL_TO,
+        ]
+    ):
         logger.warning("notifier.email.skipped", reason="incomplete SMTP config")
         return
 
@@ -94,8 +99,7 @@ async def _send_email(
         # Build HTML body
         color = _SEVERITY_COLORS.get(severity.lower(), "#808080")
         meta_rows = "".join(
-            f"<tr><td style='color:#888;padding:2px 8px'>{k}</td>"
-            f"<td style='padding:2px 8px'>{v}</td></tr>"
+            f"<tr><td style='color:#888;padding:2px 8px'>{k}</td><td style='padding:2px 8px'>{v}</td></tr>"
             for k, v in metadata.items()
         )
         html_body = f"""
@@ -115,8 +119,8 @@ async def _send_email(
 
         msg = MIMEMultipart("alternative")
         msg["Subject"] = f"[OfSec {severity.upper()}] {title}"
-        msg["From"]    = settings.ALERT_EMAIL_FROM
-        msg["To"]      = ", ".join(recipients)
+        msg["From"] = settings.ALERT_EMAIL_FROM
+        msg["To"] = ", ".join(recipients)
         msg.attach(MIMEText(message, "plain"))
         msg.attach(MIMEText(html_body, "html"))
 
@@ -136,6 +140,7 @@ async def _send_email(
 
 # ─── Webhook ──────────────────────────────────────────────────────────
 
+
 async def _send_webhook(
     url: str,
     title: str,
@@ -154,28 +159,26 @@ async def _send_webhook(
     payload = {
         # ── Slack / Mattermost format ──
         "text": f"*[{severity.upper()}]* {title}",
-        "attachments": [{
-            "color": color,
-            "title": title,
-            "text": message,
-            "fields": [
-                {"title": k, "value": str(v), "short": True}
-                for k, v in list(metadata.items())[:6]
-            ],
-            "footer": "OfSec V3",
-            "ts": int(datetime.now(UTC).timestamp()),
-        }],
+        "attachments": [
+            {
+                "color": color,
+                "title": title,
+                "text": message,
+                "fields": [{"title": k, "value": str(v), "short": True} for k, v in list(metadata.items())[:6]],
+                "footer": "OfSec V3",
+                "ts": int(datetime.now(UTC).timestamp()),
+            }
+        ],
         # ── Discord format ──
-        "embeds": [{
-            "title": f"[{severity.upper()}] {title}",
-            "description": message,
-            "color": int(color.lstrip("#"), 16),
-            "timestamp": timestamp,
-            "fields": [
-                {"name": k, "value": str(v), "inline": True}
-                for k, v in list(metadata.items())[:6]
-            ],
-        }],
+        "embeds": [
+            {
+                "title": f"[{severity.upper()}] {title}",
+                "description": message,
+                "color": int(color.lstrip("#"), 16),
+                "timestamp": timestamp,
+                "fields": [{"name": k, "value": str(v), "inline": True} for k, v in list(metadata.items())[:6]],
+            }
+        ],
         # ── Generic / custom ──
         "ofsec_alert": {
             "title": title,
@@ -202,6 +205,7 @@ async def _send_webhook(
 
 # ─── Public API ───────────────────────────────────────────────────────
 
+
 async def dispatch_alert(
     title: str,
     message: str,
@@ -225,15 +229,11 @@ async def dispatch_alert(
 
     if settings.ALERT_WEBHOOK_ENABLED and settings.ALERT_WEBHOOK_URL:
         attempted.append("webhook")
-        tasks.append(_send_webhook(
-            settings.ALERT_WEBHOOK_URL, title, message, severity, meta
-        ))
+        tasks.append(_send_webhook(settings.ALERT_WEBHOOK_URL, title, message, severity, meta))
 
     if settings.ALERT_WEBHOOK_ENABLED and settings.ALERT_WEBHOOK_URL_2:
         attempted.append("webhook_2")
-        tasks.append(_send_webhook(
-            settings.ALERT_WEBHOOK_URL_2, title, message, severity, meta
-        ))
+        tasks.append(_send_webhook(settings.ALERT_WEBHOOK_URL_2, title, message, severity, meta))
 
     if not tasks:
         logger.debug("notifier.dispatch.no_channels_configured")
@@ -249,8 +249,7 @@ async def send_test_alert() -> dict:
     """Send a test notification to all configured channels."""
     return await dispatch_alert(
         title="OfSec V3 — Test Alert",
-        message="This is a test notification from OfSec V3.\n"
-                "If you received this, alerting is configured correctly.",
+        message="This is a test notification from OfSec V3.\nIf you received this, alerting is configured correctly.",
         severity="info",
         metadata={"source": "manual_test", "platform": "OfSec V3"},
     )

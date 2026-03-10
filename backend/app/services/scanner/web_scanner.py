@@ -33,14 +33,14 @@ tracer = get_tracer("scanner.web")
 # ─── Payload collections ─────────────────────
 
 XSS_PAYLOADS = [
-    '<script>alert(1)</script>',
+    "<script>alert(1)</script>",
     '"><script>alert(1)</script>',
     "';alert(1)//",
-    '<img src=x onerror=alert(1)>',
+    "<img src=x onerror=alert(1)>",
     '"><img src=x onerror=alert(1)>',
-    '<svg onload=alert(1)>',
+    "<svg onload=alert(1)>",
     "javascript:alert(1)",
-    '{{7*7}}',  # Template injection
+    "{{7*7}}",  # Template injection
 ]
 
 SQLI_PAYLOADS = [
@@ -57,19 +57,35 @@ SQLI_PAYLOADS = [
 ]
 
 SQLI_ERROR_PATTERNS = [
-    r"SQL syntax.*MySQL", r"Warning.*mysql_", r"valid MySQL result",
-    r"PostgreSQL.*ERROR", r"Warning.*pg_", r"valid PostgreSQL result",
-    r"Driver.*SQL[\s]Server", r"OLE DB.*SQL Server",
-    r"Microsoft Access Driver", r"JET Database Engine",
-    r"Oracle.*Driver", r"Warning.*oci_",
-    r"SQLite.*error", r"Warning.*sqlite_",
-    r"ODBC.*Driver", r"syntax error",
+    r"SQL syntax.*MySQL",
+    r"Warning.*mysql_",
+    r"valid MySQL result",
+    r"PostgreSQL.*ERROR",
+    r"Warning.*pg_",
+    r"valid PostgreSQL result",
+    r"Driver.*SQL[\s]Server",
+    r"OLE DB.*SQL Server",
+    r"Microsoft Access Driver",
+    r"JET Database Engine",
+    r"Oracle.*Driver",
+    r"Warning.*oci_",
+    r"SQLite.*error",
+    r"Warning.*sqlite_",
+    r"ODBC.*Driver",
+    r"syntax error",
 ]
 
 CMD_INJECTION_PAYLOADS = [
-    "; id", "| id", "& id", "`id`",
-    "$(id)", "; cat /etc/passwd", "| cat /etc/passwd",
-    "& whoami", "; whoami", "| whoami",
+    "; id",
+    "| id",
+    "& id",
+    "`id`",
+    "$(id)",
+    "; cat /etc/passwd",
+    "| cat /etc/passwd",
+    "& whoami",
+    "; whoami",
+    "| whoami",
 ]
 
 PATH_TRAVERSAL_PAYLOADS = [
@@ -130,15 +146,17 @@ class WebApplicationScanner:
                 try:
                     response = await client.get(test_url)
                     if payload.lower() in response.text.lower():
-                        findings.append({
-                            "type": "XSS",
-                            "subtype": "Reflected XSS",
-                            "severity": "high",
-                            "url": url,
-                            "parameter": param_name,
-                            "payload": payload,
-                            "evidence": "Payload reflected in response body",
-                        })
+                        findings.append(
+                            {
+                                "type": "XSS",
+                                "subtype": "Reflected XSS",
+                                "severity": "high",
+                                "url": url,
+                                "parameter": param_name,
+                                "payload": payload,
+                                "evidence": "Payload reflected in response body",
+                            }
+                        )
                         break  # One finding per param is enough
                 except Exception as e:
                     logger.debug("scanner.web.xss.error", url=url, param=param_name, error=str(e))
@@ -162,15 +180,17 @@ class WebApplicationScanner:
                     response = await client.get(test_url)
                     for pattern in SQLI_ERROR_PATTERNS:
                         if re.search(pattern, response.text, re.IGNORECASE):
-                            findings.append({
-                                "type": "SQL Injection",
-                                "subtype": "Error-based SQLi",
-                                "severity": "critical",
-                                "url": url,
-                                "parameter": param_name,
-                                "payload": payload,
-                                "evidence": f"SQL error pattern detected: {pattern}",
-                            })
+                            findings.append(
+                                {
+                                    "type": "SQL Injection",
+                                    "subtype": "Error-based SQLi",
+                                    "severity": "critical",
+                                    "url": url,
+                                    "parameter": param_name,
+                                    "payload": payload,
+                                    "evidence": f"SQL error pattern detected: {pattern}",
+                                }
+                            )
                             break
                 except Exception as e:
                     logger.debug("scanner.web.sqli.error", url=url, param=param_name, payload=payload, error=str(e))
@@ -182,18 +202,17 @@ class WebApplicationScanner:
                 false_url = self._inject_param(url, param_name, "1 AND 1=2")
                 true_resp = await client.get(true_url)
                 false_resp = await client.get(false_url)
-                if (
-                    len(true_resp.text) != len(false_resp.text)
-                    and abs(len(true_resp.text) - len(false_resp.text)) > 50
-                ):
-                    findings.append({
-                        "type": "SQL Injection",
-                        "subtype": "Boolean-based blind SQLi",
-                        "severity": "critical",
-                        "url": url,
-                        "parameter": param_name,
-                        "evidence": f"Response size diff: {abs(len(true_resp.text) - len(false_resp.text))} bytes",
-                    })
+                if len(true_resp.text) != len(false_resp.text) and abs(len(true_resp.text) - len(false_resp.text)) > 50:
+                    findings.append(
+                        {
+                            "type": "SQL Injection",
+                            "subtype": "Boolean-based blind SQLi",
+                            "severity": "critical",
+                            "url": url,
+                            "parameter": param_name,
+                            "evidence": f"Response size diff: {abs(len(true_resp.text) - len(false_resp.text))} bytes",
+                        }
+                    )
             except Exception as e:
                 logger.debug("scanner.web.sqli_blind.error", url=url, param=param_name, error=str(e))
                 pass
@@ -214,17 +233,25 @@ class WebApplicationScanner:
                 try:
                     response = await client.get(test_url)
                     # Check for Unix command output
-                    if any(indicator in response.text for indicator in [
-                        "uid=", "root:", "/bin/bash", "www-data",
-                    ]):
-                        findings.append({
-                            "type": "Command Injection",
-                            "severity": "critical",
-                            "url": url,
-                            "parameter": param_name,
-                            "payload": payload,
-                            "evidence": "OS command output detected in response",
-                        })
+                    if any(
+                        indicator in response.text
+                        for indicator in [
+                            "uid=",
+                            "root:",
+                            "/bin/bash",
+                            "www-data",
+                        ]
+                    ):
+                        findings.append(
+                            {
+                                "type": "Command Injection",
+                                "severity": "critical",
+                                "url": url,
+                                "parameter": param_name,
+                                "payload": payload,
+                                "evidence": "OS command output detected in response",
+                            }
+                        )
                         break
                 except Exception as e:
                     logger.debug("scanner.web.cmdi.error", url=url, param=param_name, payload=payload, error=str(e))
@@ -245,20 +272,30 @@ class WebApplicationScanner:
                 test_url = self._inject_param(url, param_name, payload)
                 try:
                     response = await client.get(test_url)
-                    if any(indicator in response.text for indicator in [
-                        "root:x:", "root:*:", "[boot loader]", "[fonts]",
-                    ]):
-                        findings.append({
-                            "type": "Path Traversal",
-                            "severity": "high",
-                            "url": url,
-                            "parameter": param_name,
-                            "payload": payload,
-                            "evidence": "System file content detected in response",
-                        })
+                    if any(
+                        indicator in response.text
+                        for indicator in [
+                            "root:x:",
+                            "root:*:",
+                            "[boot loader]",
+                            "[fonts]",
+                        ]
+                    ):
+                        findings.append(
+                            {
+                                "type": "Path Traversal",
+                                "severity": "high",
+                                "url": url,
+                                "parameter": param_name,
+                                "payload": payload,
+                                "evidence": "System file content detected in response",
+                            }
+                        )
                         break
                 except Exception as e:
-                    logger.debug("scanner.web.path_traversal.error", url=url, param=param_name, payload=payload, error=str(e))
+                    logger.debug(
+                        "scanner.web.path_traversal.error", url=url, param=param_name, payload=payload, error=str(e)
+                    )
                     continue
 
         return findings
@@ -271,9 +308,11 @@ class WebApplicationScanner:
         params = self._extract_params(url)
         client = await self._get_client()
 
-        redirect_params = [p for p in params if any(
-            kw in p.lower() for kw in ["url", "redirect", "next", "return", "goto", "dest", "target"]
-        )]
+        redirect_params = [
+            p
+            for p in params
+            if any(kw in p.lower() for kw in ["url", "redirect", "next", "return", "goto", "dest", "target"])
+        ]
 
         for param_name in redirect_params:
             for payload in OPEN_REDIRECT_PAYLOADS:
@@ -282,17 +321,21 @@ class WebApplicationScanner:
                     response = await client.get(test_url)
                     location = response.headers.get("location", "")
                     if "evil.com" in location:
-                        findings.append({
-                            "type": "Open Redirect",
-                            "severity": "medium",
-                            "url": url,
-                            "parameter": param_name,
-                            "payload": payload,
-                            "evidence": f"Redirect to: {location}",
-                        })
+                        findings.append(
+                            {
+                                "type": "Open Redirect",
+                                "severity": "medium",
+                                "url": url,
+                                "parameter": param_name,
+                                "payload": payload,
+                                "evidence": f"Redirect to: {location}",
+                            }
+                        )
                         break
                 except Exception as e:
-                    logger.debug("scanner.web.open_redirect.error", url=url, param=param_name, payload=payload, error=str(e))
+                    logger.debug(
+                        "scanner.web.open_redirect.error", url=url, param=param_name, payload=payload, error=str(e)
+                    )
                     continue
 
         return findings
@@ -314,12 +357,14 @@ class WebApplicationScanner:
             has_csrf = any(p in content for p in csrf_patterns)
 
             if form_count > 0 and not has_csrf:
-                findings.append({
-                    "type": "CSRF",
-                    "severity": "medium",
-                    "url": url,
-                    "evidence": f"Found {form_count} form(s) without CSRF tokens",
-                })
+                findings.append(
+                    {
+                        "type": "CSRF",
+                        "severity": "medium",
+                        "url": url,
+                        "evidence": f"Found {form_count} form(s) without CSRF tokens",
+                    }
+                )
         except Exception as e:
             logger.debug("scanner.web.csrf.error", url=url, error=str(e))
             pass

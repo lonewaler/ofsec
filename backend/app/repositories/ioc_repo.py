@@ -1,4 +1,5 @@
 """Threat IOC persistence."""
+
 from datetime import UTC, datetime
 
 from sqlalchemy import and_, func, select
@@ -23,9 +24,7 @@ class IOCRepository:
         """Insert or update (refresh last_seen) an IOC."""
         # Check for existing
         result = await self.db.execute(
-            select(ThreatIOC).where(
-                and_(ThreatIOC.ioc_type == ioc_type, ThreatIOC.value == value)
-            )
+            select(ThreatIOC).where(and_(ThreatIOC.ioc_type == ioc_type, ThreatIOC.value == value))
         )
         existing = result.scalar_one_or_none()
 
@@ -58,9 +57,7 @@ class IOCRepository:
         if ioc_type:
             q = q.where(ThreatIOC.ioc_type == ioc_type)
 
-        total = (await self.db.execute(
-            select(func.count()).select_from(q.subquery())
-        )).scalar_one()
+        total = (await self.db.execute(select(func.count()).select_from(q.subquery()))).scalar_one()
 
         q = q.order_by(ThreatIOC.last_seen.desc()).limit(limit).offset(offset)
         result = await self.db.execute(q)

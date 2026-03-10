@@ -7,7 +7,6 @@ Checks: HSTS, CSP, X-Frame-Options, X-Content-Type-Options,
 Referrer-Policy, Permissions-Policy, CORS, cookie flags, server info leakage.
 """
 
-
 from __future__ import annotations
 
 import httpx
@@ -118,36 +117,42 @@ class HeaderSecurityAnalyzer:
                     # Analyze the value quality
                     issues = self._analyze_header_value(header_key, value)
                     if issues:
-                        findings.append({
-                            "type": "Weak Security Header",
-                            "header": info["name"],
-                            "severity": "low",
-                            "current_value": value,
-                            "issue": issues,
-                            "recommended": info["recommended"],
-                        })
+                        findings.append(
+                            {
+                                "type": "Weak Security Header",
+                                "header": info["name"],
+                                "severity": "low",
+                                "current_value": value,
+                                "issue": issues,
+                                "recommended": info["recommended"],
+                            }
+                        )
                 else:
                     missing_headers.append(header_key)
-                    findings.append({
-                        "type": "Missing Security Header",
-                        "header": info["name"],
-                        "severity": info["severity"],
-                        "recommended": info["recommended"],
-                        "description": info["description"],
-                    })
+                    findings.append(
+                        {
+                            "type": "Missing Security Header",
+                            "header": info["name"],
+                            "severity": info["severity"],
+                            "recommended": info["recommended"],
+                            "description": info["description"],
+                        }
+                    )
 
             # Check for leaky headers
             for header_key in LEAKY_HEADERS:
                 value = headers.get(header_key)
                 if value:
-                    findings.append({
-                        "type": "Information Disclosure",
-                        "header": header_key,
-                        "severity": "low",
-                        "value": value,
-                        "description": f"Server leaks {header_key}: {value}",
-                        "remediation": f"Remove or obfuscate the '{header_key}' header",
-                    })
+                    findings.append(
+                        {
+                            "type": "Information Disclosure",
+                            "header": header_key,
+                            "severity": "low",
+                            "value": value,
+                            "description": f"Server leaks {header_key}: {value}",
+                            "remediation": f"Remove or obfuscate the '{header_key}' header",
+                        }
+                    )
 
             # Check cookie security
             cookie_findings = self._analyze_cookies(response)
@@ -160,8 +165,7 @@ class HeaderSecurityAnalyzer:
             # Calculate security score (0-100)
             max_score = len(SECURITY_HEADERS) * 10
             score = max_score - sum(
-                10 if h in ["strict-transport-security", "content-security-policy"] else 5
-                for h in missing_headers
+                10 if h in ["strict-transport-security", "content-security-policy"] else 5 for h in missing_headers
             )
             score = max(0, min(100, score))
 
@@ -225,29 +229,35 @@ class HeaderSecurityAnalyzer:
             cookie_name = cookie.split("=")[0].strip()
 
             if "secure" not in cookie_lower:
-                findings.append({
-                    "type": "Insecure Cookie",
-                    "severity": "medium",
-                    "cookie": cookie_name,
-                    "issue": "Cookie missing 'Secure' flag",
-                    "remediation": "Add 'Secure' flag to prevent transmission over HTTP",
-                })
+                findings.append(
+                    {
+                        "type": "Insecure Cookie",
+                        "severity": "medium",
+                        "cookie": cookie_name,
+                        "issue": "Cookie missing 'Secure' flag",
+                        "remediation": "Add 'Secure' flag to prevent transmission over HTTP",
+                    }
+                )
             if "httponly" not in cookie_lower:
-                findings.append({
-                    "type": "Insecure Cookie",
-                    "severity": "medium",
-                    "cookie": cookie_name,
-                    "issue": "Cookie missing 'HttpOnly' flag",
-                    "remediation": "Add 'HttpOnly' flag to prevent JavaScript access",
-                })
+                findings.append(
+                    {
+                        "type": "Insecure Cookie",
+                        "severity": "medium",
+                        "cookie": cookie_name,
+                        "issue": "Cookie missing 'HttpOnly' flag",
+                        "remediation": "Add 'HttpOnly' flag to prevent JavaScript access",
+                    }
+                )
             if "samesite" not in cookie_lower:
-                findings.append({
-                    "type": "Insecure Cookie",
-                    "severity": "low",
-                    "cookie": cookie_name,
-                    "issue": "Cookie missing 'SameSite' attribute",
-                    "remediation": "Add 'SameSite=Strict' or 'SameSite=Lax'",
-                })
+                findings.append(
+                    {
+                        "type": "Insecure Cookie",
+                        "severity": "low",
+                        "cookie": cookie_name,
+                        "issue": "Cookie missing 'SameSite' attribute",
+                        "remediation": "Add 'SameSite=Strict' or 'SameSite=Lax'",
+                    }
+                )
         return findings
 
     def _analyze_cors(self, headers: dict) -> list[dict]:
@@ -258,19 +268,23 @@ class HeaderSecurityAnalyzer:
 
         if acao == "*":
             if acac.lower() == "true":
-                findings.append({
-                    "type": "CORS Misconfiguration",
-                    "severity": "critical",
-                    "issue": "CORS allows all origins with credentials — high risk!",
-                    "remediation": "Restrict Access-Control-Allow-Origin to specific domains",
-                })
+                findings.append(
+                    {
+                        "type": "CORS Misconfiguration",
+                        "severity": "critical",
+                        "issue": "CORS allows all origins with credentials — high risk!",
+                        "remediation": "Restrict Access-Control-Allow-Origin to specific domains",
+                    }
+                )
             else:
-                findings.append({
-                    "type": "CORS Misconfiguration",
-                    "severity": "low",
-                    "issue": "CORS allows all origins (wildcard *)",
-                    "remediation": "Consider restricting to specific trusted origins",
-                })
+                findings.append(
+                    {
+                        "type": "CORS Misconfiguration",
+                        "severity": "low",
+                        "issue": "CORS allows all origins (wildcard *)",
+                        "remediation": "Consider restricting to specific trusted origins",
+                    }
+                )
         return findings
 
     async def close(self):

@@ -93,20 +93,47 @@ class DefenseOrchestrator:
                     results["triaged_alert"] = triaged
                     results["pipeline"].append("alert_triaged")
 
-                    # 4. Auto-remediation for critical
-                    if triaged.get("priority_level") == "P1":
-                        source_ip = event.get("source_ip")
-                        if source_ip:
-                            fw_rule = self.firewall.block_ip(
-                                source_ip,
-                                reason=f"Auto-block: {rule_alert.get('rule_name', 'Critical alert')}",
+                    # 3.5 Persist Alert
+                    try:
+                        from app.repositories.alert_repo import AlertRepository
+                        from app.repositories.audit_repo import AuditRepository
+                        from app.workers.db_utils import worker_db_session
+
+                        async with worker_db_session() as db:
+                            repo = AlertRepository(db)
+                            audit_repo = AuditRepository(db)
+
+                            await repo.create_alert(
+                                severity=str(triaged.get("priority_level", "medium")),
+                                source=str(event.get("source", "siem")),
+                                title=str(rule_alert.get("rule_name", "Security Event")),
+                                message=f"Rule ID: {rule_alert.get('rule_id')} matched.",
+                                metadata=triaged,
                             )
-                            results["auto_remediation"] = fw_rule
-                            results["pipeline"].append("auto_blocked")
+
+                            # 4. Auto-remediation for critical
+                            if triaged.get("priority_level") == "P1":
+                                source_ip = event.get("source_ip")
+                                if source_ip:
+                                    fw_rule = self.firewall.block_ip(
+                                        source_ip,
+                                        reason=f"Auto-block: {rule_alert.get('rule_name', 'Critical alert')}",
+                                    )
+                                    results["auto_remediation"] = fw_rule
+                                    results["pipeline"].append("auto_blocked")
+
+                                    await audit_repo.log(
+                                        action="auto_remediation",
+                                        resource=f"firewall_block_ip: {source_ip}",
+                                        details={"rule": rule_alert.get("rule_name")},
+                                    )
+                    except Exception as e:
+                        logger.error("defense.orchestrator.persist_error", error=str(e), exc_info=True)
 
             # 5. Dashboard metrics
             self.dashboard_data.record_metric(
-                "events_processed", 1.0,
+                "events_processed",
+                1.0,
                 {"source": event.get("source", "unknown")},
             )
 

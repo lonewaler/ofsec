@@ -39,11 +39,7 @@ async def _run_and_persist(
         try:
             result = await orchestrator.run_module(module_name, target, config)
 
-            findings = (
-                result.get("findings")
-                or result.get("vulnerabilities")
-                or []
-            )
+            findings = result.get("findings") or result.get("vulnerabilities") or []
             if findings:
                 await repo.add_vulnerabilities(scan.id, findings)
 
@@ -156,11 +152,7 @@ async def run_full_recon(target: str, modules: list[str] | None = None) -> dict:
             all_findings: list[dict] = []
             for module_result in result.get("results", {}).values():
                 if isinstance(module_result, dict):
-                    findings = (
-                        module_result.get("findings")
-                        or module_result.get("vulnerabilities")
-                        or []
-                    )
+                    findings = module_result.get("findings") or module_result.get("vulnerabilities") or []
                     all_findings.extend(findings)
 
             if all_findings:

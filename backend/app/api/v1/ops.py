@@ -5,10 +5,10 @@ REST API for dashboard, reports, scheduling, and administration.
 """
 
 from __future__ import annotations
+
 import secrets as _sec
 
 import structlog
-import fastapi
 from fastapi import APIRouter, HTTPException
 
 from app.api.deps import CurrentUser
@@ -19,10 +19,11 @@ logger = structlog.get_logger()
 
 router = APIRouter(prefix="/ops", tags=["Dashboard & Operations"])
 
-from app.config import settings as _settings
-from app.core.notifier import send_test_alert
+from app.config import settings as _settings  # noqa: E402
+from app.core.notifier import send_test_alert  # noqa: E402
 
 # ─── Platform Status ────────────────────────
+
 
 @router.get("/status")
 async def platform_status(*, user: CurrentUser) -> dict:
@@ -30,6 +31,7 @@ async def platform_status(*, user: CurrentUser) -> dict:
 
 
 # ─── Dashboard ──────────────────────────────
+
 
 @router.get("/dashboard")
 async def dashboard_overview(*, user: CurrentUser) -> dict:
@@ -43,6 +45,7 @@ async def dashboard_trend(*, metric: str, limit: int = 50, user: CurrentUser) ->
 
 # ─── Reports ─────────────────────────────────
 
+
 @router.get("/reports/types")
 async def list_report_types(*, user: CurrentUser) -> dict:
     return {"types": OpsOrchestrator().reports.list_types()}
@@ -55,10 +58,15 @@ async def generate_report(*, report_type: str, scan_data: dict, user: CurrentUse
 
 # ─── Notifications ──────────────────────────
 
+
 @router.post("/notifications/send")
-async def send_notification(*, 
-    title: str, message: str, severity: str = "info",
-    channels: list[str] | None = None, user: CurrentUser,
+async def send_notification(
+    *,
+    title: str,
+    message: str,
+    severity: str = "info",
+    channels: list[str] | None = None,
+    user: CurrentUser,
 ) -> dict:
     return OpsOrchestrator().notifications.send(title, message, severity, channels)
 
@@ -72,68 +80,74 @@ async def notification_history(*, limit: int = 50, user: CurrentUser) -> dict:
 async def list_failed_notifications(*, user: CurrentUser) -> dict:
     import json
     from pathlib import Path
-    
-    dlq_dir = Path("/tmp/ofsec_dlq")
+
+    dlq_dir = Path("/tmp/ofsec_dlq")  # noqa: S108
     failed = []
     if dlq_dir.exists():
         for file in dlq_dir.glob("dlq_*.json"):
             try:
-                with open(file, "r") as f:
+                with open(file) as f:
                     data = json.load(f)
                     data["id"] = file.name
                     failed.append(data)
-            except Exception:
+            except Exception:  # noqa: S110
                 pass
     return {"failed": failed, "count": len(failed)}
 
 
 @router.post("/notifications/retry")
 async def retry_failed_notifications(*, user: CurrentUser) -> dict:
-    import httpx
     import json
     from pathlib import Path
-    import asyncio
-    
-    dlq_dir = Path("/tmp/ofsec_dlq")
+
+    import httpx
+
+    dlq_dir = Path("/tmp/ofsec_dlq")  # noqa: S108
     if not dlq_dir.exists():
         return {"retried": 0, "failed": 0, "message": "No DLQ directory found"}
-        
+
     retried_count = 0
     failed_count = 0
     files = list(dlq_dir.glob("dlq_*.json"))
-    
+
     async with httpx.AsyncClient(timeout=15.0) as client:
         for file in files:
             try:
-                with open(file, "r") as f:
+                with open(file) as f:
                     data = json.load(f)
-                
+
                 url = data.get("target_url")
                 payload = data.get("payload")
-                
+
                 resp = await client.post(url, json=payload, headers={"Content-Type": "application/json"})
                 resp.raise_for_status()
-                
+
                 # If successful, delete the file
                 file.unlink()
                 retried_count += 1
             except Exception as e:
                 logger.error("ops.dlq.retry_failed", file=file.name, error=str(e))
                 failed_count += 1
-                
+
     return {
         "retried": retried_count,
         "still_failing": failed_count,
-        "message": f"Successfully retried {retried_count} notifications"
+        "message": f"Successfully retried {retried_count} notifications",
     }
 
 
 # ─── Scheduler ──────────────────────────────
 
+
 @router.post("/jobs")
-async def create_job(*, 
-    name: str, job_type: str, schedule: str,
-    target: str = "", config: dict | None = None, user: CurrentUser,
+async def create_job(
+    *,
+    name: str,
+    job_type: str,
+    schedule: str,
+    target: str = "",
+    config: dict | None = None,
+    user: CurrentUser,
 ) -> dict:
     orchestrator = OpsOrchestrator()
     result = orchestrator.scheduler.create_job(name, job_type, schedule, target, config)
@@ -153,10 +167,14 @@ async def delete_job(*, job_id: str, user: CurrentUser) -> dict:
 
 # ─── Audit Log ──────────────────────────────
 
+
 @router.get("/audit")
-async def search_audit(*, 
-    username: str | None = None, action: str | None = None,
-    limit: int = 100, user: CurrentUser,
+async def search_audit(
+    *,
+    username: str | None = None,
+    action: str | None = None,
+    limit: int = 100,
+    user: CurrentUser,
 ) -> dict:
     return {"entries": OpsOrchestrator().audit.search(username, action, limit=limit)}
 
@@ -168,18 +186,25 @@ async def user_activity(*, username: str, user: CurrentUser) -> dict:
 
 # ─── Assets ─────────────────────────────────
 
+
 @router.post("/assets")
-async def add_asset(*, 
-    name: str, asset_type: str, address: str,
-    criticality: str = "medium", tags: list[str] | None = None,
+async def add_asset(
+    *,
+    name: str,
+    asset_type: str,
+    address: str,
+    criticality: str = "medium",
+    tags: list[str] | None = None,
     user: CurrentUser,
 ) -> dict:
     return OpsOrchestrator().assets.add_asset(name, asset_type, address, tags, criticality)
 
 
 @router.get("/assets")
-async def list_assets(*, 
-    asset_type: str | None = None, criticality: str | None = None,
+async def list_assets(
+    *,
+    asset_type: str | None = None,
+    criticality: str | None = None,
     user: CurrentUser,
 ) -> dict:
     return {"assets": OpsOrchestrator().assets.list_assets(asset_type, criticality)}
@@ -192,14 +217,19 @@ async def asset_risk_summary(*, user: CurrentUser) -> dict:
 
 # ─── Teams ──────────────────────────────────
 
+
 @router.get("/team/roles")
 async def list_roles(*, user: CurrentUser) -> dict:
     return {"roles": OpsOrchestrator().teams.list_roles()}
 
 
 @router.post("/team/members")
-async def add_team_member(*, 
-    username: str, role: str, email: str = "", user: CurrentUser,
+async def add_team_member(
+    *,
+    username: str,
+    role: str,
+    email: str = "",
+    user: CurrentUser,
 ) -> dict:
     return OpsOrchestrator().teams.add_member(username, role, email)
 
@@ -211,9 +241,13 @@ async def list_members(*, user: CurrentUser) -> dict:
 
 # ─── API Keys ───────────────────────────────
 
+
 @router.post("/apikeys")
-async def create_api_key(*, 
-    name: str, role: str = "analyst", scopes: list[str] | None = None,
+async def create_api_key(
+    *,
+    name: str,
+    role: str = "analyst",
+    scopes: list[str] | None = None,
     user: CurrentUser,
 ) -> dict:
     return OpsOrchestrator().api_keys.create_key(name, role, scopes)
@@ -231,6 +265,7 @@ async def revoke_api_key(*, key_id: str, user: CurrentUser) -> dict:
 
 # ─── Config ─────────────────────────────────
 
+
 @router.get("/config")
 async def get_config(*, user: CurrentUser) -> dict:
     return OpsOrchestrator().config.get_all()
@@ -243,8 +278,10 @@ async def update_config(*, key: str, value: str, user: CurrentUser) -> dict:
 
 # ─── Scan Queue ─────────────────────────────────────────────────────
 
+
 @router.post("/queue/submit")
-async def submit_scan_queue(*, 
+async def submit_scan_queue(
+    *,
     targets: list[str],
     scan_type: str = "recon",
     modules: list[str] | None = None,
@@ -273,9 +310,10 @@ async def submit_scan_queue(*,
                 task = await vuln_task.kiq(target, modules)
             else:
                 task = await recon_task.kiq(target, modules)
-            task_id = str(task.task_id) if hasattr(task, 'task_id') else str(id(task))
+            task_id = str(task.task_id) if hasattr(task, "task_id") else str(id(task))
         except Exception:
             import secrets
+
             task_id = secrets.token_hex(8)
 
         job = orchestrator.scheduler.create_job(
@@ -292,13 +330,15 @@ async def submit_scan_queue(*,
         )
         job["status"] = "running"
         job["task_id"] = task_id
-        submitted.append({
-            "job_id": job.get("id", task_id),
-            "task_id": task_id,
-            "target": target,
-            "scan_type": scan_type,
-            "status": "queued",
-        })
+        submitted.append(
+            {
+                "job_id": job.get("id", task_id),
+                "task_id": task_id,
+                "target": target,
+                "scan_type": scan_type,
+                "status": "queued",
+            }
+        )
 
     logger.info("ops.queue.submitted", count=len(submitted), scan_type=scan_type)
     return {
@@ -339,8 +379,10 @@ async def cancel_queued_job(*, job_id: str, user: CurrentUser) -> dict:
 
 # ─── Scheduled Scans (APScheduler-backed) ────────────────────────────
 
+
 @router.post("/schedules")
-async def create_schedule(*, 
+async def create_schedule(
+    *,
     target: str,
     scan_type: str = "recon",
     schedule_type: str = "cron",
@@ -368,7 +410,7 @@ async def create_schedule(*,
             modules=modules,
         )
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        raise HTTPException(status_code=400, detail=str(exc))  # noqa: B904
 
     logger.info("ops.schedule.created", job_id=job_id, target=target)
     return info
@@ -389,6 +431,7 @@ async def delete_schedule(*, job_id: str, user: CurrentUser) -> dict:
 
 # ─── Notification Test & Config ─────────────────────────────────────
 
+
 @router.post("/notifications/test")
 async def test_notification(*, user: CurrentUser) -> dict:
     """Send a test alert to all configured channels."""
@@ -397,7 +440,7 @@ async def test_notification(*, user: CurrentUser) -> dict:
         return {
             "status": "no_channels",
             "message": "No channels configured. Set ALERT_EMAIL_ENABLED=true or "
-                       "ALERT_WEBHOOK_ENABLED=true in your .env file.",
+            "ALERT_WEBHOOK_ENABLED=true in your .env file.",
         }
     return {"status": "sent", "channels": result["channels"]}
 
@@ -419,8 +462,7 @@ async def notification_config(*, user: CurrentUser) -> dict:
             "url_configured": bool(_settings.ALERT_WEBHOOK_URL),
             "url_2_configured": bool(_settings.ALERT_WEBHOOK_URL_2),
             "url_preview": _settings.ALERT_WEBHOOK_URL[:40] + "..."
-                           if len(_settings.ALERT_WEBHOOK_URL) > 40
-                           else _settings.ALERT_WEBHOOK_URL,
+            if len(_settings.ALERT_WEBHOOK_URL) > 40
+            else _settings.ALERT_WEBHOOK_URL,
         },
     }
-

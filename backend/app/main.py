@@ -9,7 +9,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 import structlog
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
@@ -22,6 +22,7 @@ except Exception:
 
 from app.config import settings
 from app.core.logging import setup_logging
+from app.core.redis_bus import redis_bus
 from app.database import engine
 
 logger = structlog.get_logger()
@@ -32,6 +33,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan — startup and shutdown events."""
     # ─── Startup ──────────────────────────────────
     from app.core.startup_checks import validate_environment
+
     validate_environment(settings.ENVIRONMENT)
 
     setup_logging()
@@ -45,6 +47,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Auto-create all tables on startup (dev convenience — Alembic handles prod)
     try:
         from app.models import Base as ModelBase
+
         async with engine.begin() as conn:
             await conn.run_sync(ModelBase.metadata.create_all)
         logger.info("ofsec.db.tables_created")
@@ -54,6 +57,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Verify DB connectivity
     try:
         from sqlalchemy import text
+
         async with engine.begin() as conn:
             await conn.execute(text("SELECT 1"))
         logger.info("ofsec.db.connected", url=settings.DATABASE_URL.split("@")[-1])
@@ -62,20 +66,29 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     # Start APScheduler
     from app.core.scheduler import register_threat_sweep, start_scheduler, stop_scheduler
+
     start_scheduler()
-    register_threat_sweep()           # daily IOC sweep at 03:00 UTC
+    register_threat_sweep()  # daily IOC sweep at 03:00 UTC
     logger.info("ofsec.scheduler.started")
+
+    # Connect Redis Pub/Sub
+    try:
+        await redis_bus.connect()
+        logger.info("ofsec.redis_bus.connected")
+    except Exception as e:
+        logger.error("ofsec.redis_bus.connection_failed", error=str(e))
 
     # Seed default admin if no users exist yet
     try:
-        from app.repositories.user_repo import UserRepository as _UR
+        from app.repositories.user_repo import UserRepository as _UR  # noqa: N814
         from app.workers.db_utils import worker_db_session
+
         async with worker_db_session() as _seed_db:
             _repo = _UR(_seed_db)
             if await _repo.count() == 0:
                 await _repo.create(
                     email="admin@ofsec.io",
-                    password="ChangeMe123!",
+                    password="ChangeMe123!",  # noqa: S106
                     display_name="Admin",
                     role="admin",
                 )
@@ -90,6 +103,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     yield
 
     # ─── Shutdown ─────────────────────────────────
+    await redis_bus.disconnect()
     stop_scheduler()
     logger.info("ofsec.shutdown")
     await engine.dispose()
@@ -99,7 +113,7 @@ def create_app() -> FastAPI:
     """Application factory."""
     app = FastAPI(
         title="OfSec Vector Triangulum V3",
-        description="Advanced Cybersecurity Operations Platform — Recon, Scanning, Attack Simulation, AI/ML Analysis, Defense",
+        description="Advanced Cybersecurity Operations Platform — Recon, Scanning, Attack Simulation, AI/ML Analysis, Defense",  # noqa: E501
         version="3.0.0",
         docs_url="/docs" if settings.DEBUG else None,
         redoc_url="/redoc" if settings.DEBUG else None,
@@ -109,6 +123,7 @@ def create_app() -> FastAPI:
 
     # ─── Exception Handlers ───────────────────────
     from app.core.exceptions import register_exception_handlers
+
     register_exception_handlers(app)
 
     # ─── Middleware ────────────────────────────────
@@ -122,6 +137,26 @@ def create_app() -> FastAPI:
 
     if not settings.DEBUG:
         app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.ALLOWED_HOSTS)
+
+    # ─── Security Headers Middleware ──────────────
+    @app.middleware("http")
+    async def add_security_headers(request: Request, call_next):
+        response = await call_next(request)
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data:;"
+        return response
+
+    # ─── Rate Limiting Stub Middleware ────────────
+    @app.middleware("http")
+    async def rate_limit_stub(request: Request, call_next):
+        # STUB: Implement Redis-based rate limiting here.
+        # e.g., limit = 100 req / minute per IP.
+        # if await redis.get(f"rate_limit:{request.client.host}") > limit:
+        #     return JSONResponse({"detail": "Too Many Requests"}, status_code=429)
+        return await call_next(request)
 
     # ─── Request Logging Middleware ───────────────
     @app.middleware("http")
@@ -144,6 +179,7 @@ def create_app() -> FastAPI:
 
     # ─── API Routers ──────────────────────────────
     from app.api.v1 import router as api_v1_router
+
     app.include_router(api_v1_router, prefix="/api/v1")
 
     # ─── Health Check ─────────────────────────────
@@ -181,13 +217,23 @@ def create_app() -> FastAPI:
         # SPA catch-all: serve index.html for any non-API, non-static route
         @app.get("/{full_path:path}", include_in_schema=False)
         async def serve_spa(full_path: str):
-            # Don't intercept API, docs, metrics, or health routes
-            if full_path.startswith(("api/", "docs", "redoc", "openapi", "metrics", "health")):
-                return JSONResponse({"detail": "Not Found"}, status_code=404)
-            file_path = dist_dir / full_path
-            if file_path.is_file():
-                return FileResponse(str(file_path))
-            return FileResponse(str(dist_dir / "index.html"))
+            BLOCKED_PREFIXES = (  # noqa: N806
+                "api/",
+                "docs",
+                "redoc",
+                "openapi.json",
+                "health",
+                "static",
+                "assets",
+                "favicon",
+            )
+            if any(full_path.startswith(p) for p in BLOCKED_PREFIXES):
+                raise HTTPException(status_code=404, detail=f"Not found: /{full_path}")
+
+            index = dist_dir / "index.html"
+            if index.exists():
+                return FileResponse(str(index))
+            raise HTTPException(status_code=404, detail="Frontend not built")
 
     # Dev fallback: serve raw frontend as static files (no Vite needed)
     elif frontend_dir.exists():
@@ -205,12 +251,25 @@ def create_app() -> FastAPI:
         # SPA catch-all for dev mode too
         @app.get("/{full_path:path}", include_in_schema=False)
         async def serve_spa_dev(full_path: str):
-            if full_path.startswith(("api/", "docs", "redoc", "openapi", "metrics", "health")):
-                return JSONResponse({"detail": "Not Found"}, status_code=404)
-            file_path = frontend_dir / full_path
-            if file_path.is_file():
-                return FileResponse(str(file_path))
-            return FileResponse(str(frontend_dir / "index.html"))
+            BLOCKED_PREFIXES = (  # noqa: N806
+                "api/",
+                "docs",
+                "redoc",
+                "openapi.json",
+                "health",
+                "css",
+                "js",
+                "images",
+                "fonts",
+                "static",
+            )
+            if any(full_path.startswith(p) for p in BLOCKED_PREFIXES):
+                raise HTTPException(status_code=404, detail=f"Not found: /{full_path}")
+
+            index = frontend_dir / "index.html"
+            if index.exists():
+                return FileResponse(str(index))
+            raise HTTPException(status_code=404, detail="Frontend not built")
 
     return app
 

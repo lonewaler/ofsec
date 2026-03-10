@@ -4,6 +4,7 @@ OfSec V3 — Startup Validation
 Validates required config and connectivity before accepting traffic.
 Fails fast with clear error messages.
 """
+
 from __future__ import annotations
 
 import os
@@ -54,9 +55,7 @@ def validate_environment(environment: str) -> None:
         for key, bad_value in INSECURE_DEFAULTS.items():
             val = os.environ.get(key, "")
             if val == bad_value:
-                errors.append(
-                    f"  [FAIL] {key} is still set to the insecure default value '{bad_value}'"
-                )
+                errors.append(f"  [FAIL] {key} is still set to the insecure default value '{bad_value}'")
 
     # 3. Recommended keys (warnings only)
     for key in RECOMMENDED:

@@ -126,8 +126,13 @@ class WHOISCorrelator:
     def _is_privacy_protected(self, registrant: dict) -> bool:
         """Detect WHOIS privacy/proxy services."""
         privacy_indicators = [
-            "privacy", "proxy", "whoisguard", "domainsbyproxy",
-            "contactprivacy", "redacted", "withheld",
+            "privacy",
+            "proxy",
+            "whoisguard",
+            "domainsbyproxy",
+            "contactprivacy",
+            "redacted",
+            "withheld",
         ]
         for value in registrant.values():
             if isinstance(value, str) and any(p in value.lower() for p in privacy_indicators):

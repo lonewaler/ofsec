@@ -11,6 +11,7 @@ from app.config import settings
 
 try:
     from taskiq_redis import ListQueueBroker, RedisAsyncResultBackend
+
     # Redis-backed broker (async-native)
     broker = ListQueueBroker(
         url=settings.REDIS_URL,
@@ -21,4 +22,5 @@ try:
     )
 except Exception:
     from taskiq import InMemoryBroker
+
     broker = InMemoryBroker()

@@ -22,33 +22,51 @@ tracer = get_tracer("ai.nlp")
 
 # ─── #49 Threat Report Parser ────────────────
 
+
 class ThreatReportParser:
     """Parse and extract intelligence from threat reports."""
 
     # IOC extraction patterns
     IOC_PATTERNS = {
-        "ipv4": r'\b(?:\d{1,3}\.){3}\d{1,3}\b',
-        "ipv6": r'\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b',
-        "domain": r'\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+(?:com|net|org|io|xyz|info|ru|cn|tk|ml|ga|cf|top|pw)\b',
+        "ipv4": r"\b(?:\d{1,3}\.){3}\d{1,3}\b",
+        "ipv6": r"\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b",
+        "domain": r"\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+(?:com|net|org|io|xyz|info|ru|cn|tk|ml|ga|cf|top|pw)\b",  # noqa: E501
         "url": r'https?://[^\s<>"\'{}|\\^`\[\]]+',
-        "email": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
-        "md5": r'\b[a-fA-F0-9]{32}\b',
-        "sha1": r'\b[a-fA-F0-9]{40}\b',
-        "sha256": r'\b[a-fA-F0-9]{64}\b',
-        "cve": r'CVE-\d{4}-\d{4,}',
-        "mitre_technique": r'T\d{4}(?:\.\d{3})?',
-        "bitcoin_address": r'\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\b',
-        "registry_key": r'HKEY_[A-Z_]+\\[^\s]+',
-        "file_path_unix": r'/(?:etc|tmp|var|usr|opt|home)/[^\s]+',
-        "file_path_windows": r'[A-Z]:\\(?:[^\s\\]+\\)*[^\s\\]+',
+        "email": r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b",
+        "md5": r"\b[a-fA-F0-9]{32}\b",
+        "sha1": r"\b[a-fA-F0-9]{40}\b",
+        "sha256": r"\b[a-fA-F0-9]{64}\b",
+        "cve": r"CVE-\d{4}-\d{4,}",
+        "mitre_technique": r"T\d{4}(?:\.\d{3})?",
+        "bitcoin_address": r"\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\b",
+        "registry_key": r"HKEY_[A-Z_]+\\[^\s]+",
+        "file_path_unix": r"/(?:etc|tmp|var|usr|opt|home)/[^\s]+",
+        "file_path_windows": r"[A-Z]:\\(?:[^\s\\]+\\)*[^\s\\]+",
     }
 
     # Threat actor name patterns
     KNOWN_ACTORS = [
-        "APT28", "APT29", "APT38", "APT41", "Lazarus", "Cozy Bear",
-        "Fancy Bear", "Turla", "Sandworm", "Kimsuky", "Charming Kitten",
-        "DarkSide", "REvil", "LockBit", "BlackCat", "ALPHV",
-        "Conti", "Cl0p", "Play", "Royal", "BlackBasta",
+        "APT28",
+        "APT29",
+        "APT38",
+        "APT41",
+        "Lazarus",
+        "Cozy Bear",
+        "Fancy Bear",
+        "Turla",
+        "Sandworm",
+        "Kimsuky",
+        "Charming Kitten",
+        "DarkSide",
+        "REvil",
+        "LockBit",
+        "BlackCat",
+        "ALPHV",
+        "Conti",
+        "Cl0p",
+        "Play",
+        "Royal",
+        "BlackBasta",
     ]
 
     def extract_iocs(self, text: str) -> dict:
@@ -82,18 +100,26 @@ class ThreatReportParser:
 
             # Extract key sentences containing threat keywords
             threat_keywords = [
-                "vulnerability", "exploit", "malware", "ransomware", "phishing",
-                "backdoor", "trojan", "zero-day", "command and control", "lateral",
-                "exfiltration", "persistence", "privilege escalation", "brute force",
+                "vulnerability",
+                "exploit",
+                "malware",
+                "ransomware",
+                "phishing",
+                "backdoor",
+                "trojan",
+                "zero-day",
+                "command and control",
+                "lateral",
+                "exfiltration",
+                "persistence",
+                "privilege escalation",
+                "brute force",
             ]
-            sentences = re.split(r'[.!?]\s+', text)
-            key_sentences = [
-                s.strip() for s in sentences
-                if any(kw in s.lower() for kw in threat_keywords)
-            ][:20]
+            sentences = re.split(r"[.!?]\s+", text)
+            key_sentences = [s.strip() for s in sentences if any(kw in s.lower() for kw in threat_keywords)][:20]
 
             # Word frequency for topic detection
-            words = re.findall(r'\b[a-zA-Z]{4,}\b', text.lower())
+            words = re.findall(r"\b[a-zA-Z]{4,}\b", text.lower())
             word_freq = Counter(words).most_common(30)
 
             return {
@@ -107,6 +133,7 @@ class ThreatReportParser:
 
 
 # ─── #50 CVE Analyzer ───────────────────────
+
 
 class CVEAnalyzer:
     """Analyze CVE data and assess impact."""
@@ -160,13 +187,8 @@ class CVEAnalyzer:
                 "published": vuln.get("published", ""),
                 "modified": vuln.get("lastModified", ""),
                 "cvss": cvss_data,
-                "references": [
-                    ref.get("url") for ref in vuln.get("references", [])[:5]
-                ],
-                "weaknesses": [
-                    w.get("description", [{}])[0].get("value", "")
-                    for w in vuln.get("weaknesses", [])
-                ],
+                "references": [ref.get("url") for ref in vuln.get("references", [])[:5]],
+                "weaknesses": [w.get("description", [{}])[0].get("value", "") for w in vuln.get("weaknesses", [])],
             }
             self._cache[cve_id] = result
             return result
@@ -205,6 +227,7 @@ class CVEAnalyzer:
 
 
 # ─── #51 Dark Web Monitor ───────────────────
+
 
 class DarkWebMonitor:
     """Monitor dark web sources for leaked data and threat mentions."""
