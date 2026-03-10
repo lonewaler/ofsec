@@ -32,6 +32,7 @@ export default defineConfig({
             input: resolve(__dirname, 'index.html'),
             output: {
                 manualChunks: {
+                    core: ['./js/core/State.js', './js/core/Router.js', './js/core/ApiClient.js'],
                     icons: ['lucide'],
                 },
             },

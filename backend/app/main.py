@@ -238,7 +238,7 @@ def create_app() -> FastAPI:
     # Dev fallback: serve raw frontend as static files (no Vite needed)
     elif frontend_dir.exists():
         # Mount each frontend subdirectory at its expected URL path
-        # so that index.html's references like /css/style.css and /js/app.js resolve correctly.
+        # so that index.html's references like /css/style.css and /js/main.js resolve correctly.
         for subdir in ("css", "js", "images", "fonts", "static"):
             sub_path = frontend_dir / subdir
             if sub_path.is_dir():
