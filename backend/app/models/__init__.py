@@ -213,3 +213,5 @@ class ThreatIOC(Base):
     metadata_ = Column("metadata", JSON, default={})
 
     __table_args__ = (Index("ix_iocs_type_value", "ioc_type", "value"),)
+
+from app.models.vault import SecretVault  # noqa: E402

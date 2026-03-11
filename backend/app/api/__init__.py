@@ -19,6 +19,7 @@ from app.api.v1.log_router import router as log_router  # noqa: E402
 from app.api.v1.ops import router as ops_router  # noqa: E402
 from app.api.v1.recon import router as recon_router  # noqa: E402
 from app.api.v1.scanner import router as scanner_router  # noqa: E402
+from app.api.v1.vault import router as vault_router  # noqa: E402
 
 router.include_router(recon_router)
 router.include_router(scanner_router)
@@ -28,6 +29,7 @@ router.include_router(ai_router)
 router.include_router(defense_router)
 router.include_router(ops_router)
 router.include_router(log_router)
+router.include_router(vault_router, prefix="/vault")
 
 
 @router.get("/status", tags=["System"])
