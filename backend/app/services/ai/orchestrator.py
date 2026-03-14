@@ -168,3 +168,97 @@ class AIOrchestrator:
         await self.darkweb_monitor.close()
         await self.llm.close()
         await self.embedding_search.close()
+
+
+import json
+
+import openai
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
+from app.api.v1.vault import ACTIVE_MASTER_PASSWORD
+from app.core.encryption import decrypt_secret
+from app.models.vault import SecretVault
+from app.services.ai.memory import RAGMemory
+from app.services.ops.installer import AutoInstaller
+
+
+class AgenticBrain:
+    """The central intelligence orchestrating pentesting tools autonomous usage."""
+
+    def __init__(self):
+        self.memory = RAGMemory()
+    
+    async def _get_openai_client(self, db_session: AsyncSession) -> openai.AsyncOpenAI:
+        """Retrieve the API key from the vault and initialize the OpenAI client."""
+        if not ACTIVE_MASTER_PASSWORD:
+            raise ValueError("Vault is locked. ACTIVE_MASTER_PASSWORD is not set.")
+
+        query = select(SecretVault).where(SecretVault.service_name == "openai")
+        result = await db_session.execute(query)
+        secret_record = result.scalar_one_or_none()
+
+        if not secret_record:
+            raise ValueError("OpenAI API key not found in the vault.")
+
+        api_key = decrypt_secret(secret_record.encrypted_key, ACTIVE_MASTER_PASSWORD)
+        return openai.AsyncOpenAI(api_key=api_key)
+
+    async def _generate_embedding(self, client: openai.AsyncOpenAI, text: str) -> list[float]:
+        """Generate a vector embedding using OpenAI."""
+        response = await client.embeddings.create(
+            input=text,
+            model="text-embedding-3-small"
+        )
+        return response.data[0].embedding
+
+    async def plan_action(self, user_goal: str, db_session: AsyncSession) -> dict:
+        """
+        Analyze the goal, retrieve past experiences, and decide the next CLI command.
+        """
+        client = await self._get_openai_client(db_session)
+        
+        # 1. Generate an embedding for the goal
+        embedding = await self._generate_embedding(client, user_goal)
+
+        # 2. Query Qdrant for past experiences
+        memory_results = await self.memory.search_experience(embedding, limit=3)
+        fmt_memory = "\n".join([f"- {json.dumps(m)}" for m in memory_results]) if memory_results else "None"
+
+        # 3. Available external tools
+        available_tools = list(AutoInstaller.TOOL_REGISTRY.keys())
+
+        # 4. Construct System Prompt
+        system_prompt = (
+            "You are an expert autonomous pentester.\n"
+            f"The user wants to: {user_goal}\n\n"
+            f"Available OS tools for execution: {available_tools}\n\n"
+            "Past experiences from memory:\n"
+            f"{fmt_memory}\n\n"
+            "You must return a JSON object with 'tool' (string) and 'args' (list of strings) to execute.\n"
+            "Only use tools from the available OS tools list."
+        )
+
+        logger.info("agentic_brain.planning_action", goal=user_goal)
+
+        # 5. Call LLM for planning
+        response = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": "Generate the next best CLI execution payload as JSON."}
+            ],
+            temperature=0.2
+        )
+
+        content = response.choices[0].message.content
+        if not content:
+            raise ValueError("Failed to generate an action from the LLM.")
+
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError as e:
+            logger.error("agentic_brain.json_decode_error", error=str(e), content=content)
+            raise ValueError("LLM returned malformed JSON.")
+
